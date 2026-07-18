@@ -1,0 +1,246 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ----------------------------------------------------------------------------
+   NovaNest AI — Aurora design system
+   Dark-first premium palette: midnight navy base, indigo→violet primary,
+   cyan/amber accents, glass surfaces. Light mode is a refined, high-contrast
+   counterpart — never a flat inversion.
+---------------------------------------------------------------------------- */
+
+@layer base {
+  :root {
+    /* Surfaces — light */
+    --background: 210 40% 99%;          /* #F8FAFC */
+    --foreground: 222 47% 11%;          /* #0F172A ink */
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Brand — indigo → violet */
+    --primary: 239 84% 60%;            /* #6366F1 indigo-500 */
+    --primary-foreground: 0 0% 100%;
+    --primary-strong: 245 75% 59%;     /* #6D5EF6 */
+
+    --secondary: 230 60% 96%;
+    --secondary-foreground: 230 40% 25%;
+
+    --muted: 225 30% 96%;
+    --muted-foreground: 225 16% 46%;
+
+    --accent: 187 95% 43%;             /* #06B6D4 cyan */
+    --accent-foreground: 0 0% 100%;
+    --accent-warm: 38 92% 50%;          /* #F59E0B amber */
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 225 25% 90%;
+    --input: 225 25% 92%;
+    --ring: 239 84% 60%;
+
+    /* Glass tokens */
+    --glass-bg: 255 100% 100%;
+    --glass-border: 222 40% 20%;
+    --glass-shadow: 222 40% 20%;
+
+    /* Chart palette (categorical, light) */
+    --chart-1: 239 84% 60%;   /* indigo   */
+    --chart-2: 258 90% 66%;   /* violet   */
+    --chart-3: 187 95% 43%;   /* cyan     */
+    --chart-4: 38 92% 50%;    /* amber    */
+    --chart-5: 160 84% 39%;   /* emerald  */
+
+    --radius: 0.875rem;
+  }
+
+  .dark {
+    /* Surfaces — midnight navy */
+    --background: 230 47% 7%;           /* #070B1A */
+    --foreground: 220 30% 96%;
+
+    --card: 232 40% 11%;               /* #111627 */
+    --card-foreground: 220 30% 96%;
+    --popover: 232 40% 11%;
+    --popover-foreground: 220 30% 96%;
+
+    --primary: 250 84% 68%;            /* #8B7CF6 violet */
+    --primary-foreground: 230 47% 7%;
+    --primary-strong: 245 80% 67%;     /* #7C6FF6 */
+
+    --secondary: 232 30% 18%;
+    --secondary-foreground: 220 30% 92%;
+
+    --muted: 232 28% 16%;
+    --muted-foreground: 220 14% 66%;
+
+    --accent: 187 92% 56%;             /* #22D3EE cyan */
+    --accent-foreground: 230 47% 7%;
+    --accent-warm: 38 95% 56%;          /* amber */
+
+    --destructive: 0 80% 64%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 232 30% 20%;
+    --input: 232 30% 18%;
+    --ring: 250 84% 68%;
+
+    /* Glass tokens */
+    --glass-bg: 0 0% 100%;
+    --glass-border: 0 0% 100%;
+    --glass-shadow: 230 47% 4%;
+
+    --chart-1: 250 84% 68%;   /* violet  */
+    --chart-2: 239 84% 64%;   /* indigo  */
+    --chart-3: 187 92% 56%;   /* cyan    */
+    --chart-4: 38 95% 56%;    /* amber   */
+    --chart-5: 160 70% 50%;   /* emerald */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground transition-colors duration-300;
+    font-family: var(--font-sans), Inter, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4, h5, .font-display {
+    font-family: var(--font-display), "Space Grotesk", Inter, sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  /* Visible, branded focus ring for keyboard users. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted));
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground) / 0.5); background-clip: content-box; }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.25);
+  }
+}
+
+@layer utilities {
+  /* Aurora gradient text — the brand wordmark / headline treatment. */
+  .aurora-text {
+    @apply font-extrabold tracking-tighter text-transparent bg-clip-text;
+    background-image: linear-gradient(110deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--chart-2)) 35%,
+      hsl(var(--accent)) 70%,
+      hsl(var(--accent-warm)) 100%);
+  }
+  .animate-aurora {
+    background-size: 220% 220%;
+    animation: auroraShift 6s ease infinite;
+  }
+
+  /* Backwards-compatible alias for existing pages that use `.gradient-title`. */
+  .gradient-title {
+    @apply aurora-text pb-2 pr-2;
+  }
+  .gradient {
+    @apply bg-gradient-to-r;
+    background-image: linear-gradient(110deg, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--accent-warm)));
+  }
+
+  /* Glass surfaces */
+  .glass {
+    background: hsl(var(--glass-bg) / 0.04);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid hsl(var(--glass-border) / 0.08);
+  }
+  .glass-strong {
+    background: hsl(var(--glass-bg) / 0.07);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid hsl(var(--glass-border) / 0.1);
+  }
+
+  /* Aurora ambient background — fixed, decorative, pointer-events-none */
+  .aurora-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .aurora-blob {
+    position: absolute;
+    border-radius: 999px;
+    filter: blur(80px);
+    opacity: 0.55;
+    will-change: transform;
+  }
+
+  /* Subtle dot/grid mesh used behind hero & cards */
+  .grid-mesh {
+    background-image:
+      linear-gradient(to right, hsl(var(--foreground) / 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--foreground) / 0.04) 1px, transparent 1px);
+    background-size: 56px 56px;
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+            mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+  }
+
+  .shimmer {
+    background: linear-gradient(100deg, hsl(var(--muted)) 30%, hsl(var(--muted-foreground) / 0.15) 50%, hsl(var(--muted)) 70%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
+
+  /* Page section vertical rhythm */
+  .section { @apply py-16 md:py-24; }
+
+  /* Reusable gradient ring (avatar/badge accents) */
+  .ring-aurora {
+    background: linear-gradient(120deg, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--accent-warm)));
+  }
+}
+
+@keyframes auroraShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-14px); }
+}
+
+/* Reduced motion — respect user preference. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
