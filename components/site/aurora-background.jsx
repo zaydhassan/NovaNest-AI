@@ -12,7 +12,8 @@ export function AuroraBackground({ className = "" }) {
           height: 560,
           top: -160,
           left: "-10%",
-          background: "hsl(var(--primary))",
+          background: "hsl(var(--purple))",
+          opacity: 0.30,
           animation: "floaty 9s ease-in-out infinite",
         }}
       />
@@ -23,8 +24,8 @@ export function AuroraBackground({ className = "" }) {
           height: 520,
           top: -120,
           right: "-8%",
-          background: "hsl(var(--accent))",
-          opacity: 0.42,
+          background: "hsl(var(--cyan))",
+          opacity: 0.26,
           animation: "floaty 11s ease-in-out infinite reverse",
         }}
       />
@@ -35,8 +36,8 @@ export function AuroraBackground({ className = "" }) {
           height: 480,
           bottom: -180,
           left: "30%",
-          background: "hsl(var(--chart-2))",
-          opacity: 0.35,
+          background: "hsl(var(--emerald))",
+          opacity: 0.20,
           animation: "floaty 13s ease-in-out infinite",
         }}
       />

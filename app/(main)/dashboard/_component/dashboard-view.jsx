@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   BarChart,
@@ -24,6 +25,11 @@ import {
   CheckCircle2,
   Circle,
   Clock,
+  FileText,
+  GraduationCap,
+  PenBox,
+  KanbanSquare,
+  ArrowRight,
 } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import {
@@ -65,6 +71,45 @@ const outlookMeta = (outlook) => {
     default: return { icon: LineIcon, color: "text-muted-foreground" };
   }
 };
+
+const quickActions = [
+  { icon: FileText, label: "Build resume", href: "/resume", hint: "ATS-optimized" },
+  { icon: GraduationCap, label: "Practice interview", href: "/interview", hint: "Role-specific" },
+  { icon: PenBox, label: "Cover letter", href: "/ai-cover-letter", hint: "AI-generated" },
+  { icon: KanbanSquare, label: "Track applications", href: "/applications", hint: "Kanban board" },
+];
+
+function QuickActions() {
+  return (
+    <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      {quickActions.map((a, i) => {
+        const Icon = a.icon;
+        return (
+          <motion.div
+            key={a.label}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: i * 0.05 }}
+          >
+            <Link
+              href={a.href}
+              className="group flex items-center gap-3 rounded-xl border border-border bg-card p-4 shadow-elevated transition-all duration-300 ease-spring hover:-translate-y-1 hover:border-primary/40 hover:shadow-glow"
+            >
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg ring-aurora text-white shadow-glow">
+                <Icon className="h-5 w-5" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-semibold">{a.label}</span>
+                <span className="block truncate text-xs text-muted-foreground">{a.hint}</span>
+              </span>
+              <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-all group-hover:translate-x-0.5 group-hover:text-primary" />
+            </Link>
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+}
 
 function KpiCard({ icon: Icon, label, value, sub, children, delay = 0 }) {
   return (
@@ -143,6 +188,9 @@ export default function DashboardView({ insights, userSkills = [], nova = null }
         </div>
         <ChangeIndustryDialog currentIndustry={insights.industry} />
       </div>
+
+      {/* Quick actions */}
+      <QuickActions />
 
       {/* NovaScore — readiness composite */}
       {nova && <NovaScoreCard nova={nova} />}

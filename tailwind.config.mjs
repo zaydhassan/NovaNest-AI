@@ -57,13 +57,24 @@ export default {
   			}
   		},
   		borderRadius: {
+        xs: 'var(--radius-xs)',
+        sm: 'var(--radius-sm)',
   			lg: 'var(--radius)',
-  			md: 'calc(var(--radius) - 2px)',
-  			sm: 'calc(var(--radius) - 4px)'
+        md: 'calc(var(--radius) - 2px)',
+        xl: 'var(--radius-lg)',
+        '2xl': 'var(--radius-xl)',
+        '3xl': 'var(--radius-2xl)'
   		},
       boxShadow: {
-        glass: '0 10px 40px -12px hsl(var(--glass-shadow) / 0.45)',
-        glow: '0 0 0 1px hsl(var(--primary) / 0.25), 0 12px 40px -8px hsl(var(--primary) / 0.45)',
+        glass: '0 10px 40px -12px hsl(0 0% 0% / 0.55)',
+        'glass-lg': '0 24px 70px -20px hsl(0 0% 0% / 0.65)',
+        glow: '0 0 0 1px hsl(var(--purple) / 0.25), 0 12px 40px -8px hsl(var(--purple) / 0.45)',
+        'glow-cyan': '0 0 0 1px hsl(var(--cyan) / 0.20), 0 16px 50px -12px hsl(var(--cyan) / 0.45)',
+        'glow-emerald': '0 0 0 1px hsl(var(--emerald) / 0.20), 0 16px 50px -12px hsl(var(--emerald) / 0.40)',
+        elevated: '0 1px 0 0 hsl(0 0% 100% / 0.04) inset, 0 20px 50px -24px hsl(0 0% 0% / 0.7)'
+  		},
+      transitionTimingFunction: {
+        spring: 'cubic-bezier(0.22, 1, 0.36, 1)',
       },
   		keyframes: {
   			'accordion-down': {
@@ -85,14 +96,28 @@ export default {
         'floaty': {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-14px)' },
+        },
+        'marquee': {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        'gradient-pan': {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+        },
+        'spin-slow': {
+          to: { transform: 'rotate(360deg)' },
         }
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
-        'aurora': 'aurora 6s ease infinite',
-        'shimmer': 'shimmer 1.4s ease-in-out infinite',
-        'floaty': 'floaty 7s ease-in-out infinite'
+        'aurora': 'aurora 8s ease infinite',
+        'shimmer': 'shimmer 1.6s ease-in-out infinite',
+        'floaty': 'floaty 7s ease-in-out infinite',
+        'marquee': 'marquee 32s linear infinite',
+        'gradient-pan': 'gradient-pan 6s ease infinite',
+        'spin-slow': 'spin-slow 18s linear infinite'
   		}
   	}
   },

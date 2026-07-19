@@ -146,7 +146,7 @@ export function EntryForm({ type, entries, onChange }) {
                   error={errors.title}
                 />
                 {errors.title && (
-                  <p className="text-sm text-red-500">{errors.title.message}</p>
+                  <p className="text-sm text-destructive">{errors.title.message}</p>
                 )}
               </div>
               <div className="space-y-2">
@@ -156,7 +156,7 @@ export function EntryForm({ type, entries, onChange }) {
                   error={errors.organization}
                 />
                 {errors.organization && (
-                  <p className="text-sm text-red-500">
+                  <p className="text-sm text-destructive">
                     {errors.organization.message}
                   </p>
                 )}
@@ -171,7 +171,7 @@ export function EntryForm({ type, entries, onChange }) {
                   error={errors.startDate}
                 />
                 {errors.startDate && (
-                  <p className="text-sm text-red-500">
+                  <p className="text-sm text-destructive">
                     {errors.startDate.message}
                   </p>
                 )}
@@ -184,7 +184,7 @@ export function EntryForm({ type, entries, onChange }) {
                   error={errors.endDate}
                 />
                 {errors.endDate && (
-                  <p className="text-sm text-red-500">
+                  <p className="text-sm text-destructive">
                     {errors.endDate.message}
                   </p>
                 )}
@@ -214,7 +214,7 @@ export function EntryForm({ type, entries, onChange }) {
                 error={errors.description}
               />
               {errors.description && (
-                <p className="text-sm text-red-500">
+                <p className="text-sm text-destructive">
                   {errors.description.message}
                 </p>
               )}

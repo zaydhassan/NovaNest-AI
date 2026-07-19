@@ -3,101 +3,125 @@
 @tailwind utilities;
 
 /* ----------------------------------------------------------------------------
-   NovaNest AI — Aurora design system
-   Dark-first premium palette: midnight navy base, indigo→violet primary,
-   cyan/amber accents, glass surfaces. Light mode is a refined, high-contrast
-   counterpart — never a flat inversion.
+   NovaNest AI — Obsidian design system
+   Black-first premium palette. Near-black surfaces, hairline white borders,
+   and a single reserved accent gradient: cyan -> purple -> emerald.
+   Gradients appear ONLY on CTAs, charts, progress, icons, the logo, key
+   statistics, and hero headline highlights. Everything else stays elegant
+   black. Light mode is a refined, high-contrast counterpart -- never a flat
+   inversion.
 ---------------------------------------------------------------------------- */
 
 @layer base {
   :root {
-    /* Surfaces — light */
-    --background: 210 40% 99%;          /* #F8FAFC */
-    --foreground: 222 47% 11%;          /* #0F172A ink */
+    /* Spacing -- 8-point rhythm */
+    --space-1: 0.5rem;   /*  8 */
+    --space-2: 1rem;     /* 16 */
+    --space-3: 1.5rem;   /* 24 */
+    --space-4: 2rem;     /* 32 */
+    --space-5: 3rem;     /* 48 */
+    --space-6: 4rem;     /* 64 */
+    --space-7: 6rem;     /* 96 */
+    --space-8: 8rem;     /* 128 */
+
+    /* Radius scale */
+    --radius-xs: 0.375rem;
+    --radius-sm: 0.5rem;
+    --radius: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.25rem;
+    --radius-2xl: 1.5rem;
+
+    /* Accent channels -- cyan -> purple -> emerald */
+    --cyan: 191 100% 50%;      /* #00D4FF */
+    --purple: 252 100% 68%;    /* #7C5CFF */
+    --emerald: 152 61% 53%;    /* #34D399 */
+
+    /* Surfaces -- light */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 4%;          /* near-black ink */
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 240 10% 4%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 240 10% 4%;
 
-    /* Brand — indigo → violet */
-    --primary: 239 84% 60%;            /* #6366F1 indigo-500 */
+    /* Brand -- purple is the primary action color */
+    --primary: 252 100% 68%;            /* #7C5CFF */
     --primary-foreground: 0 0% 100%;
-    --primary-strong: 245 75% 59%;     /* #6D5EF6 */
+    --primary-strong: 252 100% 73%;
 
-    --secondary: 230 60% 96%;
-    --secondary-foreground: 230 40% 25%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 6% 20%;
 
-    --muted: 225 30% 96%;
-    --muted-foreground: 225 16% 46%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 46%;     /* #71717A */
 
-    --accent: 187 95% 43%;             /* #06B6D4 cyan */
+    --accent: 191 100% 42%;             /* cyan */
     --accent-foreground: 0 0% 100%;
-    --accent-warm: 38 92% 50%;          /* #F59E0B amber */
+    --accent-warm: 152 61% 43%;         /* emerald (3rd gradient stop) */
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 225 25% 90%;
-    --input: 225 25% 92%;
-    --ring: 239 84% 60%;
-
-    /* Glass tokens */
-    --glass-bg: 255 100% 100%;
-    --glass-border: 222 40% 20%;
-    --glass-shadow: 222 40% 20%;
-
-    /* Chart palette (categorical, light) */
-    --chart-1: 239 84% 60%;   /* indigo   */
-    --chart-2: 258 90% 66%;   /* violet   */
-    --chart-3: 187 95% 43%;   /* cyan     */
-    --chart-4: 38 92% 50%;    /* amber    */
-    --chart-5: 160 84% 39%;   /* emerald  */
-
-    --radius: 0.875rem;
-  }
-
-  .dark {
-    /* Surfaces — midnight navy */
-    --background: 230 47% 7%;           /* #070B1A */
-    --foreground: 220 30% 96%;
-
-    --card: 232 40% 11%;               /* #111627 */
-    --card-foreground: 220 30% 96%;
-    --popover: 232 40% 11%;
-    --popover-foreground: 220 30% 96%;
-
-    --primary: 250 84% 68%;            /* #8B7CF6 violet */
-    --primary-foreground: 230 47% 7%;
-    --primary-strong: 245 80% 67%;     /* #7C6FF6 */
-
-    --secondary: 232 30% 18%;
-    --secondary-foreground: 220 30% 92%;
-
-    --muted: 232 28% 16%;
-    --muted-foreground: 220 14% 66%;
-
-    --accent: 187 92% 56%;             /* #22D3EE cyan */
-    --accent-foreground: 230 47% 7%;
-    --accent-warm: 38 95% 56%;          /* amber */
-
-    --destructive: 0 80% 64%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 232 30% 20%;
-    --input: 232 30% 18%;
-    --ring: 250 84% 68%;
+    --border: 240 6% 90%;
+    --input: 240 6% 92%;
+    --ring: 252 100% 68%;
 
     /* Glass tokens */
     --glass-bg: 0 0% 100%;
-    --glass-border: 0 0% 100%;
-    --glass-shadow: 230 47% 4%;
+    --glass-border: 0 0% 0%;
+    --glass-shadow: 240 10% 4%;
 
-    --chart-1: 250 84% 68%;   /* violet  */
-    --chart-2: 239 84% 64%;   /* indigo  */
-    --chart-3: 187 92% 56%;   /* cyan    */
-    --chart-4: 38 95% 56%;    /* amber   */
-    --chart-5: 160 70% 50%;   /* emerald */
+    /* Chart palette (categorical, light) */
+    --chart-1: 191 100% 42%;   /* cyan    */
+    --chart-2: 252 100% 68%;   /* purple  */
+    --chart-3: 152 61% 43%;    /* emerald */
+    --chart-4: 199 89% 48%;    /* sky     */
+    --chart-5: 258 89% 66%;    /* violet  */
+  }
+
+  .dark {
+    /* Surfaces -- premium black-first */
+    --background: 0 0% 2%;              /* #050505 */
+    --foreground: 0 0% 100%;            /* #FFFFFF */
+
+    --card: 0 0% 6%;                    /* #101010 */
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 5%;                 /* #0D0D0D */
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 252 100% 68%;            /* #7C5CFF purple */
+    --primary-foreground: 0 0% 100%;
+    --primary-strong: 252 100% 73%;
+
+    --secondary: 0 0% 10%;              /* #1A1A1A */
+    --secondary-foreground: 0 0% 88%;   /* #E0E0E0 */
+
+    --muted: 0 0% 4%;                   /* #0B0B0B secondary bg */
+    --muted-foreground: 240 6% 65%;     /* #A1A1AA secondary text */
+
+    --accent: 191 100% 50%;             /* #00D4FF cyan */
+    --accent-foreground: 0 0% 4%;
+    --accent-warm: 152 61% 53%;         /* #34D399 emerald */
+
+    --destructive: 0 72% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 5% 14%;               /* hairline over black */
+    --input: 240 5% 16%;
+    --ring: 252 100% 68%;
+
+    /* Glass tokens -- white alpha over black */
+    --glass-bg: 0 0% 100%;
+    --glass-border: 0 0% 100%;
+    --glass-shadow: 0 0% 0%;
+
+    --chart-1: 191 100% 50%;   /* cyan    #00D4FF */
+    --chart-2: 252 100% 68%;   /* purple  #7C5CFF */
+    --chart-3: 152 61% 53%;    /* emerald #34D399 */
+    --chart-4: 199 89% 52%;    /* sky     */
+    --chart-5: 258 89% 70%;    /* violet  */
   }
 }
 
@@ -112,11 +136,12 @@
     @apply bg-background text-foreground transition-colors duration-300;
     font-family: var(--font-sans), Inter, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
   h1, h2, h3, h4, h5, .font-display {
     font-family: var(--font-display), "Space Grotesk", Inter, sans-serif;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
   }
 
   /* Visible, branded focus ring for keyboard users. */
@@ -124,35 +149,53 @@
     @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
   }
 
-  /* Custom scrollbar */
+  /* Custom scrollbar -- slim, neutral */
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--muted));
+    background: hsl(var(--foreground) / 0.12);
     border-radius: 999px;
     border: 2px solid transparent;
     background-clip: content-box;
   }
-  ::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground) / 0.5); background-clip: content-box; }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--foreground) / 0.22);
+    background-clip: content-box;
+  }
 
   ::selection {
-    background: hsl(var(--primary) / 0.25);
+    background: hsl(var(--purple) / 0.30);
+    color: #fff;
   }
 }
 
 @layer utilities {
-  /* Aurora gradient text — the brand wordmark / headline treatment. */
+  /* ---- Accent gradient -- the ONE brand gradient (cyan -> purple -> emerald) ---- */
+  .text-gradient {
+    @apply text-transparent bg-clip-text;
+    background-image: linear-gradient(110deg,
+      hsl(var(--cyan)) 0%,
+      hsl(var(--purple)) 50%,
+      hsl(var(--emerald)) 100%);
+  }
+  .cta-gradient {
+    background-image: linear-gradient(110deg,
+      hsl(var(--cyan)) 0%,
+      hsl(var(--purple)) 52%,
+      hsl(var(--emerald)) 100%);
+  }
+
+  /* Aurora gradient text -- animated headline / wordmark treatment. */
   .aurora-text {
     @apply font-extrabold tracking-tighter text-transparent bg-clip-text;
     background-image: linear-gradient(110deg,
-      hsl(var(--primary)) 0%,
-      hsl(var(--chart-2)) 35%,
-      hsl(var(--accent)) 70%,
-      hsl(var(--accent-warm)) 100%);
+      hsl(var(--cyan)) 0%,
+      hsl(var(--purple)) 45%,
+      hsl(var(--emerald)) 100%);
   }
   .animate-aurora {
     background-size: 220% 220%;
-    animation: auroraShift 6s ease infinite;
+    animation: auroraShift 8s ease infinite;
   }
 
   /* Backwards-compatible alias for existing pages that use `.gradient-title`. */
@@ -160,25 +203,45 @@
     @apply aurora-text pb-2 pr-2;
   }
   .gradient {
-    @apply bg-gradient-to-r;
-    background-image: linear-gradient(110deg, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--accent-warm)));
+    background-image: linear-gradient(110deg,
+      hsl(var(--cyan)), hsl(var(--purple)), hsl(var(--emerald)));
   }
 
-  /* Glass surfaces */
+  /* Reusable gradient ring (avatar/badge/icon accents) */
+  .ring-aurora {
+    background: linear-gradient(130deg,
+      hsl(var(--cyan)), hsl(var(--purple)), hsl(var(--emerald)));
+  }
+  .ring-aurora-soft {
+    background: linear-gradient(130deg,
+      hsl(var(--cyan) / 0.9), hsl(var(--purple) / 0.9), hsl(var(--emerald) / 0.9));
+  }
+
+  /* ---- Surfaces ---- */
+  .surface-1 { background-color: hsl(var(--muted)); }              /* #0B0B0B */
+  .surface-2 { background-color: hsl(var(--card)); }               /* #101010 */
+  .surface-3 { background-color: hsl(0 0% 9%); }                   /* #161616 hover */
+
+  /* ---- Glass surfaces (sparingly: navbar, dialogs, floating cards) ---- */
   .glass {
     background: hsl(var(--glass-bg) / 0.04);
-    backdrop-filter: blur(14px) saturate(140%);
-    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
     border: 1px solid hsl(var(--glass-border) / 0.08);
   }
   .glass-strong {
-    background: hsl(var(--glass-bg) / 0.07);
-    backdrop-filter: blur(20px) saturate(150%);
-    -webkit-backdrop-filter: blur(20px) saturate(150%);
-    border: 1px solid hsl(var(--glass-border) / 0.1);
+    background: hsl(var(--glass-bg) / 0.06);
+    backdrop-filter: blur(22px) saturate(150%);
+    -webkit-backdrop-filter: blur(22px) saturate(150%);
+    border: 1px solid hsl(var(--glass-border) / 0.10);
   }
 
-  /* Aurora ambient background — fixed, decorative, pointer-events-none */
+  /* ---- Glow shadows ---- */
+  .glow-cyan    { box-shadow: 0 0 0 1px hsl(var(--cyan) / 0.20), 0 18px 60px -12px hsl(var(--cyan) / 0.45); }
+  .glow-purple  { box-shadow: 0 0 0 1px hsl(var(--purple) / 0.22), 0 18px 60px -12px hsl(var(--purple) / 0.50); }
+  .glow-emerald { box-shadow: 0 0 0 1px hsl(var(--emerald) / 0.20), 0 18px 60px -12px hsl(var(--emerald) / 0.40); }
+
+  /* ---- Ambient backgrounds ---- */
   .aurora-bg {
     position: fixed;
     inset: 0;
@@ -189,33 +252,57 @@
   .aurora-blob {
     position: absolute;
     border-radius: 999px;
-    filter: blur(80px);
-    opacity: 0.55;
+    filter: blur(90px);
+    opacity: 0.45;
     will-change: transform;
   }
 
   /* Subtle dot/grid mesh used behind hero & cards */
   .grid-mesh {
     background-image:
-      linear-gradient(to right, hsl(var(--foreground) / 0.04) 1px, transparent 1px),
-      linear-gradient(to bottom, hsl(var(--foreground) / 0.04) 1px, transparent 1px);
+      linear-gradient(to right, hsl(var(--foreground) / 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--foreground) / 0.035) 1px, transparent 1px);
     background-size: 56px 56px;
     -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
             mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
   }
 
+  /* Radial spotlight that follows the cursor (set --mx/--my via JS) */
+  .spotlight {
+    background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 0%),
+      hsl(var(--purple) / 0.10), transparent 60%);
+  }
+
   .shimmer {
-    background: linear-gradient(100deg, hsl(var(--muted)) 30%, hsl(var(--muted-foreground) / 0.15) 50%, hsl(var(--muted)) 70%);
+    background: linear-gradient(100deg,
+      hsl(0 0% 12%) 30%,
+      hsl(0 0% 22% / 0.6) 50%,
+      hsl(0 0% 12%) 70%);
     background-size: 200% 100%;
-    animation: shimmer 1.4s ease-in-out infinite;
+    animation: shimmer 1.6s ease-in-out infinite;
   }
 
   /* Page section vertical rhythm */
-  .section { @apply py-16 md:py-24; }
+  .section { @apply py-16 md:py-28; }
 
-  /* Reusable gradient ring (avatar/badge accents) */
-  .ring-aurora {
-    background: linear-gradient(120deg, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--accent-warm)));
+  /* Animated gradient border wrapper */
+  .border-gradient {
+    position: relative;
+    background: hsl(var(--card));
+    border-radius: var(--radius-2xl);
+  }
+  .border-gradient::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(130deg, hsl(var(--cyan) / 0.6), hsl(var(--purple) / 0.4), hsl(var(--emerald) / 0.5));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
   }
 }
 
@@ -235,7 +322,17 @@
   50%      { transform: translateY(-14px); }
 }
 
-/* Reduced motion — respect user preference. */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes gradient-pan {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* Reduced motion -- respect user preference. */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;

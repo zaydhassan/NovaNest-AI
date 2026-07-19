@@ -3,6 +3,7 @@
 import { useMemo, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
+import { motion } from "framer-motion";
 import { Eye, Trash2, Search, FileText, ArrowUpDown } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -156,8 +157,14 @@ export default function CoverLetterList({ coverLetters }) {
         </Card>
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
-          {filtered.map((letter) => (
-            <Card key={letter.id} className="glass group relative transition-transform duration-300 hover:-translate-y-1">
+          {filtered.map((letter, i) => (
+            <motion.div
+              key={letter.id}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: Math.min(i * 0.05, 0.3), ease: [0.22, 1, 0.36, 1] }}
+            >
+            <Card className="glass group relative transition-all duration-300 ease-spring hover:-translate-y-1 hover:border-white/20">
               <CardHeader>
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
@@ -220,6 +227,7 @@ export default function CoverLetterList({ coverLetters }) {
                 </div>
               </CardContent>
             </Card>
+            </motion.div>
           ))}
         </div>
       )}

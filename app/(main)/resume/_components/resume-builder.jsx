@@ -173,9 +173,10 @@ export default function ResumeBuilder({ initialContent }) {
 
           <motion.div whileTap={{ scale: 0.98 }}>
             <Button
+              variant="gradient"
               onClick={generatePDF}
               disabled={isGenerating}
-              className="gap-2 font-semibold shadow-glow"
+              className="gap-2 font-semibold"
             >
               {isGenerating ? (
                 <>
@@ -196,11 +197,11 @@ export default function ResumeBuilder({ initialContent }) {
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
-        className="max-w-4xl mx-auto bg-[linear-gradient(180deg,rgba(255,255,255,0.01),rgba(255,255,255,0.02))] border border-white/6 rounded-2xl shadow-[0_10px_40px_rgba(2,6,23,0.6)] p-4"
+        className="max-w-4xl mx-auto border border-border rounded-2xl bg-card/40 shadow-elevated p-4"
       >
-        <TabsList className="w-full flex justify-center gap-6 py-2 rounded bg-gray-900/40 mb-4">
-          <TabsTrigger value="edit" className="text-base font-medium text-gray-200">Form</TabsTrigger>
-          <TabsTrigger value="preview" className="text-base font-medium text-gray-200">Markdown</TabsTrigger>
+        <TabsList className="w-full flex justify-center gap-6 py-2 rounded mb-4">
+          <TabsTrigger value="edit" className="text-base font-medium">Form</TabsTrigger>
+          <TabsTrigger value="preview" className="text-base font-medium">Markdown</TabsTrigger>
         </TabsList>
 
         <TabsContent value="edit">
@@ -212,114 +213,114 @@ export default function ResumeBuilder({ initialContent }) {
               transition={{ duration: 0.45 }}
               className="space-y-4"
             >
-              <h3 className="text-lg font-semibold text-white">Contact Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border border-gray-800 rounded-lg bg-gray-950">
+              <h3 className="text-lg font-semibold text-foreground">Contact Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border border-border rounded-lg bg-muted/40">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-300">Email</label>
+                  <label className="text-sm font-medium text-foreground">Email</label>
                   <Input
                     {...register("contactInfo.email")}
                     type="email"
                     placeholder="your@email.com"
-                    className="bg-gray-900 text-gray-100 border-gray-700 focus:ring-2 focus:ring-purple-600"
+                    className=""
                   />
-                  {errors.contactInfo?.email && <p className="text-xs text-red-400">{errors.contactInfo.email.message}</p>}
+                  {errors.contactInfo?.email && <p className="text-xs text-destructive">{errors.contactInfo.email.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-300">Mobile Number</label>
+                  <label className="text-sm font-medium text-foreground">Mobile Number</label>
                   <Input
                     {...register("contactInfo.mobile")}
                     type="tel"
                     placeholder="+1 234 567 8900"
-                    className="bg-gray-900 text-gray-100 border-gray-700 focus:ring-2 focus:ring-purple-600"
+                    className=""
                   />
-                  {errors.contactInfo?.mobile && <p className="text-xs text-red-400">{errors.contactInfo.mobile.message}</p>}
+                  {errors.contactInfo?.mobile && <p className="text-xs text-destructive">{errors.contactInfo.mobile.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-300">LinkedIn</label>
+                  <label className="text-sm font-medium text-foreground">LinkedIn</label>
                   <Input
                     {...register("contactInfo.linkedin")}
                     type="url"
                     placeholder="https://linkedin.com/in/your-profile"
-                    className="bg-gray-900 text-gray-100 border-gray-700 focus:ring-2 focus:ring-purple-600"
+                    className=""
                   />
-                  {errors.contactInfo?.linkedin && <p className="text-xs text-red-400">{errors.contactInfo.linkedin.message}</p>}
+                  {errors.contactInfo?.linkedin && <p className="text-xs text-destructive">{errors.contactInfo.linkedin.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-300">Twitter/X</label>
+                  <label className="text-sm font-medium text-foreground">Twitter/X</label>
                   <Input
                     {...register("contactInfo.twitter")}
                     type="url"
                     placeholder="https://twitter.com/your-handle"
-                    className="bg-gray-900 text-gray-100 border-gray-700 focus:ring-2 focus:ring-purple-600"
+                    className=""
                   />
-                  {errors.contactInfo?.twitter && <p className="text-xs text-red-400">{errors.contactInfo.twitter.message}</p>}
+                  {errors.contactInfo?.twitter && <p className="text-xs text-destructive">{errors.contactInfo.twitter.message}</p>}
                 </div>
               </div>
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, delay: 0.06 }} className="space-y-4">
-              <h3 className="text-lg font-semibold text-white">Professional Summary</h3>
+              <h3 className="text-lg font-semibold text-foreground">Professional Summary</h3>
               <Controller
                 name="summary"
                 control={control}
                 render={({ field }) => (
                   <Textarea
                     {...field}
-                    className="h-32 bg-gray-950 text-gray-100 border-gray-700 rounded focus:ring-2 focus:ring-pink-500"
+                    className="h-32"
                     placeholder="Write a compelling professional summary..."
                   />
                 )}
               />
-              {errors.summary && <p className="text-xs text-red-400">{errors.summary.message}</p>}
+              {errors.summary && <p className="text-xs text-destructive">{errors.summary.message}</p>}
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, delay: 0.12 }} className="space-y-4">
-              <h3 className="text-lg font-semibold text-white">Skills</h3>
+              <h3 className="text-lg font-semibold text-foreground">Skills</h3>
               <Controller
                 name="skills"
                 control={control}
                 render={({ field }) => (
                   <Textarea
                     {...field}
-                    className="h-32 bg-gray-950 text-gray-100 border-gray-700 rounded focus:ring-2 focus:ring-indigo-500"
+                    className="h-32"
                     placeholder="List your key skills..."
                   />
                 )}
               />
-              {errors.skills && <p className="text-xs text-red-400">{errors.skills.message}</p>}
+              {errors.skills && <p className="text-xs text-destructive">{errors.skills.message}</p>}
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, delay: 0.18 }} className="space-y-4">
-              <h3 className="text-lg font-semibold text-white">Work Experience</h3>
+              <h3 className="text-lg font-semibold text-foreground">Work Experience</h3>
               <Controller
                 name="experience"
                 control={control}
                 render={({ field }) => <EntryForm type="Experience" entries={field.value} onChange={field.onChange} />}
               />
-              {errors.experience && <p className="text-xs text-red-400">{errors.experience.message}</p>}
+              {errors.experience && <p className="text-xs text-destructive">{errors.experience.message}</p>}
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, delay: 0.24 }} className="space-y-4">
-              <h3 className="text-lg font-semibold text-white">Education</h3>
+              <h3 className="text-lg font-semibold text-foreground">Education</h3>
               <Controller
                 name="education"
                 control={control}
                 render={({ field }) => <EntryForm type="Education" entries={field.value} onChange={field.onChange} />}
               />
-              {errors.education && <p className="text-xs text-red-400">{errors.education.message}</p>}
+              {errors.education && <p className="text-xs text-destructive">{errors.education.message}</p>}
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, delay: 0.30 }} className="space-y-4">
-              <h3 className="text-lg font-semibold text-white">Projects</h3>
+              <h3 className="text-lg font-semibold text-foreground">Projects</h3>
               <Controller
                 name="projects"
                 control={control}
                 render={({ field }) => <EntryForm type="Project" entries={field.value} onChange={field.onChange} />}
               />
-              {errors.projects && <p className="text-xs text-red-400">{errors.projects.message}</p>}
+              {errors.projects && <p className="text-xs text-destructive">{errors.projects.message}</p>}
             </motion.div>
           </form>
         </TabsContent>
@@ -329,7 +330,6 @@ export default function ResumeBuilder({ initialContent }) {
             <div className="mb-4 flex items-center justify-between gap-4">
               <Button
                 variant="ghost"
-                className="text-gray-200"
                 onClick={() => setResumeMode(resumeMode === "preview" ? "edit" : "preview")}
               >
                 {resumeMode === "preview" ? (
@@ -344,23 +344,23 @@ export default function ResumeBuilder({ initialContent }) {
               </Button>
 
               <div className="flex items-center gap-2">
-                <Button onClick={() => navigator.clipboard?.writeText(previewContent || "")} className="bg-gray-800 text-gray-200">Copy Markdown</Button>
-                <Button onClick={() => { setActiveTab("edit"); toast("Switching to Form for edits"); }} className="bg-gray-800 text-gray-200">Edit Form</Button>
+                <Button onClick={() => navigator.clipboard?.writeText(previewContent || "")} variant="secondary">Copy Markdown</Button>
+                <Button onClick={() => { setActiveTab("edit"); toast("Switching to Form for edits"); }} variant="secondary">Edit Form</Button>
               </div>
             </div>
           )}
 
           {activeTab === "preview" && resumeMode !== "preview" && (
-            <div className="flex p-3 gap-2 items-center border-2 border-yellow-800 text-yellow-500 rounded mb-2 bg-gray-950">
+            <div className="flex p-3 gap-2 items-center border border-amber-500/30 text-amber-500 rounded-lg mb-2 bg-amber-500/10">
               <AlertTriangle className="h-5 w-5" />
               <span className="text-xs">You will lose edited markdown if you update the form data.</span>
             </div>
           )}
 
-          <div className="border rounded-lg bg-gray-900 shadow overflow-hidden">
-            <div className="p-3 border-b border-gray-800 bg-gray-950 flex items-center justify-between">
-              <div className="text-sm text-gray-300">Live Markdown / Preview</div>
-              <div className="text-xs text-gray-400">Mode: {resumeMode}</div>
+          <div className="border border-border rounded-lg bg-card shadow-elevated overflow-hidden">
+            <div className="p-3 border-b border-border bg-muted/60 flex items-center justify-between">
+              <div className="text-sm text-muted-foreground">Live Markdown / Preview</div>
+              <div className="text-xs text-muted-foreground">Mode: {resumeMode}</div>
             </div>
             <div className="p-4">
               <MDEditor value={previewContent} onChange={setPreviewContent} height={680} preview={resumeMode} />

@@ -20,34 +20,54 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import HeroSection from "@/components/site/hero";
+import { ProductDemo } from "@/components/site/product-demo";
+import { DashboardPreview } from "@/components/site/dashboard-preview";
+import { Pricing } from "@/components/site/pricing";
 import { SectionHeading } from "@/components/site/section-heading";
 import { StatCounter } from "@/components/site/stat-counter";
 import { features } from "@/data/features";
 import { testimonial } from "@/data/testimonial";
 import { faqs } from "@/data/faqs";
 import { howItWorks } from "@/data/howItWorks";
+import { plans } from "@/data/pricing";
+import { aiFeatures } from "@/data/aiFeatures";
+
+const ease = [0.22, 1, 0.36, 1];
 
 const stats = [
-  { icon: <Trophy className="h-5 w-5" />, to: 50, suffix: "+", label: "Industries covered", delay: 0, accent: "linear-gradient(135deg,hsl(var(--chart-1)),hsl(var(--chart-2)))" },
-  { icon: <Sparkles className="h-5 w-5" />, to: 1000, suffix: "+", label: "AI interview questions", delay: 120, accent: "linear-gradient(135deg,hsl(var(--chart-3)),hsl(var(--chart-1)))" },
-  { icon: <CheckCircle2 className="h-5 w-5" />, to: 95, suffix: "%", label: "User success rate", delay: 240, accent: "linear-gradient(135deg,hsl(var(--chart-4)),hsl(var(--chart-2)))" },
-  { icon: <Target className="h-5 w-5" />, to: 24, suffix: "/7", label: "AI support", delay: 360, accent: "linear-gradient(135deg,hsl(var(--chart-2)),hsl(var(--chart-1)))" },
+  { icon: <Trophy className="h-5 w-5" />, to: 50, suffix: "+", label: "Industries covered", delay: 0, accent: "linear-gradient(135deg,hsl(var(--cyan)),hsl(var(--purple)))" },
+  { icon: <Sparkles className="h-5 w-5" />, to: 1000, suffix: "+", label: "AI interview questions", delay: 120, accent: "linear-gradient(135deg,hsl(var(--purple)),hsl(var(--emerald)))" },
+  { icon: <CheckCircle2 className="h-5 w-5" />, to: 95, suffix: "%", label: "User success rate", delay: 240, accent: "linear-gradient(135deg,hsl(var(--emerald)),hsl(var(--cyan)))" },
+  { icon: <Target className="h-5 w-5" />, to: 24, suffix: "/7", label: "AI support", delay: 360, accent: "linear-gradient(135deg,hsl(var(--cyan)),hsl(var(--emerald)))" },
 ];
+
+const trusted = ["TechNova", "BrightWave", "Insight Co.", "Northwind", "Lumen", "Vertex", "Halcyon", "Quanta"];
+
+const accentText = {
+  cyan: "text-accent",
+  purple: "text-primary",
+  emerald: "text-accent-warm",
+};
 
 export default function LandingPage() {
   return (
     <>
       <HeroSection />
 
-      {/* Trust strip */}
-      <section className="border-y border-border/40 bg-background/30 py-8">
+      {/* ---- Trusted by (marquee) ---- */}
+      <section className="relative border-y border-white/[0.06] bg-white/[0.015] py-8">
         <div className="container mx-auto px-4">
           <p className="mb-6 text-center text-xs font-medium uppercase tracking-widest text-muted-foreground">
             Trusted by professionals at
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 opacity-70">
-            {["TechNova", "BrightWave", "Insight Co.", "Northwind", "Lumen", "Vertex"].map((name) => (
-              <span key={name} className="font-display text-lg font-semibold text-muted-foreground">
+        </div>
+        <div className="relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,#000_12%,#000_88%,transparent)]">
+          <div className="flex w-max animate-marquee items-center gap-14 pr-14">
+            {[...trusted, ...trusted].map((name, i) => (
+              <span
+                key={`${name}-${i}`}
+                className="font-display text-lg font-semibold text-muted-foreground/70 transition-colors hover:text-foreground"
+              >
                 {name}
               </span>
             ))}
@@ -55,7 +75,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features */}
+      {/* ---- Features ---- */}
       <section className="section">
         <div className="container mx-auto px-4">
           <SectionHeading
@@ -70,10 +90,10 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.5, delay: index * 0.08 }}
-                className="glass group rounded-2xl p-6 transition-transform duration-300 hover:-translate-y-1.5"
+                transition={{ duration: 0.5, delay: index * 0.08, ease }}
+                className="glass group rounded-2xl p-6 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:border-white/20 hover:shadow-glass-lg"
               >
-                <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl ring-aurora text-white">
+                <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl ring-aurora text-white shadow-glow">
                   {feature.icon}
                 </div>
                 <h3 className="mb-2 text-lg font-semibold">{feature.title}</h3>
@@ -84,7 +104,31 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Stats */}
+      {/* ---- Interactive product demo ---- */}
+      <section className="section pt-4 md:pt-8">
+        <div className="container mx-auto px-4">
+          <SectionHeading
+            eyebrow="See it in action"
+            title="One workspace, every career tool"
+            subtitle="Switch between the core products and watch them work — no signup required."
+          />
+          <ProductDemo />
+        </div>
+      </section>
+
+      {/* ---- Dashboard preview ---- */}
+      <section className="section pt-4 md:pt-8">
+        <div className="container mx-auto px-4">
+          <SectionHeading
+            eyebrow="Dashboard"
+            title="An executive view of your career"
+            subtitle="KPIs, salary analytics, skill coverage, and AI-curated trends — all in one calm, focused workspace."
+          />
+          <DashboardPreview />
+        </div>
+      </section>
+
+      {/* ---- Stats ---- */}
       <section className="section py-12 md:py-20">
         <div className="container mx-auto px-4">
           <SectionHeading
@@ -100,7 +144,44 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* How it works */}
+      {/* ---- AI features ---- */}
+      <section className="section py-12 md:py-20">
+        <div className="container mx-auto px-4">
+          <SectionHeading
+            eyebrow="AI features"
+            title="Intelligence woven into every step"
+            subtitle="NovaNest's AI is contextual, private, and built for the work you actually do."
+          />
+          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {aiFeatures.map((f, index) => {
+              const Icon = f.icon;
+              return (
+                <motion.div
+                  key={f.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.5, delay: index * 0.07, ease }}
+                  className="glass group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:border-white/20"
+                >
+                  <div
+                    className="absolute -right-10 -top-10 h-28 w-28 rounded-full opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-40"
+                    style={{ background: `hsl(var(--${f.accent}))` }}
+                    aria-hidden="true"
+                  />
+                  <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl border border-white/10 bg-white/[0.04]">
+                    <Icon className={`h-6 w-6 ${accentText[f.accent]}`} />
+                  </div>
+                  <h3 className="mb-2 text-lg font-semibold">{f.title}</h3>
+                  <p className="text-sm text-muted-foreground">{f.description}</p>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ---- How it works ---- */}
       <section className="section">
         <div className="container mx-auto px-4">
           <SectionHeading
@@ -110,7 +191,7 @@ export default function LandingPage() {
           />
           <div className="relative mx-auto max-w-6xl">
             <div className="hidden md:absolute md:left-0 md:right-0 md:top-[64px] md:block" aria-hidden="true">
-              <div className="mx-auto h-px max-w-5xl bg-gradient-to-r from-transparent via-border to-transparent" />
+              <div className="mx-auto h-px max-w-5xl bg-gradient-to-r from-transparent via-white/15 to-transparent" />
             </div>
             <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
               {howItWorks.map((item, i) => (
@@ -119,11 +200,11 @@ export default function LandingPage() {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                  transition={{ duration: 0.5, delay: i * 0.1, ease }}
                   className="relative"
                 >
-                  <div className="glass rounded-2xl p-6">
-                    <div className="mb-4 grid h-10 w-10 place-items-center rounded-full ring-aurora font-semibold text-white">
+                  <div className="glass rounded-2xl p-6 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:border-white/20">
+                    <div className="mb-4 grid h-10 w-10 place-items-center rounded-full ring-aurora font-semibold text-white shadow-glow">
                       {i + 1}
                     </div>
                     <div className="mb-4 text-primary">{item.icon}</div>
@@ -137,7 +218,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* ---- Testimonials ---- */}
       <section className="section">
         <div className="container mx-auto px-4">
           <SectionHeading
@@ -152,8 +233,8 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className="glass relative rounded-2xl p-6"
+                transition={{ duration: 0.5, delay: idx * 0.1, ease }}
+                className="glass relative rounded-2xl p-6 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:border-white/20"
               >
                 <Quote className="absolute right-5 top-5 h-8 w-8 text-primary/20" aria-hidden="true" />
                 <div className="mb-4 flex items-center gap-3">
@@ -186,7 +267,19 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* FAQ */}
+      {/* ---- Pricing ---- */}
+      <section className="section">
+        <div className="container mx-auto px-4">
+          <SectionHeading
+            eyebrow="Pricing"
+            title="Simple, transparent pricing"
+            subtitle="Start free. Upgrade when you're ready. Cancel anytime."
+          />
+          <Pricing plans={plans} />
+        </div>
+      </section>
+
+      {/* ---- FAQ ---- */}
       <section className="section">
         <div className="container mx-auto px-4">
           <SectionHeading
@@ -201,8 +294,8 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 12 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.25 }}
-                transition={{ delay: i * 0.06, duration: 0.4 }}
-                className="glass overflow-hidden rounded-xl"
+                transition={{ delay: i * 0.06, duration: 0.4, ease }}
+                className="glass overflow-hidden rounded-xl transition-colors hover:border-white/15"
               >
                 <Accordion type="single" collapsible>
                   <AccordionItem value={`faq-${i}`} className="border-0">
@@ -220,11 +313,20 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Final CTA */}
+      {/* ---- Final CTA ---- */}
       <section className="section">
         <div className="container mx-auto px-4">
-          <div className="glass-strong relative overflow-hidden rounded-3xl px-6 py-16 text-center md:py-20">
-            <div className="aurora-blob" style={{ width: 400, height: 400, top: -120, left: "20%", background: "hsl(var(--primary))" }} aria-hidden="true" />
+          <div className="border-gradient relative overflow-hidden px-6 py-16 text-center shadow-glass-lg md:py-20">
+            <div
+              className="aurora-blob"
+              style={{ width: 420, height: 420, top: -140, left: "20%", background: "hsl(var(--purple))", opacity: 0.25 }}
+              aria-hidden="true"
+            />
+            <div
+              className="aurora-blob"
+              style={{ width: 360, height: 360, bottom: -160, right: "18%", background: "hsl(var(--cyan))", opacity: 0.2 }}
+              aria-hidden="true"
+            />
             <div className="relative z-10 mx-auto max-w-2xl">
               <h2 className="aurora-text animate-aurora text-3xl font-extrabold md:text-5xl">
                 Ready to advance your career?
@@ -233,7 +335,7 @@ export default function LandingPage() {
                 Join a new wave of professionals scaling new heights with NovaNest&apos;s smart tools, insights, and interview mastery.
               </p>
               <Link href="/dashboard" className="mt-8 inline-block">
-                <Button size="lg" className="gap-2 rounded-full px-8 shadow-glow">
+                <Button variant="gradient" size="lg" className="gap-2 rounded-full px-8">
                   Begin your career upgrade
                   <ArrowRight className="h-4 w-4" />
                 </Button>

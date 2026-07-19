@@ -20,19 +20,21 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/site/logo";
 import { MobileMenu } from "@/components/site/mobile-menu";
 import { ThemeToggle } from "@/components/site/theme-toggle";
+import { HeaderScrollShell } from "@/components/site/header-scroll-shell";
 import { checkUser } from "@/lib/checkUser";
 
 /**
  * SiteHeader — sticky glass top bar. Server component (syncs the Clerk user
- * into our DB via checkUser, matching the original behavior). Interactive
- * bits (mobile sheet, theme toggle) are client islands.
+ * into our DB via checkUser, matching the original behavior). The scroll
+ * shrink/glass behavior lives in the client HeaderScrollShell wrapper;
+ * interactive bits (mobile sheet, theme toggle) are client islands.
  */
 export async function SiteHeader() {
   await checkUser();
 
   return (
-    <header className="fixed top-0 z-50 w-full border-b border-border/60 bg-background/70 backdrop-blur-xl supports-[backdrop-filter]:bg-background/55">
-      <nav className="container mx-auto flex h-16 items-center justify-between px-4">
+    <HeaderScrollShell>
+      <nav className="container mx-auto flex h-full items-center justify-between px-4">
         <Logo />
 
         {/* Desktop signed-in nav */}
@@ -47,8 +49,8 @@ export async function SiteHeader() {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button className="hidden md:inline-flex items-center gap-2">
-                  <StarsIcon className="h-4 w-4" />
+                <Button variant="secondary" className="hidden md:inline-flex items-center gap-2">
+                  <StarsIcon className="h-4 w-4 text-primary" />
                   Growth Tools
                   <ChevronDown className="h-4 w-4 opacity-70" />
                 </Button>
@@ -100,9 +102,7 @@ export async function SiteHeader() {
             <UserButton
               appearance={{
                 elements: {
-                  avatarBox: "h-9 w-9",
-                  userButtonPopoverCard: "shadow-xl",
-                  userPreviewMainIdentifier: "font-semibold",
+                  avatarBox: "h-9 w-9 rounded-full ring-1 ring-white/10",
                 },
               }}
               afterSignOutUrl="/"
@@ -113,7 +113,7 @@ export async function SiteHeader() {
           <MobileMenu />
         </div>
       </nav>
-    </header>
+    </HeaderScrollShell>
   );
 }
 

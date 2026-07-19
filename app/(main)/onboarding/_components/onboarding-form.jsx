@@ -4,8 +4,9 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { Loader2, Sparkles, Check, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
+import { Logo } from "@/components/site/logo";
 import {
   Card,
   CardContent,
@@ -76,10 +77,53 @@ const OnboardingForm = ({ industries }) => {
   const watchIndustry = watch("industry");
 
   return (
-    <div className="flex items-center justify-center bg-background">
-      <Card className="w-full max-w-lg mt-10 mx-2">
+    <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-2 lg:items-stretch">
+      {/* Brand / value panel */}
+      <div className="border-gradient relative hidden overflow-hidden p-8 lg:flex lg:flex-col lg:justify-between">
+        <div
+          className="aurora-blob"
+          style={{ width: 280, height: 280, top: -80, right: -60, background: "hsl(var(--purple))", opacity: 0.25 }}
+          aria-hidden="true"
+        />
+        <div
+          className="aurora-blob"
+          style={{ width: 220, height: 220, bottom: -90, left: -40, background: "hsl(var(--cyan))", opacity: 0.2 }}
+          aria-hidden="true"
+        />
+        <div className="relative z-10">
+          <Logo href={null} markSize={40} />
+          <h2 className="mt-8 text-3xl font-extrabold tracking-tight text-foreground">
+            Welcome to <span className="aurora-text animate-aurora">NovaNest</span>
+          </h2>
+          <p className="mt-3 max-w-sm text-sm text-muted-foreground">
+            Tell us about your career so we can tailor resumes, interviews, and
+            insights to the work you actually do.
+          </p>
+        </div>
+        <ul className="relative z-10 mt-10 space-y-4">
+          {[
+            "Personalized AI resume & cover letter generation",
+            "Role-specific interview practice with live scoring",
+            "Live industry insights for your exact field",
+          ].map((item) => (
+            <li key={item} className="flex items-start gap-3 text-sm text-foreground/85">
+              <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full ring-aurora">
+                <Check className="h-3 w-3 text-white" />
+              </span>
+              {item}
+            </li>
+          ))}
+        </ul>
+        <div className="relative z-10 mt-10 flex items-center gap-2 text-xs text-muted-foreground">
+          <Sparkles className="h-3.5 w-3.5 text-primary" />
+          Takes about 60 seconds
+        </div>
+      </div>
+
+      {/* Form panel */}
+      <Card className="w-full overflow-hidden">
         <CardHeader>
-          <CardTitle className="gradient-title text-4xl">
+          <CardTitle className="gradient-title text-3xl md:text-4xl">
             Complete Your Profile
           </CardTitle>
           <CardDescription>
@@ -115,7 +159,7 @@ const OnboardingForm = ({ industries }) => {
                 </SelectContent>
               </Select>
               {errors.industry && (
-                <p className="text-sm text-red-500">
+                <p className="text-sm text-destructive">
                   {errors.industry.message}
                 </p>
               )}
@@ -142,7 +186,7 @@ const OnboardingForm = ({ industries }) => {
                   </SelectContent>
                 </Select>
                 {errors.subIndustry && (
-                  <p className="text-sm text-red-500">
+                  <p className="text-sm text-destructive">
                     {errors.subIndustry.message}
                   </p>
                 )}
@@ -160,7 +204,7 @@ const OnboardingForm = ({ industries }) => {
                 {...register("experience")}
               />
               {errors.experience && (
-                <p className="text-sm text-red-500">
+                <p className="text-sm text-destructive">
                   {errors.experience.message}
                 </p>
               )}
@@ -177,7 +221,7 @@ const OnboardingForm = ({ industries }) => {
                 Separate multiple skills with commas
               </p>
               {errors.skills && (
-                <p className="text-sm text-red-500">{errors.skills.message}</p>
+                <p className="text-sm text-destructive">{errors.skills.message}</p>
               )}
             </div>
 
@@ -190,18 +234,21 @@ const OnboardingForm = ({ industries }) => {
                 {...register("bio")}
               />
               {errors.bio && (
-                <p className="text-sm text-red-500">{errors.bio.message}</p>
+                <p className="text-sm text-destructive">{errors.bio.message}</p>
               )}
             </div>
 
-            <Button type="submit" className="w-full" disabled={updateLoading}>
+            <Button type="submit" variant="gradient" className="w-full gap-2" disabled={updateLoading}>
               {updateLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                   Saving...
                 </>
               ) : (
-                "Complete Profile"
+                <>
+                  Complete Profile
+                  <ArrowRight className="h-4 w-4" />
+                </>
               )}
             </Button>
           </form>

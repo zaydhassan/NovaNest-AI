@@ -1,6 +1,7 @@
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
+import { dark as clerkDark } from "@clerk/themes";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuroraBackground } from "@/components/site/aurora-background";
@@ -69,10 +70,11 @@ export default function RootLayout({ children }) {
   return (
     <ClerkProvider
       appearance={{
-        baseTheme: undefined,
+        baseTheme: clerkDark,
         variables: {
           colorPrimary: "hsl(var(--primary))",
           colorText: "hsl(var(--foreground))",
+          colorTextSecondary: "hsl(var(--muted-foreground))",
           colorBackground: "hsl(var(--popover))",
           colorInputBackground: "hsl(var(--input))",
           colorInputText: "hsl(var(--foreground))",
@@ -94,6 +96,17 @@ export default function RootLayout({ children }) {
           footerTextLink: "text-primary hover:text-primary/80",
           formFieldInput:
             "bg-input text-foreground border-border placeholder:text-muted-foreground",
+          // UserButton popover — keep menu actions (Manage account / Sign out) legible on dark.
+          userButtonPopoverBox:
+            "bg-popover border border-border shadow-glass-lg",
+          userButtonPopoverActionButton:
+            "bg-transparent text-foreground hover:bg-muted hover:text-foreground",
+          userButtonPopoverActionButtonText: "text-foreground",
+          userButtonPopoverActionButtonIcon: "text-muted-foreground",
+          userButtonPopoverFooter: "bg-transparent",
+          userButtonPopoverFooterText: "text-muted-foreground",
+          userPreviewMainIdentifier: "text-foreground font-semibold",
+          userPreviewSecondaryIdentifier: "text-muted-foreground",
         },
       }}
     >

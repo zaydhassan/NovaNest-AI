@@ -18,22 +18,28 @@ export default function Error({ error, reset }) {
   }, [error]);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center">
-      <Logo href={null} markSize={48} />
-      <h1 className="aurora-text mt-8 text-4xl font-extrabold md:text-5xl">
-        Something went wrong
-      </h1>
-      <p className="mt-4 max-w-md text-sm text-muted-foreground">
-        An unexpected error occurred while rendering this page. You can try
-        again, or head back to safety.
-      </p>
-      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-        <Button onClick={() => reset()} className="shadow-glow">
-          Try again
-        </Button>
-        <Link href="/">
-          <Button variant="outline">Back to home</Button>
-        </Link>
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 text-center">
+      <div className="aurora-bg" aria-hidden="true">
+        <div className="aurora-blob" style={{ width: 400, height: 400, top: "12%", right: "16%", background: "hsl(var(--purple))", opacity: 0.16 }} />
+        <div className="aurora-blob" style={{ width: 340, height: 340, bottom: "14%", left: "14%", background: "hsl(var(--emerald))", opacity: 0.14 }} />
+      </div>
+      <div className="relative z-10 flex flex-col items-center">
+        <Logo href={null} markSize={48} />
+        <h1 className="aurora-text mt-8 text-4xl font-extrabold md:text-5xl">
+          Something went wrong
+        </h1>
+        <p className="mt-4 max-w-md text-sm text-muted-foreground">
+          An unexpected error occurred while rendering this page. You can try
+          again, or head back to safety.
+        </p>
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <Button variant="gradient" onClick={() => reset()} className="shadow-glow">
+            Try again
+          </Button>
+          <Link href="/">
+            <Button variant="outline">Back to home</Button>
+          </Link>
+        </div>
       </div>
     </div>
   );

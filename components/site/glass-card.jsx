@@ -12,7 +12,7 @@ export function GlassCard({ as: Comp = "div", strong = false, className, childre
     <Comp
       className={cn(
         strong ? "glass-strong" : "glass",
-        "rounded-2xl shadow-glass transition-transform duration-300 hover:-translate-y-1",
+        "rounded-2xl shadow-glass transition-all duration-300 ease-spring hover:-translate-y-1 hover:shadow-glass-lg hover:border-white/20",
         className
       )}
       {...props}

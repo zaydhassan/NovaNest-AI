@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -78,7 +78,7 @@ export default function CoverLetterGenerator() {
                   {...register("companyName")}
                 />
                 {errors.companyName && (
-                  <p className="text-sm text-red-500">
+                  <p className="text-sm text-destructive">
                     {errors.companyName.message}
                   </p>
                 )}
@@ -92,7 +92,7 @@ export default function CoverLetterGenerator() {
                   {...register("jobTitle")}
                 />
                 {errors.jobTitle && (
-                  <p className="text-sm text-red-500">
+                  <p className="text-sm text-destructive">
                     {errors.jobTitle.message}
                   </p>
                 )}
@@ -108,21 +108,24 @@ export default function CoverLetterGenerator() {
                 {...register("jobDescription")}
               />
               {errors.jobDescription && (
-                <p className="text-sm text-red-500">
+                <p className="text-sm text-destructive">
                   {errors.jobDescription.message}
                 </p>
               )}
             </div>
 
             <div className="flex justify-end">
-              <Button type="submit" disabled={generating}>
+              <Button type="submit" variant="gradient" className="gap-2" disabled={generating}>
                 {generating ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                     Generating...
                   </>
                 ) : (
-                  "Generate Cover Letter"
+                  <>
+                    Generate Cover Letter
+                    <Sparkles className="h-4 w-4" />
+                  </>
                 )}
               </Button>
             </div>
