@@ -20,6 +20,8 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/site/logo";
 import { MobileMenu } from "@/components/site/mobile-menu";
 import { ThemeToggle } from "@/components/site/theme-toggle";
+import { CommandPalette } from "@/components/site/command-palette";
+import { PlanBadge } from "@/components/site/plan-badge";
 import { HeaderScrollShell } from "@/components/site/header-scroll-shell";
 import { checkUser } from "@/lib/checkUser";
 
@@ -30,7 +32,7 @@ import { checkUser } from "@/lib/checkUser";
  * interactive bits (mobile sheet, theme toggle) are client islands.
  */
 export async function SiteHeader() {
-  await checkUser();
+  const user = await checkUser();
 
   return (
     <HeaderScrollShell>
@@ -40,6 +42,9 @@ export async function SiteHeader() {
         {/* Desktop signed-in nav */}
         <div className="flex items-center gap-2 md:gap-3">
           <SignedIn>
+            {user?.plan && user.plan !== "STARTER" && (
+              <PlanBadge plan={user.plan} className="hidden md:inline-flex" />
+            )}
             <Link href="/dashboard" className="hidden md:inline-flex">
               <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
                 <LayoutDashboard className="h-4 w-4" />
@@ -91,6 +96,8 @@ export async function SiteHeader() {
           </SignedIn>
 
           <ThemeToggle className="hidden md:inline-flex" />
+
+          <CommandPalette className="hidden md:inline-flex" />
 
           <SignedOut>
             <SignInButton mode="modal">

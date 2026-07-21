@@ -362,7 +362,7 @@ export default function ResumeBuilder({ initialContent }) {
               <div className="text-sm text-muted-foreground">Live Markdown / Preview</div>
               <div className="text-xs text-muted-foreground">Mode: {resumeMode}</div>
             </div>
-            <div className="p-4">
+            <div className="p-4" data-color-mode="dark">
               <MDEditor value={previewContent} onChange={setPreviewContent} height={680} preview={resumeMode} />
             </div>
           </div>

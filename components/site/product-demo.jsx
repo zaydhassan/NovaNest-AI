@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { FileText, GraduationCap, LineChart, Check, Sparkles, TrendingUp, Mic } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -14,36 +14,109 @@ const TABS = [
 ];
 
 function ResumePreview() {
+  const experiences = [
+    {
+      role: "Senior Frontend Engineer",
+      company: "Lumen Labs · 2022 — Present",
+      bullets: [
+        "Led rebuild of the core dashboard, cutting load time 41%.",
+        "Shipped design system adopted by 6 product teams.",
+      ],
+    },
+    {
+      role: "Frontend Engineer",
+      company: "Northwind · 2020 — 2022",
+      bullets: [
+        "Built 30+ accessible components in React + TypeScript.",
+      ],
+    },
+  ];
+
   return (
     <div className="grid gap-4 md:grid-cols-[1.3fr_1fr]">
-      <div className="space-y-3">
-        <div className="h-7 w-2/3 rounded-md bg-white/[0.06]" />
-        <div className="h-3 w-1/2 rounded bg-white/[0.05]" />
-        <div className="mt-5 h-4 w-1/3 rounded bg-white/[0.07]" />
-        <div className="space-y-2 pt-1">
-          {[0.95, 0.88, 0.92, 0.7].map((w, i) => (
-            <motion.div
-              key={i}
-              className="h-3 rounded bg-white/[0.05]"
-              initial={{ width: 0, opacity: 0 }}
-              animate={{ width: `${w * 100}%`, opacity: 1 }}
-              transition={{ delay: 0.1 + i * 0.08, duration: 0.5, ease }}
-            />
-          ))}
+      {/* Resume document mockup — a real "paper" sheet, not skeleton bars */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease }}
+        className="overflow-hidden rounded-xl bg-white p-5 text-slate-800 shadow-glass-lg md:p-6"
+      >
+        {/* Header */}
+        <div className="border-b border-slate-200 pb-3">
+          <h3 className="text-lg font-bold tracking-tight text-slate-900">
+            Jordan Avery
+          </h3>
+          <p className="text-xs font-medium text-indigo-600">
+            Senior Frontend Engineer
+          </p>
+          <p className="mt-1 text-[11px] text-slate-500">
+            jordan.avery@mail.com · linkedin.com/in/jordanavery · San Francisco, CA
+          </p>
         </div>
-        <div className="mt-5 h-4 w-1/3 rounded bg-white/[0.07]" />
-        <div className="space-y-2 pt-1">
-          {[0.8, 0.9, 0.6].map((w, i) => (
-            <motion.div
-              key={i}
-              className="h-3 rounded bg-white/[0.05]"
-              initial={{ width: 0, opacity: 0 }}
-              animate={{ width: `${w * 100}%`, opacity: 1 }}
-              transition={{ delay: 0.45 + i * 0.08, duration: 0.5, ease }}
-            />
-          ))}
+
+        {/* Summary */}
+        <div className="pt-3">
+          <h4 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            Summary
+          </h4>
+          <p className="mt-1 text-[11px] leading-relaxed text-slate-600">
+            Frontend engineer with 7+ years building performant, accessible web
+            apps. Focused on design systems, DX, and measurable user impact.
+          </p>
         </div>
-      </div>
+
+        {/* Experience */}
+        <div className="pt-3">
+          <h4 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            Experience
+          </h4>
+          <div className="mt-2 space-y-3">
+            {experiences.map((exp, i) => (
+              <motion.div
+                key={exp.role}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 + i * 0.12, duration: 0.4, ease }}
+              >
+                <p className="text-xs font-semibold text-slate-900">{exp.role}</p>
+                <p className="text-[11px] text-slate-500">{exp.company}</p>
+                <ul className="mt-1 space-y-1">
+                  {exp.bullets.map((b, j) => (
+                    <li
+                      key={j}
+                      className="flex gap-1.5 text-[11px] leading-relaxed text-slate-600"
+                    >
+                      <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-indigo-500" />
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Skills */}
+        <div className="pt-3">
+          <h4 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            Skills
+          </h4>
+          <div className="mt-1.5 flex flex-wrap gap-1.5">
+            {["React", "TypeScript", "Next.js", "Tailwind", "Node", "Figma"].map(
+              (s) => (
+                <span
+                  key={s}
+                  className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] font-medium text-slate-600"
+                >
+                  {s}
+                </span>
+              )
+            )}
+          </div>
+        </div>
+      </motion.div>
+
+      {/* AI suggestions panel */}
       <div className="glass rounded-xl p-4">
         <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
           <Sparkles className="h-4 w-4 text-primary" /> AI suggestions
@@ -71,6 +144,7 @@ function ResumePreview() {
 }
 
 function InterviewPreview() {
+  const reduced = useReducedMotion();
   return (
     <div className="space-y-4">
       <div className="glass rounded-xl p-4">
@@ -92,8 +166,16 @@ function InterviewPreview() {
               <motion.span
                 key={i}
                 className="w-1 rounded-full bg-primary"
-                animate={{ height: [`${h * 16}px`, `${h * 28}px`, `${h * 16}px`] }}
-                transition={{ duration: 0.9, repeat: Infinity, delay: i * 0.07, ease: "easeInOut" }}
+                animate={
+                  reduced
+                    ? { height: `${h * 22}px` }
+                    : { height: [`${h * 16}px`, `${h * 28}px`, `${h * 16}px`] }
+                }
+                transition={
+                  reduced
+                    ? { duration: 0.001 }
+                    : { duration: 0.9, repeat: Infinity, delay: i * 0.07, ease: "easeInOut" }
+                }
               />
             ))}
           </div>

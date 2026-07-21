@@ -1,8 +1,11 @@
 export const plans = [
   {
+    id: "STARTER",
     name: "Starter",
     price: 0,
+    currency: "INR",
     period: "/mo",
+    purchasable: false,
     description: "Everything you need to explore NovaNest and ship your first resume.",
     features: [
       "1 AI resume build",
@@ -15,9 +18,12 @@ export const plans = [
     highlighted: false,
   },
   {
+    id: "PRO",
     name: "Pro",
-    price: 19,
+    price: 1499,
+    currency: "INR",
     period: "/mo",
+    purchasable: true,
     description: "For active job seekers who want the full AI workspace, unlimited.",
     features: [
       "Unlimited resumes & cover letters",
@@ -32,9 +38,12 @@ export const plans = [
     highlighted: true,
   },
   {
+    id: "TEAMS",
     name: "Teams",
-    price: 49,
+    price: 3999,
+    currency: "INR",
     period: "/mo",
+    purchasable: true,
     description: "For career teams, bootcamps, and universities coaching many candidates.",
     features: [
       "Everything in Pro",
@@ -43,8 +52,15 @@ export const plans = [
       "Team analytics dashboard",
       "SSO + admin controls",
     ],
-    cta: "Contact sales",
+    cta: "Get Teams",
     href: "/dashboard",
     highlighted: false,
   },
 ];
+
+// Currency code → display symbol. Keep here so the pricing component never
+// hardcodes a currency glyph.
+export const CURRENCY_SYMBOL = {
+  INR: "₹",
+  USD: "$",
+};

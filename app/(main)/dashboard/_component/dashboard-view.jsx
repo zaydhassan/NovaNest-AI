@@ -44,6 +44,7 @@ import { Progress } from "@/components/ui/progress";
 import NovaScoreCard from "./nova-score-card";
 import WeeklyDigestCard from "./weekly-digest-card";
 import ChangeIndustryDialog from "./change-industry-dialog";
+import PlanStatusCard from "./plan-status-card";
 
 const demandColor = (level) => {
   switch (String(level).toLowerCase()) {
@@ -148,7 +149,7 @@ function GlassTooltip({ active, payload, label, formatter }) {
   );
 }
 
-export default function DashboardView({ insights, userSkills = [], nova = null }) {
+export default function DashboardView({ insights, userSkills = [], nova = null, planInfo = null }) {
   const salaryData = insights.salaryRanges.map((range) => ({
     name: range.role,
     min: Math.round(range.min / 1000),
@@ -175,6 +176,14 @@ export default function DashboardView({ insights, userSkills = [], nova = null }
 
   return (
     <div className="space-y-6">
+      {planInfo && (
+        <PlanStatusCard
+          plan={planInfo.plan}
+          subscriptionStatus={planInfo.subscriptionStatus}
+          currentPeriodEnd={planInfo.currentPeriodEnd}
+        />
+      )}
+
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant="outline" className="gap-1.5">

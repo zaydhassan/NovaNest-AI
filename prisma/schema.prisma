@@ -29,6 +29,16 @@ model User {
   streak        Int       @default(0)
   lastActiveAt  DateTime?
 
+  // Subscription — set by the Razorpay checkout flow. `plan` is the
+  // effective tier ("STARTER" | "PRO" | "TEAMS"); `currentPeriodEnd` drives
+  // entitlement expiry; `razorpayCustomerId` holds the last successful
+  // payment id (Razorpay has no persistent customer id for one-off orders).
+  plan               String    @default("STARTER")
+  subscriptionStatus String?
+  currentPeriodEnd   DateTime?
+  razorpayCustomerId String?
+  paymentOrders      PaymentOrder[]
+
   // Relations
   skills        String[]  // Array of skills
   assessments   Assessment[]
@@ -163,5 +173,27 @@ model WeeklyDigest {
   createdAt   DateTime  @default(now())
 
   @@unique([userId, weekStart])
+  @@index([userId])
+}
+
+// Razorpay payment orders — one row per checkout attempt. Created before the
+// Razorpay modal opens (status "created"), updated to "paid" once the client
+// posts back a verified signature. `amount` is in paise; `billingCycle` is
+// "monthly" | "annual". Acts as the audit trail for every plan purchase.
+model PaymentOrder {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan              String   // "PRO" | "TEAMS"
+  billingCycle      String   // "monthly" | "annual"
+  amount            Int      // paise
+  currency          String   @default("INR")
+  razorpayOrderId   String   @unique
+  razorpayPaymentId String?
+  razorpaySignature String?
+  status            String   @default("created") // created | paid | failed
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
   @@index([userId])
 }

@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Check, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CheckoutButton } from "@/components/site/checkout-button";
+import { CURRENCY_SYMBOL } from "@/data/pricing";
 import { cn } from "@/lib/utils";
 
 const ease = [0.22, 1, 0.36, 1];
@@ -44,6 +46,7 @@ export function Pricing({ plans }) {
         {plans.map((plan, i) => {
           const price = annual ? Math.round(plan.price * 12 * 0.8) : plan.price;
           const period = annual ? "/yr" : plan.period;
+          const symbol = CURRENCY_SYMBOL[plan.currency] ?? "$";
           return (
             <motion.div
               key={plan.name}
@@ -67,18 +70,38 @@ export function Pricing({ plans }) {
                 <h3 className="text-lg font-semibold">{plan.name}</h3>
                 <p className="mt-1 min-h-[40px] text-sm text-muted-foreground">{plan.description}</p>
                 <div className="mt-5 flex items-end gap-1">
-                  <span className="text-4xl font-extrabold tracking-tight">${price}</span>
+                  <span className="text-4xl font-extrabold tracking-tight">
+                    {symbol}
+                    {price.toLocaleString("en-IN")}
+                  </span>
                   <span className="mb-1 text-sm text-muted-foreground">{period}</span>
                 </div>
 
-                <Link href={plan.href} className="mt-6 block">
-                  <Button
-                    variant={plan.highlighted ? "gradient" : "outline"}
-                    className="w-full rounded-full"
-                  >
-                    {plan.cta}
-                  </Button>
-                </Link>
+                <div className="mt-6 block">
+                  {plan.purchasable ? (
+                    <CheckoutButton
+                      plan={plan}
+                      billingCycle={annual ? "annual" : "monthly"}
+                      variant={plan.highlighted ? "gradient" : "outline"}
+                      className={
+                        plan.highlighted
+                          ? "w-full rounded-full border-2 border-white/40 bg-violet-600 font-semibold text-white ring-2 ring-white/10 hover:bg-violet-500 hover:border-white/60"
+                          : "w-full rounded-full border border-white/20 hover:border-white/40"
+                      }
+                    >
+                      {plan.cta}
+                    </CheckoutButton>
+                  ) : (
+                    <Link href={plan.href} className="block">
+                      <Button
+                        variant={plan.highlighted ? "gradient" : "outline"}
+                        className="w-full rounded-full"
+                      >
+                        {plan.cta}
+                      </Button>
+                    </Link>
+                  )}
+                </div>
 
                 <ul className="mt-6 space-y-3">
                   {plan.features.map((f) => (

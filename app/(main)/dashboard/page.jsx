@@ -14,9 +14,27 @@ export default async function DashboardPage() {
   // Run insight resolution, the user lookup, and the NovaScore in parallel.
   const [insights, user, nova] = await Promise.all([
     getIndustryInsights(),
-    requireUser({ select: { skills: true } }),
+    requireUser({
+      select: {
+        skills: true,
+        plan: true,
+        subscriptionStatus: true,
+        currentPeriodEnd: true,
+      },
+    }),
     getNovaScore(),
   ]);
 
-  return <DashboardView insights={insights} userSkills={user.skills ?? []} nova={nova} />;
+  return (
+    <DashboardView
+      insights={insights}
+      userSkills={user.skills ?? []}
+      nova={nova}
+      planInfo={{
+        plan: user.plan,
+        subscriptionStatus: user.subscriptionStatus,
+        currentPeriodEnd: user.currentPeriodEnd,
+      }}
+    />
+  );
 }
