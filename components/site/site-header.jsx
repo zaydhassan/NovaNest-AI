@@ -41,10 +41,14 @@ export async function SiteHeader() {
 
         {/* Desktop signed-in nav */}
         <div className="flex items-center gap-2 md:gap-3">
+          {/* Plan badge — gated on the server-resolved DB user (null when signed
+              out), NOT on Clerk's client <SignedIn>, so this stays a pure
+              server component and never crosses the client boundary. */}
+          {user?.plan && user.plan !== "STARTER" && (
+            <PlanBadge plan={user.plan} className="hidden md:inline-flex" />
+          )}
+
           <SignedIn>
-            {user?.plan && user.plan !== "STARTER" && (
-              <PlanBadge plan={user.plan} className="hidden md:inline-flex" />
-            )}
             <Link href="/dashboard" className="hidden md:inline-flex">
               <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
                 <LayoutDashboard className="h-4 w-4" />
