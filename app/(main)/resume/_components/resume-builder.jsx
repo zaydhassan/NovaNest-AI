@@ -12,7 +12,7 @@ import {
   Save,
 } from "lucide-react";
 import { toast } from "sonner";
-import MDEditor from "@uiw/react-md-editor";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,8 +23,22 @@ import useFetch from "@/hooks/use-fetch";
 import { useUser } from "@clerk/nextjs";
 import { entriesToMarkdown } from "@/lib/markdown";
 import { resumeSchema } from "@/lib/schemas";
-import html2pdf from "html2pdf.js/dist/html2pdf.min.js";
 import { motion } from "framer-motion";
+
+// The Markdown editor (~300kB) and the PDF engine (html2canvas + jsPDF,
+// ~300kB+) are only used inside the "Markdown" tab / on download. Code-split
+// them so users on the Form tab never download either, and the PDF libs are
+// fetched only when "Download PDF" is clicked.
+const MDEditor = dynamic(() => import("@uiw/react-md-editor"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[680px] w-full animate-pulse rounded-lg bg-muted/40" />
+  ),
+});
+const MDMarkdown = dynamic(
+  () => import("@uiw/react-md-editor").then((m) => m.default.Markdown),
+  { ssr: false }
+);
 
 export default function ResumeBuilder({ initialContent }) {
   const [activeTab, setActiveTab] = useState("edit");
@@ -111,6 +125,11 @@ export default function ResumeBuilder({ initialContent }) {
     setIsGenerating(true);
     try {
       const element = document.getElementById("resume-pdf");
+      // Lazy-load the PDF engine only when actually exporting — keeps
+      // html2canvas + jsPDF (~300kB) out of the route's initial bundle.
+      const { default: html2pdf } = await import(
+        "html2pdf.js/dist/html2pdf.min.js"
+      );
       const opt = {
         margin: [15, 15],
         filename: "resume.pdf",
@@ -369,7 +388,7 @@ export default function ResumeBuilder({ initialContent }) {
 
           <div className="hidden">
             <div id="resume-pdf">
-              <MDEditor.Markdown source={previewContent} style={{ background: "white", color: "black" }} />
+              <MDMarkdown source={previewContent} style={{ background: "white", color: "black" }} />
             </div>
           </div>
         </TabsContent>

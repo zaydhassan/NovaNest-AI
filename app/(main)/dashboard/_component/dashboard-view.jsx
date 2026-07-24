@@ -2,19 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  RadialBar,
-  RadialBarChart,
-  PolarAngleAxis,
-} from "recharts";
 import {
   BriefcaseIcon,
   LineChart as LineIcon,
@@ -41,10 +30,25 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import NovaScoreCard from "./nova-score-card";
 import WeeklyDigestCard from "./weekly-digest-card";
 import ChangeIndustryDialog from "./change-industry-dialog";
 import PlanStatusCard from "./plan-status-card";
+
+// recharts is the single biggest dependency on this page. Code-split every
+// chart into its own chunk so the dashboard's First Load JS stays small and
+// the charting library only downloads as each card hydrates.
+const NovaScoreCard = dynamic(() => import("./nova-score-card"), {
+  ssr: false,
+  loading: () => <div className="h-[220px] animate-pulse rounded-2xl bg-muted/30" />,
+});
+const SalaryChart = dynamic(() => import("./salary-chart"), {
+  ssr: false,
+  loading: () => <div className="h-[420px] animate-pulse rounded-2xl bg-muted/30" />,
+});
+const GrowthRadialChart = dynamic(() => import("./growth-radial-chart"), {
+  ssr: false,
+  loading: () => <div className="h-[420px] animate-pulse rounded-2xl bg-muted/30" />,
+});
 
 const demandColor = (level) => {
   switch (String(level).toLowerCase()) {
@@ -134,29 +138,7 @@ function KpiCard({ icon: Icon, label, value, sub, children, delay = 0 }) {
   );
 }
 
-function GlassTooltip({ active, payload, label, formatter }) {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className="glass-strong rounded-lg p-3 text-xs shadow-glass">
-      <p className="mb-1 font-medium text-foreground">{label}</p>
-      {payload.map((item) => (
-        <p key={item.name} className="flex items-center gap-1.5 text-muted-foreground">
-          <span className="h-2 w-2 rounded-full" style={{ background: item.color || item.fill }} />
-          {item.name}: <span className="font-medium text-foreground">{formatter ? formatter(item.value) : item.value}</span>
-        </p>
-      ))}
-    </div>
-  );
-}
-
 export default function DashboardView({ insights, userSkills = [], nova = null, planInfo = null }) {
-  const salaryData = insights.salaryRanges.map((range) => ({
-    name: range.role,
-    min: Math.round(range.min / 1000),
-    max: Math.round(range.max / 1000),
-    median: Math.round(range.median / 1000),
-  }));
-
   const OutlookIcon = outlookMeta(insights.marketOutlook).icon;
   const outlookColor = outlookMeta(insights.marketOutlook).color;
 
@@ -171,8 +153,6 @@ export default function DashboardView({ insights, userSkills = [], nova = null, 
   const have = recommended.filter((s) => userSkillSet.has(String(s).toLowerCase()));
   const gaps = recommended.filter((s) => !userSkillSet.has(String(s).toLowerCase()));
   const haveRatio = recommended.length ? Math.round((have.length / recommended.length) * 100) : 0;
-
-  const radialData = [{ name: "growth", value: Math.min(100, Math.max(0, insights.growthRate)) }];
 
   return (
     <div className="space-y-6">
@@ -229,70 +209,8 @@ export default function DashboardView({ insights, userSkills = [], nova = null, 
 
       {/* Salary + growth radial */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.6fr_1fr]">
-        <Card className="glass">
-          <CardHeader>
-            <CardTitle>Salary ranges by role</CardTitle>
-            <CardDescription>Min, median, and max (in thousands USD)</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[360px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={salaryData} margin={{ top: 8, right: 8, left: -16, bottom: 40 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-                  <XAxis
-                    dataKey="name"
-                    tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
-                    stroke="hsl(var(--border))"
-                    interval={0}
-                    angle={-20}
-                    textAnchor="end"
-                    height={50}
-                  />
-                  <YAxis tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }} stroke="hsl(var(--border))" />
-                  <Tooltip
-                    cursor={{ fill: "hsl(var(--muted) / 0.4)" }}
-                    content={<GlassTooltip formatter={(v) => `$${v}K`} />}
-                  />
-                  <Bar dataKey="min" fill="hsl(var(--chart-1))" name="Min" radius={[6, 6, 0, 0]} />
-                  <Bar dataKey="median" fill="hsl(var(--chart-2))" name="Median" radius={[6, 6, 0, 0]} />
-                  <Bar dataKey="max" fill="hsl(var(--chart-3))" name="Max" radius={[6, 6, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="glass">
-          <CardHeader>
-            <CardTitle>Growth rate</CardTitle>
-            <CardDescription>Projected industry growth</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="relative h-[360px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <RadialBarChart
-                  innerRadius="70%"
-                  outerRadius="100%"
-                  data={radialData}
-                  startAngle={90}
-                  endAngle={-270}
-                >
-                  <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
-                  <RadialBar
-                    background={{ fill: "hsl(var(--muted))" }}
-                    dataKey="value"
-                    cornerRadius={20}
-                    fill="hsl(var(--chart-1))"
-                  />
-                </RadialBarChart>
-              </ResponsiveContainer>
-              <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-4xl font-extrabold">{insights.growthRate.toFixed(1)}%</span>
-                <span className="text-xs text-muted-foreground">annual growth</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <SalaryChart salaryRanges={insights.salaryRanges} />
+        <GrowthRadialChart growthRate={insights.growthRate} />
       </div>
 
       {/* Weekly digest */}

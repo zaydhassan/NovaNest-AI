@@ -9,8 +9,6 @@ import {
   Target,
   Sparkles,
   CheckCircle2,
-  Quote,
-  Star,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,13 +18,13 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import HeroSection from "@/components/site/hero";
+import WhyNovaNest from "@/components/site/why-novanest";
 import { ProductDemo } from "@/components/site/product-demo";
 import { DashboardPreview } from "@/components/site/dashboard-preview";
 import { Pricing } from "@/components/site/pricing";
 import { SectionHeading } from "@/components/site/section-heading";
 import { StatCounter } from "@/components/site/stat-counter";
 import { features } from "@/data/features";
-import { testimonial } from "@/data/testimonial";
 import { faqs } from "@/data/faqs";
 import { howItWorks } from "@/data/howItWorks";
 import { plans } from "@/data/pricing";
@@ -76,7 +74,7 @@ export default function LandingPage() {
       </section>
 
       {/* ---- Features ---- */}
-      <section className="section">
+      <section id="features" className="section">
         <div className="container mx-auto px-4">
           <SectionHeading
             eyebrow="Features"
@@ -218,54 +216,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ---- Testimonials ---- */}
-      <section className="section">
-        <div className="container mx-auto px-4">
-          <SectionHeading
-            eyebrow="NovaNest stories"
-            title="Loved by ambitious professionals"
-            subtitle="Real results from people using NovaNest to accelerate their careers."
-          />
-          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-3">
-            {testimonial.map((item, idx) => (
-              <motion.figure
-                key={item.author}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.5, delay: idx * 0.1, ease }}
-                className="glass relative rounded-2xl p-6 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:border-white/20"
-              >
-                <Quote className="absolute right-5 top-5 h-8 w-8 text-primary/20" aria-hidden="true" />
-                <div className="mb-4 flex items-center gap-3">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={item.image}
-                    alt={item.author}
-                    width={48}
-                    height={48}
-                    className="h-12 w-12 rounded-full object-cover ring-2 ring-primary/30"
-                  />
-                  <div>
-                    <figcaption className="text-sm font-semibold">{item.author}</figcaption>
-                    <p className="text-xs text-muted-foreground">
-                      {item.role} · {item.company}
-                    </p>
-                  </div>
-                </div>
-                <div className="mb-3 flex gap-0.5 text-amber-400">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className="h-3.5 w-3.5 fill-current" />
-                  ))}
-                </div>
-                <blockquote className="text-sm leading-relaxed text-foreground/90">
-                  {item.quote}
-                </blockquote>
-              </motion.figure>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ---- Why NovaNest ---- */}
+      <WhyNovaNest />
 
       {/* ---- Pricing ---- */}
       <section className="section">

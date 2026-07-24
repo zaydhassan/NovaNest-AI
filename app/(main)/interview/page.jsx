@@ -5,7 +5,7 @@ import { ensureOnboarded } from "@/lib/onboarding";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/site/page-header";
 import StatsCards from "./_components/stats-cards";
-import PerformanceChart from "./_components/performace-chart";
+import LazyPerformanceChart from "./_components/lazy-performance-chart";
 import QuizList from "./_components/quiz-list";
 
 export default async function InterviewPrepPage() {
@@ -37,7 +37,7 @@ export default async function InterviewPrepPage() {
       />
       <div className="space-y-6">
         <StatsCards assessments={assessments} />
-        <PerformanceChart assessments={assessments} />
+        <LazyPerformanceChart assessments={assessments} />
         <QuizList assessments={assessments} />
       </div>
     </div>
