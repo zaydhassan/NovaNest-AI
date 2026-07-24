@@ -11,6 +11,7 @@ import { rateLimit } from "@/lib/rate-limit";
 import { mockInterviewSchema } from "@/lib/schemas";
 import { ValidationError } from "@/lib/errors";
 import { bumpActivity } from "@/lib/gamify";
+import { createNotification } from "@/lib/notifications";
 import { revalidatePath } from "next/cache";
 
 /**
@@ -85,6 +86,13 @@ export async function scoreMockInterview(input) {
   bumpActivity(user.id, "mock_interview").catch((e) =>
     console.error("[NovaNest] bumpActivity mock_interview:", e?.message)
   );
+  createNotification(user.id, {
+    type: "mock_scored",
+    title: `Mock interview scored ${Math.round(score)}/100`,
+    body: `Your ${parsed.data.role} session is saved — review the feedback to improve.`,
+    href: "/interview",
+    data: { score, role: parsed.data.role },
+  }).catch((e) => console.error("[NovaNest] mock notify:", e?.message));
   revalidatePath("/dashboard");
   revalidatePath("/interview");
 

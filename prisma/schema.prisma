@@ -47,6 +47,7 @@ model User {
   applications  Application[]
   mockInterviews MockInterview[]
   digests       WeeklyDigest[]
+  notifications Notification[]
 }
 
 model Assessment {
@@ -143,6 +144,27 @@ model Application {
 
   @@index([userId])
   @@index([userId, status])
+}
+
+// In-app notifications — persistent event feed surfaced via the header bell
+// and the /notifications page. `type` drives the icon + color in the UI;
+// `data` holds optional structured context (score, company, stage). Created
+// fire-and-forget from server actions at milestone events via the
+// createNotification helper (lib/notifications.js).
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   // welcome | insights_ready | quiz_completed | mock_scored | cover_letter_ready | application_logged | application_advanced | application_rejected | ats_score | payment_success | weekly_digest | industry_changed
+  title     String
+  body      String?
+  href      String?  // deep link, e.g. "/applications"
+  data      Json?    // optional payload (score, company, stage)
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([userId, isRead])
 }
 
 // Voice/text mock-interview sessions. `transcript` is the turn-by-turn

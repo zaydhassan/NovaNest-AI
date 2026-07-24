@@ -23,7 +23,9 @@ import { ThemeToggle } from "@/components/site/theme-toggle";
 import { CommandPalette } from "@/components/site/command-palette";
 import { PlanBadge } from "@/components/site/plan-badge";
 import { HeaderScrollShell } from "@/components/site/header-scroll-shell";
+import { NotificationBell } from "@/components/site/notification-bell";
 import { checkUser } from "@/lib/checkUser";
+import { db } from "@/lib/prisma";
 
 /**
  * SiteHeader — sticky glass top bar. Server component (syncs the Clerk user
@@ -33,6 +35,14 @@ import { checkUser } from "@/lib/checkUser";
  */
 export async function SiteHeader() {
   const user = await checkUser();
+
+  // Unread count for the bell badge — cheap count query, server-resolved so the
+  // badge renders correctly on first paint (no client flash).
+  const unreadCount = user
+    ? await db.notification.count({
+        where: { userId: user.id, isRead: false },
+      })
+    : 0;
 
   return (
     <HeaderScrollShell>
@@ -102,6 +112,13 @@ export async function SiteHeader() {
           <ThemeToggle className="hidden md:inline-flex" />
 
           <CommandPalette className="hidden md:inline-flex" />
+
+          <SignedIn>
+            <NotificationBell
+              count={unreadCount}
+              className="hidden md:inline-flex"
+            />
+          </SignedIn>
 
           <SignedOut>
             <SignInButton mode="modal" forceRedirectUrl="/">

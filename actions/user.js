@@ -8,6 +8,8 @@ import { ValidationError } from "@/lib/errors";
 import { revalidatePath } from "next/cache";
 import { generateAIInsights } from "./dashboard";
 import { industries } from "@/data/industries";
+import { bumpActivity } from "@/lib/gamify";
+import { createNotification } from "@/lib/notifications";
 
 /**
  * Persist onboarding data. Creates the matching IndustryInsight row (generating
@@ -54,11 +56,27 @@ export async function updateUser(data) {
           },
         });
 
+        // Welcome-to-onboarding notification — created inside the tx so it
+        // commits only if the profile save succeeds.
+        await createNotification(user.id, {
+          type: "insights_ready",
+          title: "Your industry insights are ready 📊",
+          body: "We've generated salary ranges, growth, demand, and a personalized skill-gap analysis for your field.",
+          href: "/dashboard",
+          tx,
+        });
+
         return { updatedUser, industryInsight };
       },
       { timeout: 10000 }
     );
 
+    // Best-effort onboarding XP — awarded once, fire-and-forget so a gamify
+    // hiccup never rolls back the profile save. (This was dead code: the
+    // `onboarding` XP value existed in the map but had no call site.)
+    bumpActivity(user.id, "onboarding").catch((e) =>
+      console.error("[NovaNest] bumpActivity onboarding:", e?.message)
+    );
     revalidatePath("/");
     return { success: true, user: result.updatedUser };
   } catch (error) {
@@ -149,6 +167,14 @@ export async function changeIndustry({ industry, subIndustry }) {
       where: { id: user.id },
       data: { industry: slug },
     });
+
+    createNotification(user.id, {
+      type: "industry_changed",
+      title: "Insights refreshed for your new field 🔄",
+      body: "We've updated your dashboard with salary, growth, and skill trends for your new industry.",
+      href: "/dashboard",
+      data: { industry: slug },
+    }).catch((e) => console.error("[NovaNest] industry_changed notify:", e?.message));
 
     revalidatePath("/dashboard");
     revalidatePath("/");

@@ -6,6 +6,7 @@ import { db } from "@/lib/prisma";
 import { AppError, withErrorHandling } from "@/lib/errors";
 import { createOrderSchema, verifyPaymentSchema } from "@/lib/schemas";
 import { PLANS, createOrder, verifySignature } from "@/lib/razorpay";
+import { createNotification } from "@/lib/notifications";
 
 // Entitlement duration per billing cycle. Kept coarse on purpose — renewal
 // billing is out of scope; this sets the current-period-end for the initial
@@ -134,6 +135,7 @@ async function verifyPayment({
 
   const days = PERIOD_DAYS[parsed.data.billingCycle] ?? 30;
   const currentPeriodEnd = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+  const planName = PLANS[parsed.data.planId].name;
 
   await db.$transaction([
     db.paymentOrder.update({
@@ -151,6 +153,18 @@ async function verifyPayment({
         subscriptionStatus: "active",
         currentPeriodEnd,
         razorpayCustomerId: parsed.data.razorpay_payment_id,
+      },
+    }),
+    // Welcome-to-paid notification — inside the tx so it commits only if the
+    // plan upgrade commits.
+    db.notification.create({
+      data: {
+        userId: user.id,
+        type: "payment_success",
+        title: `Welcome to ${planName}! 🎉`,
+        body: "Your subscription is active — unlimited resumes, mock interviews, and insights are unlocked.",
+        href: "/dashboard",
+        data: { plan: parsed.data.planId, billingCycle: parsed.data.billingCycle },
       },
     }),
   ]);

@@ -8,6 +8,7 @@ import { rateLimit } from "@/lib/rate-limit";
 import { saveQuizResultSchema } from "@/lib/schemas";
 import { ValidationError } from "@/lib/errors";
 import { bumpActivity } from "@/lib/gamify";
+import { createNotification } from "@/lib/notifications";
 import { revalidatePath } from "next/cache";
 
 export async function generateQuiz() {
@@ -80,6 +81,15 @@ export async function saveQuizResult(questions, answers, score) {
     bumpActivity(user.id, "quiz_completed").catch((e) =>
       console.error("[NovaNest] bumpActivity quiz_completed:", e?.message)
     );
+    createNotification(user.id, {
+      type: "quiz_completed",
+      title: `Quiz complete: ${Math.round(score)}%`,
+      body: improvementTip
+        ? "Check your improvement tip and keep your streak going."
+        : "Nice work — keep your streak going with another quiz.",
+      href: "/interview",
+      data: { score },
+    }).catch((e) => console.error("[NovaNest] quiz notify:", e?.message));
     revalidatePath("/dashboard");
 
     return assessment;

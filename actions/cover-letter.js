@@ -8,6 +8,7 @@ import { rateLimit } from "@/lib/rate-limit";
 import { coverLetterSchema } from "@/lib/schemas";
 import { NotFoundError, ValidationError } from "@/lib/errors";
 import { bumpActivity } from "@/lib/gamify";
+import { createNotification } from "@/lib/notifications";
 import { revalidatePath } from "next/cache";
 
 export async function generateCoverLetter(data) {
@@ -38,6 +39,13 @@ export async function generateCoverLetter(data) {
     bumpActivity(user.id, "cover_letter").catch((e) =>
       console.error("[NovaNest] bumpActivity cover_letter:", e?.message)
     );
+    createNotification(user.id, {
+      type: "cover_letter_ready",
+      title: `Cover letter for ${parsed.data.companyName} is ready`,
+      body: `Your ${parsed.data.jobTitle} cover letter is saved and ready to send.`,
+      href: "/ai-cover-letter",
+      data: { companyName: parsed.data.companyName, jobTitle: parsed.data.jobTitle },
+    }).catch((e) => console.error("[NovaNest] cover_letter notify:", e?.message));
     revalidatePath("/dashboard");
 
     return coverLetter;

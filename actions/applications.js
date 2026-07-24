@@ -8,8 +8,34 @@ import { rateLimit } from "@/lib/rate-limit";
 import { applicationSchema } from "@/lib/schemas";
 import { NotFoundError, ValidationError } from "@/lib/errors";
 import { bumpActivity } from "@/lib/gamify";
+import { createNotification } from "@/lib/notifications";
 import { APPLICATION_STATUSES } from "@/lib/constants";
 import { revalidatePath } from "next/cache";
+
+/**
+ * Notification copy + type for an application status move. REJECTED is branched
+ * out explicitly because it sits AFTER OFFER in APPLICATION_STATUSES (highest
+ * orderIndex), so the generic "advanced" check would otherwise mislabel a
+ * rejection as progress.
+ */
+function applicationStatusNotification(userId, company, status) {
+  if (status === "REJECTED") {
+    return createNotification(userId, {
+      type: "application_rejected",
+      title: `${company} — not selected this time`,
+      body: "Stay consistent — your next application is already in the pipeline.",
+      href: "/applications",
+      data: { company, status },
+    });
+  }
+  return createNotification(userId, {
+    type: "application_advanced",
+    title: `${company} moved to ${status.charAt(0) + status.slice(1).toLowerCase()}`,
+    body: "Great progress — keep the momentum going.",
+    href: "/applications",
+    data: { company, status },
+  });
+}
 
 /**
  * List all of the signed-in user's applications, newest first.
@@ -63,6 +89,13 @@ export async function createApplication(data) {
   bumpActivity(user.id, "application_logged").catch((e) =>
     console.error("[NovaNest] bumpActivity application_logged:", e?.message)
   );
+  createNotification(user.id, {
+    type: "application_logged",
+    title: `Application tracked at ${created.company}`,
+    body: `${created.role} — added to your pipeline. Add a JD to score ATS match.`,
+    href: "/applications",
+    data: { company: created.company, role: created.role, status },
+  }).catch((e) => console.error("[NovaNest] application_logged notify:", e?.message));
   revalidatePath("/applications");
   revalidatePath("/dashboard");
   return created;
@@ -103,6 +136,9 @@ export async function updateApplication(id, data) {
 
   if (advancedTowardOffer) {
     bumpActivity(user.id, "application_advanced").catch(() => {});
+    applicationStatusNotification(user.id, updated.company, parsed.data.status).catch((e) =>
+      console.error("[NovaNest] application status notify:", e?.message)
+    );
   }
   revalidatePath("/applications");
   revalidatePath("/dashboard");
@@ -130,6 +166,9 @@ export async function updateApplicationStatus(id, status) {
 
   if (orderIndex(status) > orderIndex(existing.status)) {
     bumpActivity(user.id, "application_advanced").catch(() => {});
+    applicationStatusNotification(user.id, updated.company, status).catch((e) =>
+      console.error("[NovaNest] application status notify:", e?.message)
+    );
   }
   revalidatePath("/applications");
   revalidatePath("/dashboard");
@@ -182,6 +221,14 @@ export async function scoreApplicationAts(id) {
       atsFeedback: JSON.stringify(result ?? {}),
     },
   });
+
+  createNotification(user.id, {
+    type: "ats_score",
+    title: `ATS match for ${app.company}: ${Math.round(Number(result?.score ?? 0))}%`,
+    body: "See matched and missing keywords, then tweak your resume to close the gap.",
+    href: "/applications",
+    data: { company: app.company, score: Number(result?.score ?? 0) },
+  }).catch((e) => console.error("[NovaNest] ats notify:", e?.message));
 
   revalidatePath("/applications");
   return { ...updated, atsResult: result };
