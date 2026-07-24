@@ -104,7 +104,7 @@ export async function SiteHeader() {
           <CommandPalette className="hidden md:inline-flex" />
 
           <SignedOut>
-            <SignInButton mode="modal">
+            <SignInButton mode="modal" forceRedirectUrl="/">
               <Button variant="outline">Sign in</Button>
             </SignInButton>
           </SignedOut>
