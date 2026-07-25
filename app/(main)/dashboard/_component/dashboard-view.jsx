@@ -53,6 +53,21 @@ const GrowthRadialChart = dynamic(() => import("./growth-radial-chart"), {
   loading: () => <div className="h-[420px] animate-pulse rounded-2xl bg-muted/30" />,
 });
 
+// Career OS cards (M4). The two recharts-backed cards are code-split (ssr:false)
+// to keep the dashboard's First Load JS small; the three lightweight cards are
+// imported directly.
+const CareerHealthCard = dynamic(() => import("./career-health-card"), {
+  ssr: false,
+  loading: () => <div className="h-[260px] animate-pulse rounded-2xl bg-muted/30" />,
+});
+const SkillGrowthCard = dynamic(() => import("./skill-growth-card"), {
+  ssr: false,
+  loading: () => <div className="h-[260px] animate-pulse rounded-2xl bg-muted/30" />,
+});
+import InterviewReadinessCard from "./interview-readiness-card";
+import TimelineEmbed from "./timeline-embed";
+import CoachInsightsEmbed from "./coach-insights-embed";
+
 const demandColor = (level) => {
   switch (String(level).toLowerCase()) {
     case "high": return "text-emerald-500";
@@ -141,7 +156,17 @@ function KpiCard({ icon: Icon, label, value, sub, children, delay = 0 }) {
   );
 }
 
-export default function DashboardView({ insights, userSkills = [], nova = null, planInfo = null }) {
+export default function DashboardView({
+  insights,
+  userSkills = [],
+  nova = null,
+  planInfo = null,
+  careerHealth = null,
+  readiness = null,
+  skillGrowth = null,
+  recentTimeline = [],
+  coachInsights = [],
+}) {
   const OutlookIcon = outlookMeta(insights.marketOutlook).icon;
   const outlookColor = outlookMeta(insights.marketOutlook).color;
 
@@ -186,6 +211,23 @@ export default function DashboardView({ insights, userSkills = [], nova = null, 
 
       {/* NovaScore — readiness composite */}
       {nova && <NovaScoreCard nova={nova} />}
+
+      {/* Career OS — Career Health + readiness + growth + timeline + coach (M4) */}
+      {careerHealth && (
+        <Reveal>
+          <div className="space-y-4">
+            <CareerHealthCard health={careerHealth} />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <InterviewReadinessCard readiness={readiness} />
+              <SkillGrowthCard growth={skillGrowth} />
+            </div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <TimelineEmbed events={recentTimeline} />
+              <CoachInsightsEmbed insights={coachInsights} />
+            </div>
+          </div>
+        </Reveal>
+      )}
 
       {/* KPI row */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">

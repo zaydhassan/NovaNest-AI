@@ -12,6 +12,11 @@ import { mockInterviewSchema } from "@/lib/schemas";
 import { ValidationError } from "@/lib/errors";
 import { bumpActivity } from "@/lib/gamify";
 import { createNotification } from "@/lib/notifications";
+import { fromMock } from "@/lib/career/memory/memory-extractors";
+import { recordTimelineEvent } from "@/lib/career/timeline/timeline-engine";
+import { deriveFromMock } from "@/lib/career/timeline/timeline-derivers";
+import { getInterviewTrendsData } from "@/lib/career/analytics/analytics-service";
+import { withErrorHandling } from "@/lib/errors";
 import { revalidatePath } from "next/cache";
 
 /**
@@ -80,6 +85,18 @@ export async function scoreMockInterview(input) {
       transcript: parsed.data.transcript,
       score,
       feedback,
+      // Career OS — denormalized fields (mirror of `feedback`) for queryable
+      // interview-memory trend analysis without re-parsing the JSON string.
+      questions: parsed.data.transcript
+        ? parsed.data.transcript
+            .filter((t) => t.role === "interviewer")
+            .map((t) => ({ question: t.text }))
+        : undefined,
+      strengths: Array.isArray(result?.strengths) ? result.strengths : [],
+      improvements: Array.isArray(result?.improvements) ? result.improvements : [],
+      communicationScore: Number(result?.communication),
+      technicalDepthScore: Number(result?.technicalDepth),
+      structureScore: Number(result?.structure),
     },
   });
 
@@ -93,6 +110,18 @@ export async function scoreMockInterview(input) {
     href: "/interview",
     data: { score, role: parsed.data.role },
   }).catch((e) => console.error("[NovaNest] mock notify:", e?.message));
+
+  // Career OS — remember interview strengths/weaknesses + flagged skill gaps.
+  // Idempotent (dedupes on source+sourceId+content); pure (uses the AI result).
+  fromMock(user.id, record, result).catch((e) =>
+    console.error("[NovaNest] fromMock memory:", e?.message)
+  );
+
+  // Career OS — timeline "interviewing" milestone. Idempotent on type+sourceId.
+  recordTimelineEvent({ userId: user.id, ...deriveFromMock(record) }).catch((e) =>
+    console.error("[NovaNest] timeline mock:", e?.message)
+  );
+
   revalidatePath("/dashboard");
   revalidatePath("/interview");
 
@@ -114,3 +143,17 @@ export async function getMockInterviews() {
     },
   });
 }
+
+/**
+ * Interview trend series for the /interview trend chart (M6). Wraps the pure
+ * analytics helper so the client just calls a server action. Returns the
+ * per-session score series + sub-metric averages + aggregate trend direction +
+ * the most-repeated improvement topic.
+ */
+export const getInterviewTrends = withErrorHandling(
+  async function getInterviewTrends(limit = 12) {
+    const user = await requireUser({ select: { id: true } });
+    return getInterviewTrendsData(user.id, { limit });
+  },
+  "Couldn't load your interview trends. Please try again."
+);

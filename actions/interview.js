@@ -9,6 +9,9 @@ import { saveQuizResultSchema } from "@/lib/schemas";
 import { ValidationError } from "@/lib/errors";
 import { bumpActivity } from "@/lib/gamify";
 import { createNotification } from "@/lib/notifications";
+import { fromQuiz } from "@/lib/career/memory/memory-extractors";
+import { recordTimelineEvent } from "@/lib/career/timeline/timeline-engine";
+import { deriveFromAssessment } from "@/lib/career/timeline/timeline-derivers";
 import { revalidatePath } from "next/cache";
 
 export async function generateQuiz() {
@@ -90,6 +93,17 @@ export async function saveQuizResult(questions, answers, score) {
       href: "/interview",
       data: { score },
     }).catch((e) => console.error("[NovaNest] quiz notify:", e?.message));
+
+    // Career OS — remember the quiz result + weak area. Idempotent + pure.
+    fromQuiz(user.id, assessment).catch((e) =>
+      console.error("[NovaNest] fromQuiz memory:", e?.message)
+    );
+
+    // Career OS — timeline "learning" milestone. Idempotent on type+sourceId.
+    recordTimelineEvent({ userId: user.id, ...deriveFromAssessment(assessment) }).catch((e) =>
+      console.error("[NovaNest] timeline quiz:", e?.message)
+    );
+
     revalidatePath("/dashboard");
 
     return assessment;

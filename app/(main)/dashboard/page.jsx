@@ -1,4 +1,11 @@
 import { getIndustryInsights, getNovaScore } from "@/actions/dashboard";
+import {
+  getCareerHealth,
+  getReadiness,
+  getSkillGrowth,
+  getRecentTimeline,
+  getRecentCoachInsights,
+} from "@/actions/career";
 import DashboardView from "./_component/dashboard-view";
 import { getUserOnboardingStatus } from "@/actions/user";
 import { requireUser } from "@/lib/auth";
@@ -11,8 +18,18 @@ export default async function DashboardPage() {
     redirect("/onboarding");
   }
 
-  // Run insight resolution, the user lookup, and the NovaScore in parallel.
-  const [insights, user, nova] = await Promise.all([
+  // Run insight resolution, the user lookup, the NovaScore, and the Career OS
+  // dashboard payloads in parallel — one round trip per surface.
+  const [
+    insights,
+    user,
+    nova,
+    careerHealth,
+    readiness,
+    skillGrowth,
+    recentTimeline,
+    coachInsights,
+  ] = await Promise.all([
     getIndustryInsights(),
     requireUser({
       select: {
@@ -23,6 +40,11 @@ export default async function DashboardPage() {
       },
     }),
     getNovaScore(),
+    getCareerHealth(),
+    getReadiness(),
+    getSkillGrowth(),
+    getRecentTimeline(6),
+    getRecentCoachInsights(4),
   ]);
 
   return (
@@ -35,6 +57,11 @@ export default async function DashboardPage() {
         subscriptionStatus: user.subscriptionStatus,
         currentPeriodEnd: user.currentPeriodEnd,
       }}
+      careerHealth={careerHealth}
+      readiness={readiness}
+      skillGrowth={skillGrowth}
+      recentTimeline={recentTimeline}
+      coachInsights={coachInsights}
     />
   );
 }

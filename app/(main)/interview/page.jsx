@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/site/page-header";
 import StatsCards from "./_components/stats-cards";
 import LazyPerformanceChart from "./_components/lazy-performance-chart";
+import LazyInterviewTrendChart from "./_components/lazy-interview-trend-chart";
 import QuizList from "./_components/quiz-list";
 
 export default async function InterviewPrepPage() {
@@ -38,6 +39,7 @@ export default async function InterviewPrepPage() {
       <div className="space-y-6">
         <StatsCards assessments={assessments} />
         <LazyPerformanceChart assessments={assessments} />
+        <LazyInterviewTrendChart />
         <QuizList assessments={assessments} />
       </div>
     </div>

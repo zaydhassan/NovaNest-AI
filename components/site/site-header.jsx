@@ -8,6 +8,10 @@ import {
   StarsIcon,
   KanbanSquare,
   Wand2,
+  Sparkles,
+  Github,
+  Fingerprint,
+  Rocket,
 } from "lucide-react";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import {
@@ -21,6 +25,7 @@ import { Logo } from "@/components/site/logo";
 import { MobileMenu } from "@/components/site/mobile-menu";
 import { ThemeToggle } from "@/components/site/theme-toggle";
 import { CommandPalette } from "@/components/site/command-palette";
+import { CoachDrawer } from "@/components/site/coach-drawer";
 import { PlanBadge } from "@/components/site/plan-badge";
 import { HeaderScrollShell } from "@/components/site/header-scroll-shell";
 import { NotificationBell } from "@/components/site/notification-bell";
@@ -105,6 +110,30 @@ export async function SiteHeader() {
                     AI Career Tools
                   </Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/coach" className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                    AI Coach
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/github" className="flex items-center gap-2">
+                    <Github className="h-4 w-4" />
+                    GitHub Analyzer
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/twin" className="flex items-center gap-2">
+                    <Fingerprint className="h-4 w-4" />
+                    Career Twin
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/learning" className="flex items-center gap-2">
+                    <Rocket className="h-4 w-4" />
+                    Learning Engine
+                  </Link>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SignedIn>
@@ -112,6 +141,10 @@ export async function SiteHeader() {
           <ThemeToggle className="hidden md:inline-flex" />
 
           <CommandPalette className="hidden md:inline-flex" />
+
+          <SignedIn>
+            <CoachDrawer className="hidden md:inline-flex" />
+          </SignedIn>
 
           <SignedIn>
             <NotificationBell

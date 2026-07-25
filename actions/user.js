@@ -10,6 +10,7 @@ import { generateAIInsights } from "./dashboard";
 import { industries } from "@/data/industries";
 import { bumpActivity } from "@/lib/gamify";
 import { createNotification } from "@/lib/notifications";
+import { fromOnboarding } from "@/lib/career/memory/memory-extractors";
 
 /**
  * Persist onboarding data. Creates the matching IndustryInsight row (generating
@@ -65,6 +66,16 @@ export async function updateUser(data) {
           href: "/dashboard",
           tx,
         });
+
+        // Career OS — seed identity + skill memories from onboarding, inside
+        // the tx (tx-join) so the user's career memory is populated atomically
+        // with their profile. Best-effort: a memory failure must not roll back
+        // the onboarding save, so swallow + log here.
+        try {
+          await fromOnboarding(user.id, parsed.data, tx);
+        } catch (memErr) {
+          console.error("[NovaNest] fromOnboarding memory:", memErr?.message);
+        }
 
         return { updatedUser, industryInsight };
       },

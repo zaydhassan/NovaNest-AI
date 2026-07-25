@@ -7,6 +7,7 @@ import { AppError, withErrorHandling } from "@/lib/errors";
 import { createOrderSchema, verifyPaymentSchema } from "@/lib/schemas";
 import { PLANS, createOrder, verifySignature } from "@/lib/razorpay";
 import { createNotification } from "@/lib/notifications";
+import { recordTimelineEvent } from "@/lib/career/timeline/timeline-engine";
 
 // Entitlement duration per billing cycle. Kept coarse on purpose — renewal
 // billing is out of scope; this sets the current-period-end for the initial
@@ -171,6 +172,18 @@ async function verifyPayment({
 
   revalidatePath("/");
   revalidatePath("/dashboard");
+
+  // Career OS — timeline "milestone" for the plan upgrade. Fire-and-forget so
+  // a timeline hiccup never affects the verified payment.
+  recordTimelineEvent({
+    userId: user.id,
+    type: "milestone",
+    title: `Upgraded to ${planName}`,
+    description: `${parsed.data.billingCycle} subscription active.`,
+    occurredAt: new Date(),
+    sourceType: "manual",
+    sourceId: order.id,
+  }).catch((e) => console.error("[NovaNest] timeline payment:", e?.message));
 
   return { success: true, plan: parsed.data.planId };
 }

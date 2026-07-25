@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, LayoutDashboard, FileText, PenBox, GraduationCap, KanbanSquare, Wand2, Bell } from "lucide-react";
+import { Menu, LayoutDashboard, FileText, PenBox, GraduationCap, KanbanSquare, Wand2, Bell, Github, Sparkles, Fingerprint, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
@@ -14,6 +14,10 @@ const links = [
   { href: "/ai-cover-letter", label: "Cover Letters", icon: PenBox },
   { href: "/interview", label: "Interview Prep", icon: GraduationCap },
   { href: "/applications", label: "Application Tracker", icon: KanbanSquare },
+  { href: "/coach", label: "AI Coach", icon: Sparkles },
+  { href: "/github", label: "GitHub Analyzer", icon: Github },
+  { href: "/twin", label: "Career Twin", icon: Fingerprint },
+  { href: "/learning", label: "Learning Engine", icon: Rocket },
   { href: "/notifications", label: "Notifications", icon: Bell },
   { href: "/ai-tools", label: "AI Career Tools", icon: Wand2 },
 ];

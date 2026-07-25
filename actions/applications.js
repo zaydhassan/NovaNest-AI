@@ -10,6 +10,12 @@ import { NotFoundError, ValidationError } from "@/lib/errors";
 import { bumpActivity } from "@/lib/gamify";
 import { createNotification } from "@/lib/notifications";
 import { APPLICATION_STATUSES } from "@/lib/constants";
+import { fromApplication } from "@/lib/career/memory/memory-extractors";
+import { recordTimelineEvent } from "@/lib/career/timeline/timeline-engine";
+import { deriveFromApplication } from "@/lib/career/timeline/timeline-derivers";
+import { applicationAgent } from "@/lib/career/agents/application.agent";
+import { recallMemory } from "@/lib/career/memory/memory-service";
+import { summarizeMemory } from "@/lib/career/ui/chat-context";
 import { revalidatePath } from "next/cache";
 
 /**
@@ -81,6 +87,11 @@ export async function createApplication(data) {
       jobDescription: parsed.data.jobDescription || null,
       status,
       notes: parsed.data.notes || null,
+      // Career OS (M6) — link artifacts + terminal-outcome context up front.
+      resumeId: parsed.data.resumeId || null,
+      coverLetterId: parsed.data.coverLetterId || null,
+      rejectionReason: parsed.data.rejectionReason || null,
+      offerDetails: parsed.data.offerDetails || null,
       appliedAt:
         status !== "SAVED" ? new Date() : parsed.data.jobUrl ? null : null,
     },
@@ -96,6 +107,18 @@ export async function createApplication(data) {
     href: "/applications",
     data: { company: created.company, role: created.role, status },
   }).catch((e) => console.error("[NovaNest] application_logged notify:", e?.message));
+
+  // Career OS — remember this application so the Coach/Twin can recall it.
+  // Idempotent (dedupes on source+sourceId+content); content is status-stable.
+  fromApplication(user.id, created).catch((e) =>
+    console.error("[NovaNest] fromApplication memory:", e?.message)
+  );
+
+  // Career OS — timeline milestone for the application's initial stage.
+  recordTimelineEvent({ userId: user.id, ...deriveFromApplication(created) }).catch((e) =>
+    console.error("[NovaNest] timeline application:", e?.message)
+  );
+
   revalidatePath("/applications");
   revalidatePath("/dashboard");
   return created;
@@ -129,6 +152,11 @@ export async function updateApplication(id, data) {
       jobDescription: parsed.data.jobDescription || null,
       status: parsed.data.status,
       notes: parsed.data.notes || null,
+      // Career OS (M6) — artifact links + terminal-outcome context.
+      resumeId: parsed.data.resumeId || null,
+      coverLetterId: parsed.data.coverLetterId || null,
+      rejectionReason: parsed.data.rejectionReason || null,
+      offerDetails: parsed.data.offerDetails || null,
       appliedAt:
         parsed.data.status !== "SAVED" && !existing.appliedAt ? new Date() : undefined,
     },
@@ -168,6 +196,14 @@ export async function updateApplicationStatus(id, status) {
     bumpActivity(user.id, "application_advanced").catch(() => {});
     applicationStatusNotification(user.id, updated.company, status).catch((e) =>
       console.error("[NovaNest] application status notify:", e?.message)
+    );
+  }
+
+  // Career OS — timeline milestone for the new stage (interviewing/offer/
+  // rejection). Idempotent on type+sourceId, so only net-new stages record.
+  if (status !== existing.status) {
+    recordTimelineEvent({ userId: user.id, ...deriveFromApplication(updated) }).catch((e) =>
+      console.error("[NovaNest] timeline application status:", e?.message)
     );
   }
   revalidatePath("/applications");
@@ -236,4 +272,138 @@ export async function scoreApplicationAts(id) {
 
 function orderIndex(status) {
   return APPLICATION_STATUSES.indexOf(status);
+}
+
+/**
+ * Link (or unlink) the resume + cover letter used for an application. Both
+ * inputs are optional; passing null/undefined clears the link. Ownership of
+ * the referenced resume/cover-letter rows is validated against the signed-in
+ * user before writing, so a forged id cannot cross-link another user's docs.
+ */
+export async function linkApplicationArtifacts(id, { resumeId, coverLetterId } = {}) {
+  const user = await requireUser();
+  const app = await db.application.findFirst({
+    where: { id, userId: user.id },
+    select: { id: true },
+  });
+  if (!app) throw new NotFoundError("Application not found.");
+
+  // Validate ownership of any non-empty ids; reject a cross-user id.
+  const nextResumeId = resumeId ? String(resumeId) : null;
+  const nextCoverId = coverLetterId ? String(coverLetterId) : null;
+
+  if (nextResumeId) {
+    const owned = await db.resume.findUnique({
+      where: { id: nextResumeId },
+      select: { userId: true },
+    });
+    if (!owned || owned.userId !== user.id) {
+      throw new ValidationError("That resume doesn't belong to your account.");
+    }
+  }
+  if (nextCoverId) {
+    const owned = await db.coverLetter.findFirst({
+      where: { id: nextCoverId, userId: user.id },
+      select: { id: true },
+    });
+    if (!owned) {
+      throw new ValidationError("That cover letter doesn't belong to your account.");
+    }
+  }
+
+  const updated = await db.application.update({
+    where: { id },
+    data: { resumeId: nextResumeId, coverLetterId: nextCoverId },
+  });
+
+  revalidatePath("/applications");
+  revalidatePath(`/applications/${id}`);
+  return updated;
+}
+
+/**
+ * AI recommendations for a specific application via the application agent. The
+ * agent is grounded in the application row + the user's recalled memory, so it
+ * can give genuinely personalized next-steps (interview prep, ATS gaps, offer
+ * negotiation). Pure agent call — no DB writes; the detail view renders it.
+ */
+export async function getApplicationRecommendations(id) {
+  const user = await requireUser({ select: { id: true } });
+
+  const app = await db.application.findFirst({
+    where: { id, userId: user.id },
+  });
+  if (!app) throw new NotFoundError("Application not found.");
+
+  const memory = await recallMemory({
+    userId: user.id,
+    query: `${app.company} ${app.role} ${app.status}`,
+    limit: 8,
+  });
+
+  // Light context summary so the agent can reference the linked resume / JD /
+  // ATS score / outcome without us re-fetching + reformatting everything here.
+  const resumeMeta = app.resumeId
+    ? await db.resume.findUnique({
+        where: { id: app.resumeId },
+        select: { id: true, atsScore: true, feedback: true },
+      })
+    : null;
+
+  let atsSummary = null;
+  if (app.atsFeedback) {
+    try {
+      atsSummary = JSON.parse(app.atsFeedback);
+    } catch {
+      atsSummary = null;
+    }
+  }
+
+  const ctx = {
+    input: `Help me with my ${app.role} application at ${app.company} (status: ${app.status}).`,
+    applicationsSummary: `${app.company} — ${app.role} (${app.status})`,
+    company: app.company,
+    role: app.role,
+    status: app.status,
+    jobDescription: app.jobDescription,
+    atsScore: app.atsScore,
+    atsSummary,
+    resumeAtsScore: resumeMeta?.atsScore ?? null,
+    rejectionReason: app.rejectionReason,
+    offerDetails: app.offerDetails,
+    notes: app.notes,
+    // Grounding the BaseAgent reads: a formatted context block the specialist
+    // prompt embeds, + a memory summary string. Without these the agent only
+    // sees the one-line task + input and can't personalize.
+    contextText: [
+      `APPLICATION: ${app.company} — ${app.role} (status: ${app.status})`,
+      app.location ? `Location: ${app.location}` : null,
+      app.salary ? `Salary band: ${app.salary}` : null,
+      app.atsScore != null ? `Resume ATS match: ${Math.round(Number(app.atsScore))}%` : null,
+      atsSummary?.missingKeywords?.length
+        ? `Missing JD keywords: ${atsSummary.missingKeywords.join(", ")}`
+        : null,
+      atsSummary?.recommendations?.length
+        ? `ATS edit suggestions: ${atsSummary.recommendations.join(" | ")}`
+        : null,
+      app.rejectionReason ? `Prior rejection reason: ${app.rejectionReason}` : null,
+      app.offerDetails ? `Offer details: ${JSON.stringify(app.offerDetails)}` : null,
+      app.notes ? `Notes: ${app.notes}` : null,
+      app.jobDescription
+        ? `Job description excerpt: ${String(app.jobDescription).slice(0, 1200)}`
+        : null,
+    ]
+      .filter(Boolean)
+      .join("\n"),
+    memorySummary: summarizeMemory(memory),
+  };
+
+  const result = await applicationAgent.run({
+    userId: user.id,
+    input: ctx.input,
+    memory,
+    ctx,
+  });
+
+  return { application: app, recommendations: result, memories: memory };
 }

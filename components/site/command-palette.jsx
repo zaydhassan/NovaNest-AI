@@ -19,6 +19,10 @@ import {
   Search,
   CornerDownLeft,
   Command,
+  Sparkles,
+  Github,
+  Fingerprint,
+  Rocket,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -126,6 +130,38 @@ export function CommandPalette({ className }) {
         icon: Wand2,
         run: () => go("/ai-tools"),
       },
+      ...(isSignedIn
+        ? [
+            {
+              id: "coach",
+              label: "Ask AI Coach",
+              group: "Career OS",
+              icon: Sparkles,
+              run: () => go("/coach"),
+            },
+            {
+              id: "github",
+              label: "Analyze a GitHub repo",
+              group: "Career OS",
+              icon: Github,
+              run: () => go("/github"),
+            },
+            {
+              id: "twin",
+              label: "Open Career Twin",
+              group: "Career OS",
+              icon: Fingerprint,
+              run: () => go("/twin"),
+            },
+            {
+              id: "learning",
+              label: "Open Learning Engine",
+              group: "Career OS",
+              icon: Rocket,
+              run: () => go("/learning"),
+            },
+          ]
+        : []),
       {
         id: "theme",
         label: resolvedTheme === "dark" ? "Switch to light theme" : "Switch to dark theme",

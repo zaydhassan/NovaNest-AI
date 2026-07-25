@@ -9,6 +9,8 @@ import { coverLetterSchema } from "@/lib/schemas";
 import { NotFoundError, ValidationError } from "@/lib/errors";
 import { bumpActivity } from "@/lib/gamify";
 import { createNotification } from "@/lib/notifications";
+import { recordTimelineEvent } from "@/lib/career/timeline/timeline-engine";
+import { deriveFromCoverLetter } from "@/lib/career/timeline/timeline-derivers";
 import { revalidatePath } from "next/cache";
 
 export async function generateCoverLetter(data) {
@@ -46,6 +48,12 @@ export async function generateCoverLetter(data) {
       href: "/ai-cover-letter",
       data: { companyName: parsed.data.companyName, jobTitle: parsed.data.jobTitle },
     }).catch((e) => console.error("[NovaNest] cover_letter notify:", e?.message));
+
+    // Career OS — timeline "applying" milestone for the cover-letter artifact.
+    recordTimelineEvent({ userId: user.id, ...deriveFromCoverLetter(coverLetter) }).catch((e) =>
+      console.error("[NovaNest] timeline cover letter:", e?.message)
+    );
+
     revalidatePath("/dashboard");
 
     return coverLetter;

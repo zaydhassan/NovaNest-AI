@@ -11,7 +11,9 @@ import {
   Loader2,
   GripVertical,
   X,
+  Maximize2,
 } from "lucide-react";
+import Link from "next/link";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -287,6 +289,15 @@ export default function ApplicationBoard({ initialApplications = [] }) {
                     >
                       <Pencil className="h-3.5 w-3.5" />
                     </Button>
+                    <Link
+                      href={`/applications/${app.id}`}
+                      className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground"
+                      aria-label="Open application detail"
+                      title="Detail"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Maximize2 className="h-3.5 w-3.5" />
+                    </Link>
                     {app.jobDescription && (
                       <Button
                         size="icon"

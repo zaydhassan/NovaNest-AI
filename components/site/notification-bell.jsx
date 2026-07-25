@@ -18,6 +18,10 @@ import {
   Crown,
   Mail,
   RefreshCw,
+  Fingerprint,
+  Github,
+  Rocket,
+  Lightbulb,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -51,6 +55,12 @@ const TYPE_META = {
   payment_success: { icon: Crown, accent: "text-amber-400" },
   weekly_digest: { icon: Mail, accent: "text-primary" },
   industry_changed: { icon: RefreshCw, accent: "text-muted-foreground" },
+  // ── Career OS (M5–M10) ──
+  coach_nudge: { icon: Sparkles, accent: "text-primary" },
+  coach_insight: { icon: Lightbulb, accent: "text-accent" },
+  twin_ready: { icon: Fingerprint, accent: "text-violet-400" },
+  github_analyzed: { icon: Github, accent: "text-foreground" },
+  learning_recommendation: { icon: Rocket, accent: "text-accent-warm" },
 };
 
 /**
