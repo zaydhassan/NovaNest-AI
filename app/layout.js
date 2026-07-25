@@ -5,6 +5,7 @@ import { dark as clerkDark } from "@clerk/themes";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuroraBackground } from "@/components/site/aurora-background";
+import { NoiseOverlay } from "@/components/site/noise-overlay";
 import { SiteHeader } from "@/components/site/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
 
@@ -126,6 +127,7 @@ export default function RootLayout({ children }) {
               Skip to content
             </a>
             <AuroraBackground />
+            <NoiseOverlay />
             <SiteHeader />
             <main id="main-content" className="min-h-screen">
               {children}

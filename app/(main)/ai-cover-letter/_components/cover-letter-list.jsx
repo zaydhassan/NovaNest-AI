@@ -35,6 +35,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { deleteCoverLetter } from "@/actions/cover-letter";
+import { SpotlightCard } from "@/components/site/spotlight-card";
 
 const SORTS = [
   { value: "newest", label: "Newest first" },
@@ -164,7 +165,7 @@ export default function CoverLetterList({ coverLetters }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: Math.min(i * 0.05, 0.3), ease: [0.22, 1, 0.36, 1] }}
             >
-            <Card className="glass group relative transition-all duration-300 ease-spring hover:-translate-y-1 hover:border-white/20">
+            <SpotlightCard className="glass group relative rounded-xl border border-border text-card-foreground shadow-elevated transition-all duration-300 ease-spring hover:-translate-y-1 hover:border-white/20">
               <CardHeader>
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
@@ -226,7 +227,7 @@ export default function CoverLetterList({ coverLetters }) {
                   </div>
                 </div>
               </CardContent>
-            </Card>
+            </SpotlightCard>
             </motion.div>
           ))}
         </div>

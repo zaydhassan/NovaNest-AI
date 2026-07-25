@@ -2,25 +2,33 @@
 
 import Link from "next/link";
 import { useRef } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Sparkles, TrendingUp, FileText, GraduationCap, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Magnetic } from "@/components/site/magnetic";
+import { NeuralCanvas } from "@/components/site/neural-canvas";
 
-const ease = [0.22, 1, 0.36, 1];
+const EASE = [0.22, 1, 0.36, 1];
 
 /**
- * HeroSection — obsidian hero with a cursor-following radial spotlight,
- * floating gradient orbs, a glass badge, gradient headline, dual CTAs, and a
- * CSS/SVG product mock (no image payload). The mock is a stylized "dashboard"
- * card with a mini salary chart and stat tiles — conveys the product without
- * shipping a heavy banner image.
+ * HeroSection — obsidian hero with:
+ *  - an interactive neural-mesh canvas that reacts to the cursor
+ *  - a cursor-following radial spotlight + floating gradient orbs
+ *  - a staggered blur-in headline and magnetic CTAs
+ *  - a glass product mock with a mini salary chart and stat tiles
+ *
+ * All decorative layers are aria-hidden and pointer-events-none. Reduced
+ * motion: the canvas renders a static field and entrance animations collapse
+ * to instant.
  */
 export default function HeroSection() {
   const sectionRef = useRef(null);
   const rafRef = useRef(null);
+  const reduced = useReducedMotion();
 
   const handleMouseMove = (e) => {
+    if (reduced) return;
     const el = sectionRef.current;
     if (!el) return;
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
@@ -31,12 +39,28 @@ export default function HeroSection() {
     });
   };
 
+  const container = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
+  };
+  const item = reduced
+    ? { hidden: { opacity: 1 }, show: { opacity: 1 } }
+    : {
+        hidden: { opacity: 0, y: 18, filter: "blur(10px)" },
+        show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.7, ease: EASE } },
+      };
+
   return (
     <section
       ref={sectionRef}
       onMouseMove={handleMouseMove}
       className="spotlight relative w-full overflow-hidden px-4 pt-36 pb-16 md:pt-44 md:pb-28"
     >
+      {/* Interactive neural mesh — sits behind everything, fades out at edges. */}
+      <div className="pointer-events-none absolute inset-0 z-0 opacity-70 [mask-image:radial-gradient(ellipse_70%_60%_at_50%_35%,#000_30%,transparent_85%)]">
+        <NeuralCanvas className="h-full w-full" />
+      </div>
+
       {/* Floating gradient orbs */}
       <div
         className="aurora-blob pointer-events-none"
@@ -54,35 +78,32 @@ export default function HeroSection() {
         aria-hidden="true"
       />
 
-      <div className="container relative mx-auto">
-        <div className="mx-auto max-w-4xl text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease }}
-          >
+      <div className="container relative z-10 mx-auto">
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="mx-auto max-w-4xl text-center"
+        >
+          <motion.div variants={item}>
             <Badge className="mb-7 gap-2 border-white/10 bg-white/[0.04] px-3.5 py-1.5 text-foreground/90 backdrop-blur-md hover:bg-white/[0.06]">
               <span className="flex h-4 w-4 items-center justify-center rounded-full ring-aurora">
                 <Sparkles className="h-2.5 w-2.5 text-white" />
               </span>
               Now with AI-powered interview prep
-              <span className="ml-1 h-1.5 w-1.5 rounded-full bg-accent-warm" />
+              <span className="ml-1 h-1.5 w-1.5 animate-pulse rounded-full bg-accent-warm" />
             </Badge>
           </motion.div>
 
           <motion.h1
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.05, ease }}
+            variants={item}
             className="aurora-text animate-aurora text-4xl font-extrabold leading-[1.05] sm:text-5xl md:text-6xl lg:text-7xl"
           >
             Your AI career growth OS
           </motion.h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.12, ease }}
+            variants={item}
             className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground md:text-lg"
           >
             Build ATS-optimized resumes, practice role-specific interviews,
@@ -91,40 +112,40 @@ export default function HeroSection() {
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.18, ease }}
+            variants={item}
             className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row"
           >
-            <Link href="/dashboard">
-              <Button variant="gradient" size="lg" className="w-full gap-2 rounded-full px-7 sm:w-auto">
-                Get started free
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-            <Link href="/resume">
-              <Button size="lg" variant="outline" className="w-full rounded-full px-7 sm:w-auto">
-                <FileText className="h-4 w-4" />
-                Try the resume builder
-              </Button>
-            </Link>
+            <Magnetic strength={0.4}>
+              <Link href="/dashboard">
+                <Button variant="gradient" size="lg" className="w-full gap-2 rounded-full px-7 sm:w-auto">
+                  Get started free
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-0.5" />
+                </Button>
+              </Link>
+            </Magnetic>
+            <Magnetic strength={0.25}>
+              <Link href="/resume">
+                <Button size="lg" variant="outline" className="w-full rounded-full px-7 sm:w-auto">
+                  <FileText className="h-4 w-4" />
+                  Try the resume builder
+                </Button>
+              </Link>
+            </Magnetic>
           </motion.div>
 
           <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            variants={item}
             className="mt-5 text-xs text-muted-foreground"
           >
             No credit card required · Free forever plan
           </motion.p>
-        </div>
+        </motion.div>
 
         {/* Product mock */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={reduced ? false : { opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.25, ease }}
+          transition={{ duration: 0.8, delay: 0.25, ease: EASE }}
           className="mx-auto mt-16 max-w-5xl"
         >
           <div className="border-gradient shadow-glass-lg">
@@ -179,9 +200,9 @@ export default function HeroSection() {
                           width={48}
                           rx={8}
                           fill={colors[i]}
-                          initial={{ height: 0, y: 140 }}
+                          initial={reduced ? false : { height: 0, y: 140 }}
                           animate={{ height: heights[i], y: 140 - heights[i] }}
-                          transition={{ duration: 0.8, delay: 0.5 + i * 0.12, ease }}
+                          transition={{ duration: 0.8, delay: 0.5 + i * 0.12, ease: EASE }}
                         />
                       );
                     })}
@@ -199,9 +220,9 @@ export default function HeroSection() {
                     <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-white/[0.08]">
                       <motion.div
                         className="h-full rounded-full ring-aurora"
-                        initial={{ width: 0 }}
+                        initial={reduced ? false : { width: 0 }}
                         animate={{ width: "86%" }}
-                        transition={{ duration: 1, delay: 0.6, ease }}
+                        transition={{ duration: 1, delay: 0.6, ease: EASE }}
                       />
                     </div>
                   </div>
@@ -214,7 +235,7 @@ export default function HeroSection() {
                       {["System design", "Leadership", "Negotiation"].map((s, i) => (
                         <motion.span
                           key={s}
-                          initial={{ opacity: 0, y: 6 }}
+                          initial={reduced ? false : { opacity: 0, y: 6 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.7 + i * 0.08 }}
                           className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-0.5 text-xs font-normal text-foreground/80"

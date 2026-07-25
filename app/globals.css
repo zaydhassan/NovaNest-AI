@@ -304,6 +304,95 @@
             mask-composite: exclude;
     pointer-events: none;
   }
+
+  /* ---- Spotlight card — cursor-following radial light + gradient ring ----
+     The .spotlight-card wrapper exposes --mx/--my (set by JS) and renders two
+     decorative layers via .spotlight-card__glow and .spotlight-card__ring. */
+  .spotlight-card {
+    position: relative;
+    isolation: isolate;
+  }
+  .spotlight-card__glow {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.4s ease-spring;
+    pointer-events: none;
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%),
+      hsl(var(--purple) / 0.16), transparent 45%);
+    z-index: 0;
+  }
+  .spotlight-card:hover .spotlight-card__glow { opacity: 1; }
+  .spotlight-card__ring {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    opacity: 0;
+    transition: opacity 0.4s ease-spring;
+    pointer-events: none;
+    background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%),
+      hsl(var(--cyan) / 0.55), transparent 60%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    z-index: 1;
+  }
+  .spotlight-card:hover .spotlight-card__ring { opacity: 1; }
+  .spotlight-card > * { position: relative; z-index: 2; }
+
+  /* ---- Film grain noise overlay ----
+     Subtle SVG turbulence as a fixed, pointer-events-none layer. Multiplied
+     softly so it reads as texture, not snow. */
+  .noise-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  :root:not(.dark) .noise-overlay { opacity: 0.025; }
+
+  /* Hairline grid that fades from the top — used behind sections/cards. */
+  .grid-fade {
+    background-image:
+      linear-gradient(to right, hsl(var(--foreground) / 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--foreground) / 0.04) 1px, transparent 1px);
+    background-size: 64px 64px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 100%);
+            mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 100%);
+  }
+
+  /* Conic spinning border for "live" / interactive frames. */
+  .conic-border::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(from var(--angle, 0deg),
+      hsl(var(--cyan)), hsl(var(--purple)), hsl(var(--emerald)), hsl(var(--cyan)));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+    animation: spin-angle 6s linear infinite;
+  }
+
+  /* Animated gradient text with a travelling sheen for headlines. */
+  .text-shimmer {
+    @apply text-transparent bg-clip-text;
+    background-image: linear-gradient(110deg,
+      hsl(var(--foreground)) 0%, hsl(var(--foreground)) 35%,
+      hsl(var(--cyan)) 50%, hsl(var(--foreground)) 65%, hsl(var(--foreground)) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 6s linear infinite;
+  }
 }
 
 @keyframes auroraShift {
@@ -332,6 +421,15 @@
   100% { background-position: 200% 50%; }
 }
 
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes spin-angle {
+  to { --angle: 360deg; }
+}
+
 /* Reduced motion -- respect user preference. */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -353,6 +451,37 @@
   color: hsl(var(--foreground));
   border: 0;
   box-shadow: none;
+}
+
+/* Resume live-preview "paper" — a light, document-like render of the
+   markdown inside the dark builder. Scoped to .resume-paper so it never
+   bleeds into the dark markdown editor. */
+.resume-paper .wmde-markdown {
+  background: #ffffff;
+  color: #18181b;
+  font-family: var(--font-sans), Inter, system-ui, sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.resume-paper .wmde-markdown h1,
+.resume-paper .wmde-markdown h2,
+.resume-paper .wmde-markdown h3 {
+  color: #18181b;
+  font-family: var(--font-display), "Space Grotesk", Inter, sans-serif;
+  letter-spacing: -0.01em;
+}
+.resume-paper .wmde-markdown h2 { font-size: 1.05rem; margin-top: 1.25rem; }
+.resume-paper .wmde-markdown a { color: #6d28d9; }
+.resume-paper .wmde-markdown code,
+.resume-paper .wmde-markdown pre {
+  background: #f4f4f5;
+  color: #18181b;
+  border-radius: 6px;
+}
+.resume-paper .wmde-markdown hr { background: #e4e4e7; height: 1px; }
+.resume-paper .wmde-markdown blockquote {
+  color: #52525b;
+  border-left: 3px solid #d4d4d8;
 }
 [data-color-mode="dark"] .w-md-editor-toolbar {
   background: hsl(var(--muted) / 0.6);

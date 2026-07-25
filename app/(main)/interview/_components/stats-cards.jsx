@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { Brain, Target, Trophy, Award } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { SpotlightCard } from "@/components/site/spotlight-card";
+import { AnimatedCounter } from "@/components/site/animated-counter";
 
 function StatCard({ icon: Icon, label, value, sub, accent, delay = 0, children }) {
   return (
@@ -12,7 +14,7 @@ function StatCard({ icon: Icon, label, value, sub, accent, delay = 0, children }
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay }}
     >
-      <Card className="glass overflow-hidden">
+      <SpotlightCard className="glass overflow-hidden rounded-xl border border-border text-card-foreground transition-all duration-300 ease-spring hover:-translate-y-1 hover:border-primary/30 hover:shadow-glow">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">{label}</CardTitle>
           <span className="grid h-8 w-8 place-items-center rounded-lg" style={{ background: accent }}>
@@ -24,7 +26,7 @@ function StatCard({ icon: Icon, label, value, sub, accent, delay = 0, children }
           {children}
           {sub && <p className="mt-1 text-xs text-muted-foreground">{sub}</p>}
         </CardContent>
-      </Card>
+      </SpotlightCard>
     </motion.div>
   );
 }
@@ -58,7 +60,7 @@ export default function StatsCards({ assessments }) {
       <StatCard
         icon={Trophy}
         label="Average score"
-        value={`${avg}%`}
+        value={<AnimatedCounter value={Number(avg)} decimals={1} suffix="%" />}
         sub="Across all assessments"
         accent="linear-gradient(135deg,hsl(var(--chart-1)),hsl(var(--chart-2)))"
         delay={0}
@@ -69,7 +71,7 @@ export default function StatsCards({ assessments }) {
       <StatCard
         icon={Brain}
         label="Questions practiced"
-        value={totalQuestions}
+        value={<AnimatedCounter value={totalQuestions} />}
         sub="Total answered"
         accent="linear-gradient(135deg,hsl(var(--chart-3)),hsl(var(--chart-1)))"
         delay={0.05}
@@ -78,7 +80,7 @@ export default function StatsCards({ assessments }) {
       <StatCard
         icon={Award}
         label="Best score"
-        value={`${best.toFixed(1)}%`}
+        value={<AnimatedCounter value={Number(best.toFixed(1))} decimals={1} suffix="%" />}
         sub="Your highest result"
         accent="linear-gradient(135deg,hsl(var(--chart-4)),hsl(var(--chart-2)))"
         delay={0.1}
@@ -87,7 +89,7 @@ export default function StatsCards({ assessments }) {
       <StatCard
         icon={Target}
         label="Latest score"
-        value={`${latest.quizScore.toFixed(1)}%`}
+        value={<AnimatedCounter value={Number(latest.quizScore.toFixed(1))} decimals={1} suffix="%" />}
         sub="Most recent quiz"
         accent="linear-gradient(135deg,hsl(var(--chart-2)),hsl(var(--chart-5)))"
         delay={0.15}

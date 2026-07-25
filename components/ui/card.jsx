@@ -2,11 +2,25 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Card — premium layered surface.
+ *
+ * Base treatment (composes with any className via twMerge):
+ *  - hairline border in the token border color
+ *  - a 1px top inset highlight so the surface catches light from above
+ *  - `shadow-elevated` for soft depth
+ *  - smooth, GPU-friendly transitions so callers can layer hover lifts
+ *
+ * Callers still own hover/lift behaviour (many pages add
+ * `hover:-translate-y-1.5 hover:shadow-glow`), so we only provide the calm
+ * resting state and the transition glue.
+ */
 const Card = React.forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border border-border bg-card text-card-foreground shadow-elevated",
+      "relative rounded-xl border border-border bg-card text-card-foreground shadow-elevated transition-[transform,box-shadow,border-color] duration-300 ease-spring",
+      "before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent",
       className
     )}
     {...props} />

@@ -30,6 +30,9 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { SpotlightCard } from "@/components/site/spotlight-card";
+import { AnimatedCounter } from "@/components/site/animated-counter";
+import { Reveal } from "@/components/site/reveal";
 import WeeklyDigestCard from "./weekly-digest-card";
 import ChangeIndustryDialog from "./change-industry-dialog";
 import PlanStatusCard from "./plan-status-card";
@@ -98,7 +101,7 @@ function QuickActions() {
           >
             <Link
               href={a.href}
-              className="group flex items-center gap-3 rounded-xl border border-border bg-card p-4 shadow-elevated transition-all duration-300 ease-spring hover:-translate-y-1 hover:border-primary/40 hover:shadow-glow"
+              className="spotlight-card group flex items-center gap-3 rounded-xl border border-border bg-card p-4 shadow-elevated transition-all duration-300 ease-spring hover:-translate-y-1 hover:border-primary/40 hover:shadow-glow"
             >
               <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg ring-aurora text-white shadow-glow">
                 <Icon className="h-5 w-5" />
@@ -123,7 +126,7 @@ function KpiCard({ icon: Icon, label, value, sub, children, delay = 0 }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay }}
     >
-      <Card className="glass overflow-hidden">
+      <SpotlightCard className="glass overflow-hidden rounded-xl border border-border transition-all duration-300 ease-spring hover:-translate-y-1 hover:border-primary/30 hover:shadow-glow">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">{label}</CardTitle>
           <Icon className="h-4 w-4 text-primary" />
@@ -133,7 +136,7 @@ function KpiCard({ icon: Icon, label, value, sub, children, delay = 0 }) {
           {children}
           {sub && <p className="mt-2 text-xs text-muted-foreground">{sub}</p>}
         </CardContent>
-      </Card>
+      </SpotlightCard>
     </motion.div>
   );
 }
@@ -190,7 +193,7 @@ export default function DashboardView({ insights, userSkills = [], nova = null, 
           <p className={`mt-1 text-xs ${outlookColor}`}>{insights.marketOutlook} outlook</p>
         </KpiCard>
 
-        <KpiCard icon={TrendingUp} label="Industry growth" value={`${insights.growthRate.toFixed(1)}%`} delay={0.05}>
+        <KpiCard icon={TrendingUp} label="Industry growth" value={<AnimatedCounter value={insights.growthRate} decimals={1} suffix="%" />} delay={0.05}>
           <Progress value={Math.min(insights.growthRate, 100)} className="mt-3 h-1.5" />
         </KpiCard>
 
@@ -208,15 +211,18 @@ export default function DashboardView({ insights, userSkills = [], nova = null, 
       </div>
 
       {/* Salary + growth radial */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.6fr_1fr]">
-        <SalaryChart salaryRanges={insights.salaryRanges} />
-        <GrowthRadialChart growthRate={insights.growthRate} />
-      </div>
+      <Reveal>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.6fr_1fr]">
+          <SalaryChart salaryRanges={insights.salaryRanges} />
+          <GrowthRadialChart growthRate={insights.growthRate} />
+        </div>
+      </Reveal>
 
       {/* Weekly digest */}
       {nova && <WeeklyDigestCard digest={nova.digest} />}
 
       {/* Skill gap + trends */}
+      <Reveal delay={0.05}>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card className="glass">
           <CardHeader>
@@ -290,8 +296,10 @@ export default function DashboardView({ insights, userSkills = [], nova = null, 
           </CardContent>
         </Card>
       </div>
+      </Reveal>
 
       {/* Recommended skills */}
+      <Reveal delay={0.1}>
       <Card className="glass">
         <CardHeader>
           <CardTitle>Recommended skills to develop</CardTitle>
@@ -315,6 +323,7 @@ export default function DashboardView({ insights, userSkills = [], nova = null, 
           </div>
         </CardContent>
       </Card>
+      </Reveal>
     </div>
   );
 }

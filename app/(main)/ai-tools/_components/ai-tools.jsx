@@ -9,13 +9,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import {
-  Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SpotlightCard } from "@/components/site/spotlight-card";
+import { Reveal, RevealStagger, RevealItem } from "@/components/site/reveal";
+import { AnimatedCounter } from "@/components/site/animated-counter";
 import useFetch from "@/hooks/use-fetch";
 import {
   rewriteAchievement,
@@ -71,7 +73,7 @@ function CopyButton({ text }) {
 
 function ToolCard({ icon: Icon, title, description, children }) {
   return (
-    <Card className="glass">
+    <SpotlightCard className="glass rounded-xl border border-border text-card-foreground shadow-elevated transition-all duration-300 ease-spring hover:-translate-y-0.5 hover:border-white/15">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <span className="grid h-7 w-7 place-items-center rounded-lg bg-primary/15 text-primary">
@@ -82,7 +84,7 @@ function ToolCard({ icon: Icon, title, description, children }) {
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>{children}</CardContent>
-    </Card>
+    </SpotlightCard>
   );
 }
 
@@ -109,14 +111,14 @@ function BulletRewriter() {
           Rewrite bullet
         </Button>
         {variants.length > 0 && (
-          <div className="space-y-2 pt-1">
+          <RevealStagger className="space-y-2 pt-1">
             {variants.map((v, i) => (
-              <div key={i} className="flex items-start justify-between gap-2 rounded-lg border border-border bg-background/60 p-3">
+              <RevealItem key={i} className="flex items-start justify-between gap-2 rounded-lg border border-border bg-background/60 p-3">
                 <p className="text-sm">{v}</p>
                 <CopyButton text={v} />
-              </div>
+              </RevealItem>
             ))}
-          </div>
+          </RevealStagger>
         )}
       </div>
     </ToolCard>
@@ -155,11 +157,11 @@ function RoadmapTool() {
           Generate roadmap
         </Button>
         {data && (
-          <div className="space-y-3 pt-1">
+          <Reveal className="space-y-3 pt-1">
             {data.summary && <p className="text-sm text-muted-foreground">{data.summary}</p>}
-            <div className="grid gap-2">
+            <RevealStagger className="grid gap-2">
               {weeks.map((w) => (
-                <div key={w.week} className="rounded-lg border border-border bg-background/60 p-3">
+                <RevealItem key={w.week} className="rounded-lg border border-border bg-background/60 p-3">
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-semibold">Week {w.week}: {w.focus}</p>
                     {w.skills?.length > 0 && (
@@ -180,10 +182,10 @@ function RoadmapTool() {
                       ))}
                     </ul>
                   )}
-                </div>
+                </RevealItem>
               ))}
-            </div>
-          </div>
+            </RevealStagger>
+          </Reveal>
         )}
       </div>
     </ToolCard>
@@ -231,14 +233,14 @@ function OutreachTool() {
           </Button>
         </div>
         {out && (
-          <div className="space-y-2 pt-1">
+          <Reveal className="space-y-2 pt-1">
             <div className="whitespace-pre-wrap rounded-lg border border-border bg-background/60 p-3 text-sm">
               {out}
             </div>
             <div className="flex justify-end">
               <CopyButton text={out} />
             </div>
-          </div>
+          </Reveal>
         )}
       </div>
     </ToolCard>
@@ -268,10 +270,10 @@ function JobFitTool() {
           Score job fit
         </Button>
         {fit != null && data && (
-          <div className="space-y-3 pt-1">
+          <Reveal className="space-y-3 pt-1">
             <div className="flex items-center gap-3">
               <div className="grid h-16 w-16 place-items-center rounded-full ring-aurora">
-                <span className="text-2xl font-extrabold">{Math.round(fit)}</span>
+                <AnimatedCounter value={Math.round(fit)} className="text-2xl font-extrabold" />
               </div>
               <p className="text-sm text-muted-foreground">
                 {fit >= 75 ? "Strong fit." : fit >= 50 ? "Decent fit — emphasize the right things." : "Stretch role — frame gaps carefully."}
@@ -303,7 +305,7 @@ function JobFitTool() {
                 </ul>
               </div>
             )}
-          </div>
+          </Reveal>
         )}
       </div>
     </ToolCard>

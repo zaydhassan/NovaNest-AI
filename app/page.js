@@ -24,6 +24,8 @@ import { DashboardPreview } from "@/components/site/dashboard-preview";
 import { Pricing } from "@/components/site/pricing";
 import { SectionHeading } from "@/components/site/section-heading";
 import { StatCounter } from "@/components/site/stat-counter";
+import { SpotlightCard } from "@/components/site/spotlight-card";
+import { RevealStagger, RevealItem } from "@/components/site/reveal";
 import { features } from "@/data/features";
 import { faqs } from "@/data/faqs";
 import { howItWorks } from "@/data/howItWorks";
@@ -81,24 +83,22 @@ export default function LandingPage() {
             title="Everything you need to grow your career"
             subtitle="A complete AI toolkit — from your first resume to your next promotion."
           />
-          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <RevealStagger className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.5, delay: index * 0.08, ease }}
-                className="glass group rounded-2xl p-6 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:border-white/20 hover:shadow-glass-lg"
-              >
-                <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl ring-aurora text-white shadow-glow">
-                  {feature.icon}
-                </div>
-                <h3 className="mb-2 text-lg font-semibold">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">{feature.description}</p>
-              </motion.div>
+              <RevealItem key={index}>
+                <SpotlightCard className="glass group h-full rounded-2xl p-6 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:border-white/20 hover:shadow-glass-lg">
+                  <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl ring-aurora text-white shadow-glow transition-transform duration-300 ease-spring group-hover:scale-110 group-hover:rotate-3">
+                    {feature.icon}
+                  </div>
+                  <h3 className="mb-1.5 text-lg font-semibold">{feature.title}</h3>
+                  {feature.value && (
+                    <p className="mb-2 text-sm font-medium text-foreground/90">{feature.value}</p>
+                  )}
+                  <p className="text-sm text-muted-foreground">{feature.description}</p>
+                </SpotlightCard>
+              </RevealItem>
             ))}
-          </div>
+          </RevealStagger>
         </div>
       </section>
 
@@ -150,32 +150,27 @@ export default function LandingPage() {
             title="Intelligence woven into every step"
             subtitle="NovaNest's AI is contextual, private, and built for the work you actually do."
           />
-          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {aiFeatures.map((f, index) => {
+          <RevealStagger className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {aiFeatures.map((f) => {
               const Icon = f.icon;
               return (
-                <motion.div
-                  key={f.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 0.5, delay: index * 0.07, ease }}
-                  className="glass group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:border-white/20"
-                >
-                  <div
-                    className="absolute -right-10 -top-10 h-28 w-28 rounded-full opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-40"
-                    style={{ background: `hsl(var(--${f.accent}))` }}
-                    aria-hidden="true"
-                  />
-                  <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl border border-white/10 bg-white/[0.04]">
-                    <Icon className={`h-6 w-6 ${accentText[f.accent]}`} />
-                  </div>
-                  <h3 className="mb-2 text-lg font-semibold">{f.title}</h3>
-                  <p className="text-sm text-muted-foreground">{f.description}</p>
-                </motion.div>
+                <RevealItem key={f.title}>
+                  <SpotlightCard className="glass group relative h-full overflow-hidden rounded-2xl p-6 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:border-white/20">
+                    <div
+                      className="absolute -right-10 -top-10 h-28 w-28 rounded-full opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-40"
+                      style={{ background: `hsl(var(--${f.accent}))` }}
+                      aria-hidden="true"
+                    />
+                    <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl border border-white/10 bg-white/[0.04] transition-transform duration-300 ease-spring group-hover:scale-110">
+                      <Icon className={`h-6 w-6 ${accentText[f.accent]}`} />
+                    </div>
+                    <h3 className="mb-2 text-lg font-semibold">{f.title}</h3>
+                    <p className="text-sm text-muted-foreground">{f.description}</p>
+                  </SpotlightCard>
+                </RevealItem>
               );
             })}
-          </div>
+          </RevealStagger>
         </div>
       </section>
 
@@ -191,27 +186,20 @@ export default function LandingPage() {
             <div className="hidden md:absolute md:left-0 md:right-0 md:top-[64px] md:block" aria-hidden="true">
               <div className="mx-auto h-px max-w-5xl bg-gradient-to-r from-transparent via-white/15 to-transparent" />
             </div>
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
+            <RevealStagger className="grid grid-cols-1 gap-8 md:grid-cols-4" stagger={0.1}>
               {howItWorks.map((item, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 0.5, delay: i * 0.1, ease }}
-                  className="relative"
-                >
-                  <div className="glass rounded-2xl p-6 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:border-white/20">
+                <RevealItem key={i} className="relative">
+                  <SpotlightCard className="glass h-full rounded-2xl p-6 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:border-white/20">
                     <div className="mb-4 grid h-10 w-10 place-items-center rounded-full ring-aurora font-semibold text-white shadow-glow">
                       {i + 1}
                     </div>
                     <div className="mb-4 text-primary">{item.icon}</div>
                     <h3 className="mb-2 text-base font-semibold">{item.title}</h3>
                     <p className="text-sm text-muted-foreground">{item.description}</p>
-                  </div>
-                </motion.div>
+                  </SpotlightCard>
+                </RevealItem>
               ))}
-            </div>
+            </RevealStagger>
           </div>
         </div>
       </section>

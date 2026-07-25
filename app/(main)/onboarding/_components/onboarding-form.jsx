@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Sparkles, Check, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { Logo } from "@/components/site/logo";
+import { Reveal, RevealStagger, RevealItem } from "@/components/site/reveal";
 import {
   Card,
   CardContent,
@@ -100,20 +101,23 @@ const OnboardingForm = ({ industries }) => {
             insights to the work you actually do.
           </p>
         </div>
-        <ul className="relative z-10 mt-10 space-y-4">
+        <RevealStagger
+          stagger={0.12}
+          className="relative z-10 mt-10 space-y-4"
+        >
           {[
             "Personalized AI resume & cover letter generation",
             "Role-specific interview practice with live scoring",
             "Live industry insights for your exact field",
           ].map((item) => (
-            <li key={item} className="flex items-start gap-3 text-sm text-foreground/85">
+            <RevealItem key={item} className="flex items-start gap-3 text-sm text-foreground/85">
               <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full ring-aurora">
                 <Check className="h-3 w-3 text-white" />
               </span>
               {item}
-            </li>
+            </RevealItem>
           ))}
-        </ul>
+        </RevealStagger>
         <div className="relative z-10 mt-10 flex items-center gap-2 text-xs text-muted-foreground">
           <Sparkles className="h-3.5 w-3.5 text-primary" />
           Takes about 60 seconds
