@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, Sparkles, TrendingUp, FileText, GraduationCap, Play } from "lucide-react";
+import { ArrowRight, Sparkles, TrendingUp, GraduationCap, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Magnetic } from "@/components/site/magnetic";
@@ -90,7 +90,7 @@ export default function HeroSection() {
               <span className="flex h-4 w-4 items-center justify-center rounded-full ring-aurora">
                 <Sparkles className="h-2.5 w-2.5 text-white" />
               </span>
-              Now with AI-powered interview prep
+              Now with Career Twin — an AI that knows your career
               <span className="ml-1 h-1.5 w-1.5 animate-pulse rounded-full bg-accent-warm" />
             </Badge>
           </motion.div>
@@ -99,16 +99,17 @@ export default function HeroSection() {
             variants={item}
             className="aurora-text animate-aurora text-4xl font-extrabold leading-[1.05] sm:text-5xl md:text-6xl lg:text-7xl"
           >
-            Your AI career growth OS
+            Your career, running on AI.
           </motion.h1>
 
           <motion.p
             variants={item}
             className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground md:text-lg"
           >
-            Build ATS-optimized resumes, practice role-specific interviews,
-            generate cover letters, and track live industry insights — all in
-            one polished workspace.
+            NovaNest is the AI Career Operating System — one workspace that
+            remembers everything you&apos;ve built, applied to, and practiced,
+            then runs specialist AI agents across your resume, interviews, and
+            applications. Not a chatbot. A system that compounds.
           </motion.p>
 
           <motion.div
@@ -118,16 +119,16 @@ export default function HeroSection() {
             <Magnetic strength={0.4}>
               <Link href="/dashboard">
                 <Button variant="gradient" size="lg" className="w-full gap-2 rounded-full px-7 sm:w-auto">
-                  Get started free
+                  Start free
                   <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-0.5" />
                 </Button>
               </Link>
             </Magnetic>
             <Magnetic strength={0.25}>
-              <Link href="/resume">
+              <Link href="#demo">
                 <Button size="lg" variant="outline" className="w-full rounded-full px-7 sm:w-auto">
-                  <FileText className="h-4 w-4" />
-                  Try the resume builder
+                  <Play className="h-4 w-4" />
+                  See the OS
                 </Button>
               </Link>
             </Magnetic>
@@ -137,7 +138,7 @@ export default function HeroSection() {
             variants={item}
             className="mt-5 text-xs text-muted-foreground"
           >
-            No credit card required · Free forever plan
+            Free forever plan · No credit card · Your data never trains shared models
           </motion.p>
         </motion.div>
 
@@ -148,7 +149,7 @@ export default function HeroSection() {
           transition={{ duration: 0.8, delay: 0.25, ease: EASE }}
           className="mx-auto mt-16 max-w-5xl"
         >
-          <div className="border-gradient shadow-glass-lg">
+          <div className="border-gradient shadow-float">
             <div className="rounded-[calc(var(--radius-2xl)-1px)] p-2">
               {/* window chrome */}
               <div className="mb-2 flex items-center gap-1.5 px-3 py-2">
@@ -163,13 +164,13 @@ export default function HeroSection() {
 
               <div className="grid gap-4 rounded-xl bg-background/40 p-4 md:grid-cols-[1.4fr_1fr]">
                 {/* left: chart card */}
-                <div className="glass rounded-xl p-5">
+                <div className="glass rounded-xl p-5 shadow-card">
                   <div className="mb-4 flex items-center justify-between">
                     <div>
                       <p className="text-sm text-muted-foreground">Salary ranges</p>
                       <p className="text-lg font-semibold">Senior Engineer · by role</p>
                     </div>
-                    <Badge variant="secondary" className="gap-1">
+                    <Badge variant="secondary" className="gap-1 tnum">
                       <TrendingUp className="h-3 w-3 text-accent-warm" /> +12.4%
                     </Badge>
                   </div>
@@ -216,7 +217,7 @@ export default function HeroSection() {
                       <GraduationCap className="h-4 w-4" />
                       <span className="text-sm">Interview readiness</span>
                     </div>
-                    <p className="mt-2 text-2xl font-bold">86%</p>
+                    <p className="mt-2 text-2xl font-bold tnum">86%</p>
                     <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-white/[0.08]">
                       <motion.div
                         className="h-full rounded-full ring-aurora"

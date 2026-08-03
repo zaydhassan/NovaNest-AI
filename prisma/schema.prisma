@@ -15,6 +15,11 @@ model User {
   imageUrl      String?
   industry      String?    // Combined industry-subindustry (e.g., "tech-software-development")
   industryInsight IndustryInsight? @relation(fields: [industry], references: [industry])
+  // Dream Company Mode — validated slug from DREAM_COMPANIES (Google, OpenAI,
+  // …). NOT a FK to CompanyProfile (profile is generated lazily on-demand); this
+  // is a plain string so the user can set a target before any profile exists.
+  targetCompany String?
+  companyProfile CompanyProfile? @relation(fields: [targetCompany], references: [company])
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -64,6 +69,8 @@ model User {
   careerGoals        CareerGoal[]
   learningTopics     LearningTopic[]
   learningSessions   LearningSession[]
+  structuredMemories StructuredMemory[]
+  dreamCompanyPlan   DreamCompanyPlan?
 }
 
 // ── Career OS — long-term memory ─────────────────────────────────
@@ -93,6 +100,46 @@ model MemoryEntry {
   @@index([userId])
   @@index([userId, type])
   @@index([userId, isForgotten])
+  @@index([userId, importance])
+}
+
+// ── Career OS — structured memory (Memory Engine) ────────────────
+// Purpose-built, queryable, typed structured memories: the discrete career
+// artifacts that don't have a dedicated model (Projects, Skills-as-records,
+// Achievements, Certificates, Preferences, Resume Versions, Lessons/mistakes,
+// Notes). `category` is one of STRUCTURED_MEMORY_CATEGORIES (lib/constants.js);
+// `structured` holds the Zod-validated typed payload per category; `tags` +
+// `importance` power keyword/tag retrieval ranking. `linkedType`/`linkedId`
+// optionally point at a dedicated row (resume|mockInterview|assessment|
+// application|learningTopic|goal) when the structured memory is derived from
+// one, so the retrieval engine can dedupe across sources. Retrieval is
+// keyword/tag/importance/recency based (no vectors); pg_trgm GIN indexes on
+// title/summary/tags (added via raw-SQL migration) power fast ILIKE + overlap.
+// `isArchived` soft-hides a row from retrieval (the curated equivalent of
+// MemoryEntry.isForgotten). Idempotent on (userId, source, sourceId) when a
+// source row is provided (mirrors MemoryEntry).
+model StructuredMemory {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category    String   // STRUCTURED_MEMORY_CATEGORIES: project|skill|achievement|certificate|preference|resume_version|lesson|note
+  title       String
+  summary     String?                 // one-line WHY / context
+  detail      String?  @db.Text       // rich long-form
+  structured  Json?                   // Zod-validated typed payload per category
+  tags        String[] @default([])
+  importance  Float    @default(0.5)  // 0..1, boosts retrieval rank
+  source      String   @default("manual") // manual|ai-extracted|import|resume|mock|...
+  sourceId    String?
+  linkedType  String?  // resume|mockInterview|assessment|application|learningTopic|goal
+  linkedId    String?
+  isArchived  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([userId, category])
+  @@index([userId, isArchived])
   @@index([userId, importance])
 }
 
@@ -290,6 +337,7 @@ model Assessment {
   quizScore     Float     // Overall quiz score
   questions     Json[]    // Array of {question, answer, userAnswer, isCorrect}
   category      String    // "Technical", "Behavioral", etc.
+  company       String?   // Dream Company slug when the quiz was company-tailored
   improvementTip String?  // AI-generated improvement tip
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -350,6 +398,57 @@ model IndustryInsight {
   nextUpdate    DateTime  // Scheduled update time
 
   @@index([industry])
+}
+
+// ── Dream Company Mode ─────────────────────────────────────────
+// Company-grained market + interview knowledge for one of the 8 dream
+// companies (Google, OpenAI, …). Mirrors IndustryInsight: generated on-demand
+// (upsert in getOrGenerateCompanyProfile) + refreshed by the weekly
+// `generateCompanyProfiles` Inngest cron. `company` is the slug from
+// DREAM_COMPANIES; `displayName` is the human label.
+model CompanyProfile {
+  id                String   @id @default(cuid())
+  company           String   @unique  // slug from DREAM_COMPANIES (the FK target)
+  displayName       String
+
+  // Salary data — rendered directly (rule-based, no AI), mirrors IndustryInsight.
+  salaryRanges      Json[]    // Array of { role, min, max, median, location? }
+
+  // Skills this company hires for / expects
+  topSkills         String[]
+  recommendedSkills String[]
+
+  // Interview knowledge — themes per round + famous questions to lean into
+  interviewThemes   Json?     // [{ round, focus, examples[] }]
+  famousQuestions   String[]
+  values            String[]  // culture tenets (e.g. "Customer obsession")
+  bar               String?   // hiring-bar summary
+  keyTrends         String[]
+
+  raw               Json?     // full model response, kept for debugging/audit
+  lastUpdated       DateTime  @default(now())
+  nextUpdate        DateTime  // scheduled refresh time
+
+  users             User[]
+
+  @@index([company])
+}
+
+// One personalized 7-area Dream Company plan per user, cached. Regenerated
+// when the user changes their target company, when stale (>7d via nextUpdate),
+// or via the "Regenerate" button. `plan` is the 7-area JSON from
+// dreamCompanyPlanPrompt — each item carries a `why` grounded in the
+// candidate's background + the company's bar/values.
+model DreamCompanyPlan {
+  id          String   @id @default(cuid())
+  userId      String   @unique  // one plan per user
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company     String   // slug the plan was generated for
+  plan        Json     // the 7-area object
+  generatedAt DateTime @default(now())
+  nextUpdate  DateTime // generatedAt + 7d
+
+  @@index([userId])
 }
 
 // Job-application pipeline tracker. Each application can optionally link to
@@ -414,6 +513,7 @@ model MockInterview {
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   role        String
   industry    String?
+  company     String?   // Dream Company slug when the session was company-tailored
   transcript  Json      // [{ role: "interviewer" | "candidate", text }]
   score       Float?
   feedback    String?   @db.Text

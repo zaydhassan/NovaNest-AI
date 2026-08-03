@@ -3,9 +3,9 @@ import { Brain, MessageSquareText, Mic, Target, ShieldCheck, Zap } from "lucide-
 export const aiFeatures = [
   {
     icon: Brain,
-    title: "Context-aware generation",
+    title: "Memory-aware generation",
     description:
-      "NovaNest reads your full profile — roles, skills, goals — and writes copy that actually sounds like you, not a template.",
+      "NovaNest recalls your roles, skills, goals, and every mock you've run — then writes copy that sounds like you, not a template.",
     accent: "cyan",
   },
   {
@@ -17,9 +17,9 @@ export const aiFeatures = [
   },
   {
     icon: Target,
-    title: "NovaScore readiness",
+    title: "Career Health Score",
     description:
-      "A single composite score tracks resume strength, interview reps, and skill coverage so you always know where you stand.",
+      "A composite score blends resume strength, interview reps, skill coverage, learning, and memory richness — so you always know where you stand.",
     accent: "emerald",
   },
   {

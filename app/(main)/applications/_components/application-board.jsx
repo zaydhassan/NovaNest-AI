@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useId, cloneElement } from "react";
 import { motion } from "framer-motion";
 import {
   Plus,
@@ -404,7 +404,7 @@ export default function ApplicationBoard({ initialApplications = [] }) {
                 value={form.status}
                 onValueChange={(v) => setForm({ ...form, status: v })}
               >
-                <SelectTrigger>
+                <SelectTrigger aria-label="Status">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -472,10 +472,11 @@ export default function ApplicationBoard({ initialApplications = [] }) {
 }
 
 function Field({ label, hint, children }) {
+  const id = useId();
   return (
     <div className="space-y-1.5">
-      <Label className="text-xs">{label}</Label>
-      {children}
+      <Label htmlFor={id} className="text-xs">{label}</Label>
+      {cloneElement(children, { id })}
       {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
     </div>
   );

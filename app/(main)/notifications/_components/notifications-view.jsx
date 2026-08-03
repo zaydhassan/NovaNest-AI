@@ -32,10 +32,7 @@ import {
   TabsContent,
 } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+import { EmptyState } from "@/components/site/state-block";
 import { cn } from "@/lib/utils";
 import {
   markNotificationRead,
@@ -65,20 +62,13 @@ const TYPE_META = {
   learning_recommendation: { icon: Rocket, accent: "text-accent-warm" },
 };
 
-function EmptyState() {
+function NotificationEmptyState() {
   return (
-    <Card className="border-dashed">
-      <CardContent className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted/60">
-          <Bell className="h-6 w-6 text-muted-foreground" />
-        </div>
-        <p className="text-sm font-medium text-foreground">Nothing here yet</p>
-        <p className="max-w-xs text-xs text-muted-foreground">
-          You&apos;ll see updates here as you complete quizzes, mock interviews,
-          and track applications.
-        </p>
-      </CardContent>
-    </Card>
+    <EmptyState
+      icon={Bell}
+      title="Nothing here yet"
+      description="You'll see updates here as you complete quizzes, mock interviews, and track applications."
+    />
   );
 }
 
@@ -199,7 +189,7 @@ export function NotificationsView({
   }
 
   function renderList(list) {
-    if (list.length === 0) return <EmptyState />;
+    if (list.length === 0) return <NotificationEmptyState />;
     return (
       <div className="space-y-3">
         {list.map((n) => (

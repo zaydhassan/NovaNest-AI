@@ -3,6 +3,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark as clerkDark } from "@clerk/themes";
 import { Toaster } from "sonner";
+import { MotionProvider } from "@/components/site/motion-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuroraBackground } from "@/components/site/aurora-background";
 import { NoiseOverlay } from "@/components/site/noise-overlay";
@@ -26,34 +27,46 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://novanest.ai";
 export const metadata = {
   metadataBase: new URL(APP_URL),
   title: {
-    default: "NovaNest AI — Your AI Career Growth OS",
+    default: "NovaNest AI — The AI Career Operating System",
     template: "%s · NovaNest AI",
   },
   description:
-    "NovaNest AI is the AI career growth platform — build ATS-optimized resumes, practice role-specific interviews, generate cover letters, and track industry insights, all in one workspace.",
+    "NovaNest is the AI Career Operating System — one workspace that remembers your career. Build resumes, prep interviews, track applications, and get guidance powered by specialist AI agents and long-term career memory.",
   keywords: [
-    "AI career coach",
+    "AI Career OS",
+    "career copilot",
+    "career memory",
     "resume builder",
     "ATS resume",
     "interview prep",
     "cover letter generator",
     "industry insights",
-    "career growth",
+    "application tracker",
     "NovaNest AI",
   ],
   authors: [{ name: "NovaNest AI" }],
+  applicationName: "NovaNest AI",
   openGraph: {
-    title: "NovaNest AI — Your AI Career Growth OS",
+    title: "NovaNest AI — The AI Career Operating System",
     description:
-      "Build ATS-optimized resumes, practice interviews, generate cover letters, and track market insights — powered by AI.",
+      "One workspace that remembers your career — resumes, interviews, applications, and guidance powered by specialist AI agents that coordinate instead of guess.",
     type: "website",
     url: APP_URL,
     siteName: "NovaNest AI",
+    images: [
+      {
+        url: "/banner.png",
+        width: 1200,
+        height: 630,
+        alt: "NovaNest AI — The AI Career Operating System",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "NovaNest AI",
-    description: "Your AI Career Growth OS — resumes, interviews, cover letters & insights.",
+    description: "The AI Career Operating System — a workspace that remembers your career and thinks alongside you.",
+    images: ["/banner.png"],
   },
   robots: { index: true, follow: true },
 };
@@ -119,21 +132,27 @@ export default function RootLayout({ children }) {
             enableSystem
             disableTransitionOnChange
           >
-            {/* Skip link for keyboard / screen-reader users. */}
-            <a
-              href="#main-content"
-              className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
-            >
-              Skip to content
-            </a>
-            <AuroraBackground />
-            <NoiseOverlay />
-            <SiteHeader />
-            <main id="main-content" className="min-h-screen">
-              {children}
-            </main>
-            <SiteFooter />
-            <Toaster richColors position="bottom-right" />
+            {/* Honor the user's OS reduced-motion preference across every
+                framer-motion animation in the app. The global CSS rule only
+                covers CSS transitions/animations; MotionConfig also
+                suppresses JS-driven motion.* transforms/opacity. */}
+            <MotionProvider>
+              {/* Skip link for keyboard / screen-reader users. */}
+              <a
+                href="#main-content"
+                className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
+              >
+                Skip to content
+              </a>
+              <AuroraBackground />
+              <NoiseOverlay />
+              <SiteHeader />
+              <main id="main-content" className="min-h-screen">
+                {children}
+              </main>
+              <SiteFooter />
+              <Toaster richColors position="bottom-right" />
+            </MotionProvider>
           </ThemeProvider>
         </body>
       </html>

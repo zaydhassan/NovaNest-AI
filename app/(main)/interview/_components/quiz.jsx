@@ -15,12 +15,14 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { generateQuiz, saveQuizResult } from "@/actions/interview";
 import QuizResult from "./quiz-result";
+import TargetCompanySelect from "./target-company-select";
 import useFetch from "@/hooks/use-fetch";
 import { motion } from "framer-motion";
 
-export default function Quiz() {
+export default function Quiz({ userTargetCompany, companies = [] }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState([]);
+  const [companySlug, setCompanySlug] = useState(userTargetCompany ?? null);
 
   const {
     loading: generatingQuiz,
@@ -61,7 +63,7 @@ export default function Quiz() {
   const finishQuiz = async () => {
     const score = calculateScore();
     try {
-      await saveQuizResultFn(quizData, answers, score);
+      await saveQuizResultFn(quizData, answers, score, companySlug);
       toast.success("Quiz completed!");
     } catch (error) {
       toast.error(error.message || "Failed to save quiz results");
@@ -80,7 +82,7 @@ export default function Quiz() {
     setCurrentQuestion(0);
     setAnswers([]);
     setResultData(null);
-    generateQuizFn();
+    generateQuizFn(companySlug);
   };
 
   if (generatingQuiz) {
@@ -108,14 +110,19 @@ export default function Quiz() {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-semibold">Ready to test your knowledge?</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <p className="text-center text-sm text-muted-foreground">
             This quiz contains 10 tailored questions designed around your skills
             and industry. Take your time and choose carefully.
           </p>
+          <TargetCompanySelect
+            value={companySlug}
+            onChange={setCompanySlug}
+            companies={companies}
+          />
         </CardContent>
         <CardFooter>
-          <Button onClick={generateQuizFn} className="w-full" size="lg" aria-label="Start quiz">
+          <Button onClick={() => generateQuizFn(companySlug)} className="w-full" size="lg" aria-label="Start quiz">
             Start quiz
           </Button>
         </CardFooter>

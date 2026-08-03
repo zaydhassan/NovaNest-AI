@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useId, cloneElement } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -163,7 +163,7 @@ export default function ApplicationDetail({ application, resume, coverLetters = 
                   </Badge>
                 )}
               </div>
-              <h1 className="aurora-text animate-aurora text-2xl font-extrabold md:text-3xl">
+              <h1 className="text-2xl font-extrabold tracking-tight text-foreground md:text-3xl">
                 {app.role}
               </h1>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -345,7 +345,7 @@ export default function ApplicationDetail({ application, resume, coverLetters = 
                     onValueChange={onCoverChange}
                     disabled={linking || coverLetters.length === 0}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger aria-label="Cover letter">
                       <SelectValue placeholder={coverLetters.length ? "Select a cover letter" : "No cover letters"} />
                     </SelectTrigger>
                     <SelectContent>
@@ -497,10 +497,11 @@ export default function ApplicationDetail({ application, resume, coverLetters = 
 }
 
 function Field({ label, children }) {
+  const id = useId();
   return (
     <div className="space-y-1.5">
-      <Label className="text-xs">{label}</Label>
-      {children}
+      <Label htmlFor={id} className="text-xs">{label}</Label>
+      {cloneElement(children, { id })}
     </div>
   );
 }

@@ -17,13 +17,14 @@ import { recordTimelineEvent } from "@/lib/career/timeline/timeline-engine";
 import { deriveFromMock } from "@/lib/career/timeline/timeline-derivers";
 import { getInterviewTrendsData } from "@/lib/career/analytics/analytics-service";
 import { withErrorHandling } from "@/lib/errors";
+import { resolveCompanyContext } from "@/lib/career/dream-company/company-context";
 import { revalidatePath } from "next/cache";
 
 /**
  * Ask the AI interviewer for the next question, given the role and the
  * transcript so far.
  */
-export async function nextInterviewQuestion(role, industry, transcript) {
+export async function nextInterviewQuestion(role, industry, transcript, companySlug = null) {
   const user = await requireUser();
   if (!role || typeof role !== "string") {
     throw new ValidationError("A target role is required.");
@@ -40,7 +41,11 @@ export async function nextInterviewQuestion(role, industry, transcript) {
         .join("\n")
     : "";
 
-  return generateText(mockInterviewQuestionPrompt(role, industry, soFar));
+  // Dream Company Mode — resolve the company context once (null when no
+  // company is selected → byte-identical baseline prompt).
+  const company = await resolveCompanyContext(companySlug);
+
+  return generateText(mockInterviewQuestionPrompt(role, industry, soFar, company));
 }
 
 /**
@@ -70,8 +75,13 @@ export async function scoreMockInterview(input) {
     .map((t) => `${t.role === "interviewer" ? "Interviewer" : "Candidate"}: ${t.text}`)
     .join("\n");
 
+  // Dream Company Mode — resolve the company context (null when none selected →
+  // byte-identical baseline scoring prompt).
+  const companySlug = parsed.data.company || null;
+  const company = await resolveCompanyContext(companySlug);
+
   const result = await generateJSON(
-    mockInterviewScorePrompt(parsed.data.role, user.industry, flat)
+    mockInterviewScorePrompt(parsed.data.role, user.industry, flat, company)
   );
 
   const score = Number(result?.score ?? 0);
@@ -82,6 +92,7 @@ export async function scoreMockInterview(input) {
       userId: user.id,
       role: parsed.data.role,
       industry: user.industry,
+      company: companySlug,
       transcript: parsed.data.transcript,
       score,
       feedback,
@@ -137,6 +148,7 @@ export async function getMockInterviews() {
       id: true,
       role: true,
       industry: true,
+      company: true,
       score: true,
       feedback: true,
       createdAt: true,

@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { deleteCoverLetter } from "@/actions/cover-letter";
 import { SpotlightCard } from "@/components/site/spotlight-card";
+import { EmptyState } from "@/components/site/state-block";
 
 const SORTS = [
   { value: "newest", label: "Newest first" },
@@ -101,17 +102,16 @@ export default function CoverLetterList({ coverLetters }) {
 
   if (!coverLetters?.length) {
     return (
-      <Card className="glass">
-        <CardContent className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-          <span className="grid h-12 w-12 place-items-center rounded-xl ring-aurora text-white">
-            <FileText className="h-6 w-6" />
-          </span>
-          <p className="font-medium">No cover letters yet</p>
-          <p className="text-sm text-muted-foreground">
-            Create your first cover letter to get started.
-          </p>
-        </CardContent>
-      </Card>
+      <EmptyState
+        icon={FileText}
+        title="No cover letters yet"
+        description="Generate a tailored, AI-written cover letter from any job description in seconds."
+        action={
+          <Button onClick={() => router.push("/ai-cover-letter/new")} className="gap-2">
+            <FileText className="h-4 w-4" /> Create cover letter
+          </Button>
+        }
+      />
     );
   }
 
@@ -165,7 +165,7 @@ export default function CoverLetterList({ coverLetters }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: Math.min(i * 0.05, 0.3), ease: [0.22, 1, 0.36, 1] }}
             >
-            <SpotlightCard className="glass group relative rounded-xl border border-border text-card-foreground shadow-elevated transition-all duration-300 ease-spring hover:-translate-y-1 hover:border-white/20">
+            <SpotlightCard className="glass group relative rounded-xl border border-border text-card-foreground shadow-card transition-all duration-300 ease-spring hover:-translate-y-1 hover:border-white/20">
               <CardHeader>
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">

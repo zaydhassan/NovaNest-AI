@@ -37,7 +37,7 @@ export default function QuizResult({
         <span className="grid h-10 w-10 place-items-center rounded-xl ring-aurora text-white shadow-glow">
           <Trophy className="h-5 w-5" />
         </span>
-        <h1 className="gradient-title text-3xl">Quiz Results</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Quiz Results</h1>
       </motion.div>
 
       <CardContent className="space-y-8">
@@ -101,7 +101,7 @@ export default function QuizResult({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.4, delay: index * 0.05, ease: EASE }}
-              className="rounded-xl border border-border bg-card p-4 shadow-elevated transition-colors hover:border-white/15"
+              className="rounded-xl border border-border bg-card p-4 shadow-card transition-colors hover:border-white/15"
             >
               <div className="flex items-start justify-between gap-2">
                 <p className="font-medium">{q.question}</p>

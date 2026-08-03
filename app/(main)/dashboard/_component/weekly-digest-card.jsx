@@ -33,7 +33,7 @@ export default function WeeklyDigestCard({ digest }) {
           <span className="grid h-7 w-7 place-items-center rounded-lg bg-primary/15 text-primary">
             <Newspaper className="h-4 w-4" />
           </span>
-          Your weekly brief
+          Weekly report
         </CardTitle>
         <CardDescription>
           {digest?.weekStart

@@ -9,6 +9,8 @@ import LazyPerformanceChart from "./_components/lazy-performance-chart";
 import LazyInterviewTrendChart from "./_components/lazy-interview-trend-chart";
 import QuizList from "./_components/quiz-list";
 
+export const metadata = { title: "Interview Preparation" };
+
 export default async function InterviewPrepPage() {
   await ensureOnboarded();
   const assessments = await getAssessments();

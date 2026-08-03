@@ -1,35 +1,57 @@
-import { BrainCircuit, Briefcase, LineChart, ScrollText } from "lucide-react";
+import {
+  Sparkles,
+  Radar,
+  PenBox,
+  KanbanSquare,
+  GraduationCap,
+  Rocket,
+} from "lucide-react";
 
-// Value-first feature copy: each entry leads with the outcome the user gets,
-// then the capability that delivers it. Icons and order are unchanged so the
-// existing feature grid keeps its layout.
+// The six product pillars of the AI Career Operating System. Each entry leads
+// with the outcome the user gets, then the real capabilities that deliver it.
+// These are not new features — they group the existing surfaces into the OS
+// architecture. Icons stay as JSX to match the existing feature-grid layout.
 export const features = [
   {
-    icon: <BrainCircuit className="w-7 h-7" />,
-    title: "AI-Powered Career Insights",
-    value: "Know your next move before the market does.",
+    icon: <Sparkles className="w-7 h-7" />,
+    title: "AI Copilot",
+    value: "Guidance that remembers you.",
     description:
-      "Receive data-driven career advice aligned with live market trends and your unique profile — so every decision is backed by evidence, not guesswork.",
+      "A conversational copilot backed by long-term career memory and specialist agents — interview, resume, application, analytics, learning — that coordinate instead of guessing.",
   },
   {
-    icon: <ScrollText className="w-7 h-7" />,
-    title: "Personalized Interview Practice",
-    value: "Walk into every interview already rehearsed.",
+    icon: <Radar className="w-7 h-7" />,
+    title: "Career Intelligence",
+    value: "See your career as a system.",
     description:
-      "Simulated, role-specific questions with real-time feedback on tone, structure, and coverage — calibrated to the exact role you're targeting.",
+      "Industry and salary insights, a career-health score, readiness, skill growth, a weekly digest, and an auto-built timeline — one executive view of where you stand.",
   },
   {
-    icon: <LineChart className="w-7 h-7" />,
-    title: "Industry Analytics",
-    value: "See salary, demand, and skill trends as they shift.",
+    icon: <PenBox className="w-7 h-7" />,
+    title: "Career Workspace",
+    value: "Build documents that get you shortlisted.",
     description:
-      "In-depth analytics on salary bands, hiring momentum, and skills demand in your field — updated continuously, so you negotiate from a position of facts.",
+      "An ATS-scored resume builder, AI cover letters, and a tools suite — achievement rewriter, skill roadmap, outreach, job-fit — in one connected workspace.",
   },
   {
-    icon: <Briefcase className="w-7 h-7" />,
-    title: "Smart Resume & Cover Letter",
-    value: "Generate ATS-optimized documents that get you shortlisted.",
+    icon: <KanbanSquare className="w-7 h-7" />,
+    title: "Applications",
+    value: "Run your pipeline, not a spreadsheet.",
     description:
-      "Build polished, applicant-tracking-system-ready resumes and cover letters in minutes — tailored to each role, optimized for the keywords recruiters scan for.",
+      "A kanban tracker from saved to offer, with per-job ATS scoring, artifact linking, and AI next-steps grounded in each application.",
+  },
+  {
+    icon: <GraduationCap className="w-7 h-7" />,
+    title: "Interview Prep",
+    value: "Walk in already rehearsed.",
+    description:
+      "Voice mock interviews that score you out loud, role-specific quizzes with improvement tips, and trend analytics that show your trajectory.",
+  },
+  {
+    icon: <Rocket className="w-7 h-7" />,
+    title: "Learning",
+    value: "Grow on purpose, not by chance.",
+    description:
+      "Set a career goal, run a learning board, log sessions, and get next-topic recommendations driven by your mocks and live market signals.",
   },
 ];

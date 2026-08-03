@@ -44,7 +44,7 @@ export const plans = [
     currency: "INR",
     period: "/mo",
     purchasable: true,
-    description: "For career teams, bootcamps, and universities coaching many candidates.",
+    description: "For career teams, bootcamps, and universities running many candidates through the OS.",
     features: [
       "Everything in Pro",
       "Up to 10 seats",

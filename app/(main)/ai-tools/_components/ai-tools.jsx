@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import { Loader2, Sparkles, Copy, Check, Wand2, Map, Send, Target } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -73,7 +73,7 @@ function CopyButton({ text }) {
 
 function ToolCard({ icon: Icon, title, description, children }) {
   return (
-    <SpotlightCard className="glass rounded-xl border border-border text-card-foreground shadow-elevated transition-all duration-300 ease-spring hover:-translate-y-0.5 hover:border-white/15">
+    <SpotlightCard className="glass rounded-xl border border-border text-card-foreground shadow-card transition-all duration-300 ease-spring hover:-translate-y-0.5 hover:border-white/15">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <span className="grid h-7 w-7 place-items-center rounded-lg bg-primary/15 text-primary">
@@ -104,6 +104,7 @@ function BulletRewriter() {
           value={bullet}
           onChange={(e) => setBullet(e.target.value)}
           placeholder="e.g. did bug fixes on the backend"
+          aria-label="Bullet to rewrite"
           className="h-20"
         />
         <Button onClick={() => fn({ bullet })} disabled={loading || !bullet.trim()} className="gap-2">
@@ -130,6 +131,8 @@ function RoadmapTool() {
   const [targetRole, setTargetRole] = useState("");
   const [currentSkills, setCurrentSkills] = useState("");
   const weeks = data?.weeks ?? [];
+  const targetId = useId();
+  const skillsId = useId();
 
   return (
     <ToolCard
@@ -140,12 +143,12 @@ function RoadmapTool() {
       <div className="space-y-3">
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label>Target role *</Label>
-            <Input value={targetRole} onChange={(e) => setTargetRole(e.target.value)} placeholder="Staff Engineer" />
+            <Label htmlFor={targetId}>Target role *</Label>
+            <Input id={targetId} value={targetRole} onChange={(e) => setTargetRole(e.target.value)} placeholder="Staff Engineer" />
           </div>
           <div className="space-y-1.5">
-            <Label>Current skills</Label>
-            <Input value={currentSkills} onChange={(e) => setCurrentSkills(e.target.value)} placeholder="React, Node, SQL" />
+            <Label htmlFor={skillsId}>Current skills</Label>
+            <Input id={skillsId} value={currentSkills} onChange={(e) => setCurrentSkills(e.target.value)} placeholder="React, Node, SQL" />
           </div>
         </div>
         <Button
@@ -198,6 +201,8 @@ function OutreachTool() {
   const [role, setRole] = useState("");
   const [kind, setKind] = useState("linkedin");
   const out = typeof data === "string" ? data : "";
+  const companyId = useId();
+  const roleId = useId();
 
   return (
     <ToolCard
@@ -208,12 +213,12 @@ function OutreachTool() {
       <div className="space-y-3">
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label>Company *</Label>
-            <Input value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Acme Corp" />
+            <Label htmlFor={companyId}>Company *</Label>
+            <Input id={companyId} value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Acme Corp" />
           </div>
           <div className="space-y-1.5">
-            <Label>Role / contact *</Label>
-            <Input value={role} onChange={(e) => setRole(e.target.value)} placeholder="Hiring Manager" />
+            <Label htmlFor={roleId}>Role / contact *</Label>
+            <Input id={roleId} value={role} onChange={(e) => setRole(e.target.value)} placeholder="Hiring Manager" />
           </div>
         </div>
         <div className="flex gap-2">
@@ -263,6 +268,7 @@ function JobFitTool() {
           value={jd}
           onChange={(e) => setJd(e.target.value)}
           placeholder="Paste the full job description…"
+          aria-label="Job description"
           className="h-32"
         />
         <Button onClick={() => fn({ jobDescription: jd })} disabled={loading || !jd.trim()} className="gap-2">
@@ -273,7 +279,7 @@ function JobFitTool() {
           <Reveal className="space-y-3 pt-1">
             <div className="flex items-center gap-3">
               <div className="grid h-16 w-16 place-items-center rounded-full ring-aurora">
-                <AnimatedCounter value={Math.round(fit)} className="text-2xl font-extrabold" />
+                <AnimatedCounter value={Math.round(fit)} className="text-2xl font-extrabold tnum" />
               </div>
               <p className="text-sm text-muted-foreground">
                 {fit >= 75 ? "Strong fit." : fit >= 50 ? "Decent fit — emphasize the right things." : "Stretch role — frame gaps carefully."}

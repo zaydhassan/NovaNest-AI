@@ -5,6 +5,8 @@ import { getCoverLetter } from "@/actions/cover-letter";
 import { ensureOnboarded } from "@/lib/onboarding";
 import CoverLetterPreview from "../_components/cover-letter-preview";
 
+export const metadata = { title: "Cover Letter" };
+
 export default async function EditCoverLetterPage({ params }) {
   await ensureOnboarded();
   const { id } = await params;
@@ -20,7 +22,7 @@ export default async function EditCoverLetterPage({ params }) {
           </Button>
         </Link>
 
-        <h1 className="aurora-text animate-aurora mb-6 text-3xl font-extrabold md:text-4xl">
+        <h1 className="mb-6 text-2xl font-extrabold tracking-tight text-foreground md:text-3xl">
           {coverLetter?.jobTitle} at {coverLetter?.companyName}
         </h1>
       </div>

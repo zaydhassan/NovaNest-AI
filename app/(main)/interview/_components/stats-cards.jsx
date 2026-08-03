@@ -2,10 +2,11 @@
 
 import { motion } from "framer-motion";
 import { Brain, Target, Trophy, Award } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { SpotlightCard } from "@/components/site/spotlight-card";
 import { AnimatedCounter } from "@/components/site/animated-counter";
+import { EmptyState } from "@/components/site/state-block";
 
 function StatCard({ icon: Icon, label, value, sub, accent, delay = 0, children }) {
   return (
@@ -22,7 +23,7 @@ function StatCard({ icon: Icon, label, value, sub, accent, delay = 0, children }
           </span>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{value}</div>
+          <div className="text-2xl font-bold tnum">{value}</div>
           {children}
           {sub && <p className="mt-1 text-xs text-muted-foreground">{sub}</p>}
         </CardContent>
@@ -36,17 +37,11 @@ export default function StatsCards({ assessments }) {
 
   if (!list.length) {
     return (
-      <Card className="glass">
-        <CardContent className="flex flex-col items-center justify-center gap-3 py-12 text-center">
-          <span className="grid h-12 w-12 place-items-center rounded-xl ring-aurora text-white">
-            <Target className="h-6 w-6" />
-          </span>
-          <p className="font-medium">No practice sessions yet</p>
-          <p className="text-sm text-muted-foreground">
-            Start a mock interview to see your stats here.
-          </p>
-        </CardContent>
-      </Card>
+      <EmptyState
+        icon={Target}
+        title="No practice sessions yet"
+        description="Start a mock interview or quiz to see your average score, best score, and progress over time."
+      />
     );
   }
 

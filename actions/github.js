@@ -33,7 +33,7 @@ export const connectRepo = withErrorHandling(async function connectRepo(input) {
   const pat = parsed.data.pat ? parsed.data.pat.trim() : null;
   const patHash = pat ? sha256(pat) : null;
 
-  const repo = await db.githubRepo.upsert({
+  const repo = await db.gitHubRepo.upsert({
     where: { userId_fullName: { userId: user.id, fullName } },
     update: {
       patHash,
@@ -70,7 +70,7 @@ export const connectRepo = withErrorHandling(async function connectRepo(input) {
 /** List all of the signed-in user's connected repos, newest-first. */
 export const listRepos = withErrorHandling(async function listRepos() {
   const user = await requireUser();
-  return db.githubRepo.findMany({
+  return db.gitHubRepo.findMany({
     where: { userId: user.id },
     orderBy: { createdAt: "desc" },
   });
@@ -79,7 +79,7 @@ export const listRepos = withErrorHandling(async function listRepos() {
 /** Get one repo + its analysis. Ownership-scoped to the signed-in user. */
 export const getRepoAnalysis = withErrorHandling(async function getRepoAnalysis(id) {
   const user = await requireUser();
-  const repo = await db.githubRepo.findFirst({ where: { id, userId: user.id } });
+  const repo = await db.gitHubRepo.findFirst({ where: { id, userId: user.id } });
   if (!repo) throw new NotFoundError("Repository not found.");
   return repo;
 }, "Couldn't load that analysis. Please try again.");
@@ -88,7 +88,7 @@ export const getRepoAnalysis = withErrorHandling(async function getRepoAnalysis(
 export const disconnectRepo = withErrorHandling(async function disconnectRepo(id) {
   const user = await requireUser();
   try {
-    await db.githubRepo.delete({ where: { id, userId: user.id } });
+    await db.gitHubRepo.delete({ where: { id, userId: user.id } });
   } catch {
     throw new NotFoundError("Repository not found or already removed.");
   }
@@ -105,7 +105,7 @@ export const reanalyzeRepo = withErrorHandling(async function reanalyzeRepo(id, 
   const user = await requireUser();
   rateLimit({ key: `github:${user.clerkUserId}`, limit: 10, windowMs: 60 * 60_000 });
 
-  const repo = await db.githubRepo.findFirst({
+  const repo = await db.gitHubRepo.findFirst({
     where: { id, userId: user.id },
     select: { id: true, fullName: true, isPrivate: true },
   });
@@ -118,7 +118,7 @@ export const reanalyzeRepo = withErrorHandling(async function reanalyzeRepo(id, 
     );
   }
 
-  await db.githubRepo.update({
+  await db.gitHubRepo.update({
     where: { id: repo.id },
     data: {
       analysisStatus: "pending",

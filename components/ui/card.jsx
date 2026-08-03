@@ -19,7 +19,7 @@ const Card = React.forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      "relative rounded-xl border border-border bg-card text-card-foreground shadow-elevated transition-[transform,box-shadow,border-color] duration-300 ease-spring",
+      "relative rounded-xl border border-border bg-card text-card-foreground shadow-card transition-[transform,box-shadow,border-color] duration-300 ease-spring",
       "before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent",
       className
     )}

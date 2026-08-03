@@ -32,15 +32,21 @@ import {
   nextInterviewQuestion,
   scoreMockInterview,
 } from "@/actions/mock-interview";
+import TargetCompanySelect from "./target-company-select";
 
 /**
  * Voice mock interview using the browser's Web Speech API.
  * - The AI interviewer's questions are spoken (SpeechSynthesis) + shown.
  * - The candidate answers by voice (SpeechRecognition) with a text fallback.
  * - At the end the transcript is scored by Gemini and the session is saved.
+ *
+ * Dream Company Mode: `userTargetCompany` pre-selects the user's saved target;
+ * the optional selector lets them override per-session. `null` (None) → the
+ * `askFn`/`scoreFn` calls pass `null` → byte-identical baseline behavior.
  */
-export default function VoiceMockInterview({ userIndustry }) {
+export default function VoiceMockInterview({ userIndustry, userTargetCompany, companies = [] }) {
   const [role, setRole] = useState("");
+  const [companySlug, setCompanySlug] = useState(userTargetCompany ?? null);
   const [started, setStarted] = useState(false);
   const [transcript, setTranscript] = useState([]); // [{role, text}]
   const [currentQuestion, setCurrentQuestion] = useState("");
@@ -96,7 +102,7 @@ export default function VoiceMockInterview({ userIndustry }) {
 
   const askNext = useCallback(
     async (currentTranscript) => {
-      const q = await askFn(role, userIndustry, currentTranscript);
+      const q = await askFn(role, userIndustry, currentTranscript, companySlug);
       if (q && q.trim()) {
         setCurrentQuestion(q);
         speak(q);
@@ -107,7 +113,7 @@ export default function VoiceMockInterview({ userIndustry }) {
         );
       }
     },
-    [askFn, role, userIndustry, speak, pushTurn]
+    [askFn, role, userIndustry, companySlug, speak, pushTurn]
   );
 
   const startInterview = async () => {
@@ -205,7 +211,7 @@ export default function VoiceMockInterview({ userIndustry }) {
       toast.error("Answer at least one question before scoring.");
       return;
     }
-    const result = await scoreFn({ role, transcript: transcriptRef.current });
+    const result = await scoreFn({ role, transcript: transcriptRef.current, company: companySlug });
     if (result) {
       setScoreResult(result.scored);
       setStarted(false);
@@ -260,6 +266,11 @@ export default function VoiceMockInterview({ userIndustry }) {
               </p>
             )}
           </div>
+          <TargetCompanySelect
+            value={companySlug}
+            onChange={setCompanySlug}
+            companies={companies}
+          />
           <Button onClick={startInterview} disabled={askingQuestion} className="w-full gap-2">
             {askingQuestion ? (
               <Loader2 className="h-4 w-4 animate-spin" />

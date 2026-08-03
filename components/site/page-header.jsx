@@ -22,7 +22,7 @@ export function PageHeader({ eyebrow, title, description, actions, className }) 
             {eyebrow}
           </span>
         )}
-        <h1 className="aurora-text animate-aurora text-4xl font-extrabold tracking-tight md:text-5xl">
+        <h1 className="text-3xl font-extrabold tracking-tight text-foreground md:text-4xl">
           {title}
         </h1>
         {description && (

@@ -8,6 +8,7 @@ import { NotFoundError, withErrorHandling } from "@/lib/errors";
 import { buildPrompt } from "@/lib/career/prompts/prompt-service";
 import { recallMemory } from "@/lib/career/memory/memory-service";
 import { inngest } from "@/lib/inngest/client";
+import { gatherTwinSources, buildTwinProfile } from "@/lib/career/twin/twin-builder";
 import { revalidatePath } from "next/cache";
 
 /**
@@ -27,9 +28,17 @@ export const getTwin = withErrorHandling(async function getTwin() {
  * Dispatch a background rebuild of the user's Career Twin. Returns immediately
  * with a pending state; the Inngest `rebuild-career-twin` job upserts the twin
  * and bumps `User.twinVersion`. Rate-limited so a client loop can't spam it.
+ *
+ * Local-dev fallback: if Inngest isn't configured (e.g. no dev server / event
+ * key → 401 "Event key not found"), we build the twin inline within the action
+ * instead of throwing — reusing the same `gatherTwinSources`/`buildTwinProfile`
+ * the Inngest job runs. This honors the "Inngest optional for local dev" contract:
+ * the feature works without the background queue, just synchronously. The UI's
+ * version-bump poll picks up the new twin either way. `buildTwinProfile` never
+ * throws — it returns `{ twin, error }`.
  */
 export const rebuildTwin = withErrorHandling(async function rebuildTwin() {
-  const user = await requireUser({ select: { id: true, clerkUserId: true } });
+  const user = await requireUser({ select: { id: true, clerkUserId: true, twinVersion: true } });
   rateLimit({ key: `twin-rebuild:${user.clerkUserId}`, limit: 5, windowMs: 10 * 60_000 });
 
   try {
@@ -37,13 +46,26 @@ export const rebuildTwin = withErrorHandling(async function rebuildTwin() {
       name: "twin/rebuild.requested",
       data: { userId: user.id },
     });
+    revalidatePath("/twin");
+    return { dispatched: true };
   } catch (e) {
     console.error("[NovaNest] twin/rebuild.requested dispatch:", e?.message);
-    throw new Error("Couldn't start the rebuild. Please try again.");
+    // Inline fallback (Inngest unavailable — local dev without the dev server).
+    const sources = await gatherTwinSources(user.id);
+    const built = await buildTwinProfile(sources);
+    if (!built.twin) {
+      throw new Error(built.error || "Couldn't build your Career Twin. Please try again.");
+    }
+    const nextVersion = (user.twinVersion ?? 0) + 1;
+    await db.careerTwin.upsert({
+      where: { userId: user.id },
+      update: { profile: built.twin, version: nextVersion, lastUpdatedAt: new Date() },
+      create: { userId: user.id, profile: built.twin, version: 1 },
+    });
+    await db.user.update({ where: { id: user.id }, data: { twinVersion: nextVersion } });
+    revalidatePath("/twin");
+    return { dispatched: false, built: true, version: nextVersion };
   }
-
-  revalidatePath("/twin");
-  return { dispatched: true };
 }, "Couldn't rebuild your Career Twin. Please try again.");
 
 /**

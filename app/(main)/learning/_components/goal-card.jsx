@@ -100,7 +100,7 @@ export default function GoalCard({ initialGoal }) {
         {goal && !editing ? (
           <div className="mt-5 space-y-3">
             <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-              <span className="aurora-text text-2xl font-semibold tracking-tight">
+              <span className="text-2xl font-semibold tracking-tight text-foreground">
                 {goal.targetRole}
               </span>
               {goal.targetLevel && (

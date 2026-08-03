@@ -5,10 +5,12 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
-  Trophy,
-  Target,
-  Sparkles,
-  CheckCircle2,
+  MessagesSquare,
+  Workflow,
+  Infinity,
+  Brain,
+  History,
+  Fingerprint,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,7 +25,6 @@ import { ProductDemo } from "@/components/site/product-demo";
 import { DashboardPreview } from "@/components/site/dashboard-preview";
 import { Pricing } from "@/components/site/pricing";
 import { SectionHeading } from "@/components/site/section-heading";
-import { StatCounter } from "@/components/site/stat-counter";
 import { SpotlightCard } from "@/components/site/spotlight-card";
 import { RevealStagger, RevealItem } from "@/components/site/reveal";
 import { features } from "@/data/features";
@@ -33,15 +34,6 @@ import { plans } from "@/data/pricing";
 import { aiFeatures } from "@/data/aiFeatures";
 
 const ease = [0.22, 1, 0.36, 1];
-
-const stats = [
-  { icon: <Trophy className="h-5 w-5" />, to: 50, suffix: "+", label: "Industries covered", delay: 0, accent: "linear-gradient(135deg,hsl(var(--cyan)),hsl(var(--purple)))" },
-  { icon: <Sparkles className="h-5 w-5" />, to: 1000, suffix: "+", label: "AI interview questions", delay: 120, accent: "linear-gradient(135deg,hsl(var(--purple)),hsl(var(--emerald)))" },
-  { icon: <CheckCircle2 className="h-5 w-5" />, to: 95, suffix: "%", label: "User success rate", delay: 240, accent: "linear-gradient(135deg,hsl(var(--emerald)),hsl(var(--cyan)))" },
-  { icon: <Target className="h-5 w-5" />, to: 24, suffix: "/7", label: "AI support", delay: 360, accent: "linear-gradient(135deg,hsl(var(--cyan)),hsl(var(--emerald)))" },
-];
-
-const trusted = ["TechNova", "BrightWave", "Insight Co.", "Northwind", "Lumen", "Vertex", "Halcyon", "Quanta"];
 
 const accentText = {
   cyan: "text-accent",
@@ -54,36 +46,61 @@ export default function LandingPage() {
     <>
       <HeroSection />
 
-      {/* ---- Trusted by (marquee) ---- */}
-      <section className="relative border-y border-white/[0.06] bg-white/[0.015] py-8">
+      {/* ---- Why not just ChatGPT? ---- */}
+      <section className="relative border-y border-white/[0.06] bg-white/[0.015] py-16 md:py-24">
         <div className="container mx-auto px-4">
-          <p className="mb-6 text-center text-xs font-medium uppercase tracking-widest text-muted-foreground">
-            Trusted by professionals at
-          </p>
-        </div>
-        <div className="relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,#000_12%,#000_88%,transparent)]">
-          <div className="flex w-max animate-marquee items-center gap-14 pr-14">
-            {[...trusted, ...trusted].map((name, i) => (
-              <span
-                key={`${name}-${i}`}
-                className="font-display text-lg font-semibold text-muted-foreground/70 transition-colors hover:text-foreground"
-              >
-                {name}
-              </span>
-            ))}
-          </div>
+          <SectionHeading
+            eyebrow="Why not just ChatGPT"
+            title="A chatbot starts from zero. NovaNest starts from you."
+            subtitle="ChatGPT is a blank slate every time. NovaNest is an operating system — it remembers, coordinates, and compounds."
+          />
+          <RevealStagger className="mx-auto grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-3">
+            <RevealItem>
+              <SpotlightCard className="glass h-full rounded-2xl p-6 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:border-white/20">
+                <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl ring-aurora text-white shadow-glow">
+                  <MessagesSquare className="h-6 w-6" />
+                </div>
+                <h3 className="mb-2 text-lg font-semibold">ChatGPT starts from zero.</h3>
+                <p className="text-sm text-muted-foreground">
+                  NovaNest starts from <em>you</em>. A persistent memory carries your roles, skills, goals, and every mock you&apos;ve run — so every answer is sharper than the last.
+                </p>
+              </SpotlightCard>
+            </RevealItem>
+            <RevealItem>
+              <SpotlightCard className="glass h-full rounded-2xl p-6 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:border-white/20">
+                <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl ring-aurora text-white shadow-glow">
+                  <Workflow className="h-6 w-6" />
+                </div>
+                <h3 className="mb-2 text-lg font-semibold">A chatbot guesses.</h3>
+                <p className="text-sm text-muted-foreground">
+                  NovaNest <em>coordinates</em>. A router picks the right specialist — interview, resume, application, analytics, learning — instead of one prompt doing everything badly.
+                </p>
+              </SpotlightCard>
+            </RevealItem>
+            <RevealItem>
+              <SpotlightCard className="glass h-full rounded-2xl p-6 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:border-white/20">
+                <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl ring-aurora text-white shadow-glow">
+                  <Infinity className="h-6 w-6" />
+                </div>
+                <h3 className="mb-2 text-lg font-semibold">A tool you outgrow.</h3>
+                <p className="text-sm text-muted-foreground">
+                  NovaNest <em>compounds</em>. Your Career Twin, timeline, and health score get richer with every action — so the guidance compounds with every step.
+                </p>
+              </SpotlightCard>
+            </RevealItem>
+          </RevealStagger>
         </div>
       </section>
 
-      {/* ---- Features ---- */}
+      {/* ---- Pillars ---- */}
       <section id="features" className="section">
         <div className="container mx-auto px-4">
           <SectionHeading
-            eyebrow="Features"
-            title="Everything you need to grow your career"
-            subtitle="A complete AI toolkit — from your first resume to your next promotion."
+            eyebrow="The system"
+            title="Six pillars. One operating system."
+            subtitle="Every pillar feeds the next — your work doesn't sit in silos, it compounds."
           />
-          <RevealStagger className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <RevealStagger className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {features.map((feature, index) => (
               <RevealItem key={index}>
                 <SpotlightCard className="glass group h-full rounded-2xl p-6 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:border-white/20 hover:shadow-glass-lg">
@@ -103,7 +120,7 @@ export default function LandingPage() {
       </section>
 
       {/* ---- Interactive product demo ---- */}
-      <section className="section pt-4 md:pt-8">
+      <section id="demo" className="section pt-4 md:pt-8">
         <div className="container mx-auto px-4">
           <SectionHeading
             eyebrow="See it in action"
@@ -126,19 +143,49 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ---- Stats ---- */}
+      {/* ---- How NovaNest compounds ---- */}
       <section className="section py-12 md:py-20">
         <div className="container mx-auto px-4">
           <SectionHeading
-            eyebrow="By the numbers"
-            title="Measurable impact for real careers"
-            subtitle="Real outcomes from professionals using NovaNest to accelerate their search."
+            eyebrow="Why it compounds"
+            title="Every action makes the next one sharper"
+            subtitle="NovaNest isn't a tool you run and forget. It's a system that gets richer the more you use it."
           />
-          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-4">
-            {stats.map((s) => (
-              <StatCounter key={s.label} {...s} />
-            ))}
-          </div>
+          <RevealStagger className="mx-auto grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-3">
+            <RevealItem>
+              <SpotlightCard className="glass group h-full rounded-2xl p-6 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:border-white/20">
+                <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl ring-aurora text-white shadow-glow transition-transform duration-300 ease-spring group-hover:scale-110">
+                  <Brain className="h-6 w-6" />
+                </div>
+                <h3 className="mb-2 text-lg font-semibold">Every action writes to memory</h3>
+                <p className="text-sm text-muted-foreground">
+                  Chat, mock, resume, and application — each one extracts durable facts that the OS recalls next time.
+                </p>
+              </SpotlightCard>
+            </RevealItem>
+            <RevealItem>
+              <SpotlightCard className="glass group h-full rounded-2xl p-6 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:border-white/20">
+                <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl ring-aurora text-white shadow-glow transition-transform duration-300 ease-spring group-hover:scale-110">
+                  <History className="h-6 w-6" />
+                </div>
+                <h3 className="mb-2 text-lg font-semibold">A timeline builds itself</h3>
+                <p className="text-sm text-muted-foreground">
+                  Your career history auto-derives from your activity — no manual journaling, no separate log to maintain.
+                </p>
+              </SpotlightCard>
+            </RevealItem>
+            <RevealItem>
+              <SpotlightCard className="glass group h-full rounded-2xl p-6 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:border-white/20">
+                <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl ring-aurora text-white shadow-glow transition-transform duration-300 ease-spring group-hover:scale-110">
+                  <Fingerprint className="h-6 w-6" />
+                </div>
+                <h3 className="mb-2 text-lg font-semibold">A Career Twin gets sharper</h3>
+                <p className="text-sm text-muted-foreground">
+                  An AI model of you rebuilds from your latest history — so the voice answering questions is always current.
+                </p>
+              </SpotlightCard>
+            </RevealItem>
+          </RevealStagger>
         </div>
       </section>
 
@@ -146,9 +193,9 @@ export default function LandingPage() {
       <section className="section py-12 md:py-20">
         <div className="container mx-auto px-4">
           <SectionHeading
-            eyebrow="AI features"
+            eyebrow="Intelligence layer"
             title="Intelligence woven into every step"
-            subtitle="NovaNest's AI is contextual, private, and built for the work you actually do."
+            subtitle="The OS layer that turns your activity into memory, scores, and guidance — contextual, private, and built for the work you actually do."
           />
           <RevealStagger className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {aiFeatures.map((f) => {
@@ -179,8 +226,8 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <SectionHeading
             eyebrow="How it works"
-            title="Four steps to a stronger career"
-            subtitle="Fast, clear, and effective — from setup to success."
+            title="Set up once. It remembers forever."
+            subtitle="Every action you take writes to memory — so the system gets richer, and the guidance gets sharper, with every step."
           />
           <div className="relative mx-auto max-w-6xl">
             <div className="hidden md:absolute md:left-0 md:right-0 md:top-[64px] md:block" aria-hidden="true">
@@ -212,8 +259,8 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <SectionHeading
             eyebrow="Pricing"
-            title="Simple, transparent pricing"
-            subtitle="Start free. Upgrade when you're ready. Cancel anytime."
+            title="Start free. Scale to the full OS."
+            subtitle="Begin on the free plan. Upgrade to the full operating system when you're ready. Cancel anytime."
           />
           <Pricing plans={plans} />
         </div>
@@ -225,7 +272,7 @@ export default function LandingPage() {
           <SectionHeading
             eyebrow="FAQ"
             title="Frequently asked questions"
-            subtitle="Clear answers to help you get started with confidence."
+            subtitle="What people ask before running their career on NovaNest."
           />
           <div className="mx-auto max-w-3xl space-y-3">
             {faqs.map((faq, i) => (
@@ -269,14 +316,15 @@ export default function LandingPage() {
             />
             <div className="relative z-10 mx-auto max-w-2xl">
               <h2 className="aurora-text animate-aurora text-3xl font-extrabold md:text-5xl">
-                Ready to advance your career?
+                Run your career on AI.
               </h2>
               <p className="mx-auto mt-4 max-w-xl text-muted-foreground md:text-lg">
-                Join a new wave of professionals scaling new heights with NovaNest&apos;s smart tools, insights, and interview mastery.
+                Stop starting from zero. NovaNest remembers your career,
+                coordinates the work, and compounds with every step.
               </p>
               <Link href="/dashboard" className="mt-8 inline-block">
                 <Button variant="gradient" size="lg" className="gap-2 rounded-full px-8">
-                  Begin your career upgrade
+                  Start free
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>

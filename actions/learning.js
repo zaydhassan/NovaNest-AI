@@ -86,6 +86,18 @@ export const upsertTopic = withErrorHandling(async function upsertTopic(data) {
         notes: notes ?? null,
       },
     });
+
+    // Career OS — timeline "learning" milestone when a new topic is added.
+    // Distinct sourceId (`#started`) keeps it separate from session events and
+    // from the `#learned` achievement. Fire-and-forget; never blocks the create.
+    recordTimelineEvent({
+      userId: user.id,
+      type: "learning",
+      title: `Started learning ${row.skill}`,
+      description: "New skill added to your learning board.",
+      sourceType: "learning",
+      sourceId: `${row.id}#started`,
+    }).catch((e) => console.error("[NovaNest] timeline topic-start:", e?.message));
   }
 
   revalidatePath("/learning");
@@ -122,6 +134,18 @@ export const markTopicStatus = withErrorHandling(
     });
 
     if (status === "learned") {
+      // Career OS — timeline "achievement" milestone when a topic is mastered.
+      // Distinct type (`achievement`) + sourceId (`#learned`) vs the start
+      // event, so both survive dedup. Fire-and-forget; never blocks the update.
+      recordTimelineEvent({
+        userId: user.id,
+        type: "achievement",
+        title: `Mastered ${owned.skill}`,
+        description: "Skill marked as learned — Career Health learning pillar rose.",
+        sourceType: "learning",
+        sourceId: `${owned.id}#learned`,
+      }).catch((e) => console.error("[NovaNest] timeline topic-learned:", e?.message));
+
       createNotification(user.id, {
         type: "learning_recommendation",
         title: `Learned: ${owned.skill}`,

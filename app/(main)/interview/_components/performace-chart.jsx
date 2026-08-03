@@ -18,6 +18,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/site/state-block";
 import { format } from "date-fns";
 import { TrendingUp } from "lucide-react";
 
@@ -38,14 +39,16 @@ export default function PerformanceChart({ assessments }) {
     return (
       <Card className="glass">
         <CardHeader>
-          <CardTitle>Performance trend</CardTitle>
+          <CardTitle className="text-xl font-bold tracking-tight text-foreground md:text-2xl">Performance trend</CardTitle>
           <CardDescription>Your quiz scores over time</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex h-[260px] flex-col items-center justify-center gap-2 text-center text-sm text-muted-foreground">
-            <TrendingUp className="h-8 w-8 text-primary/50" />
-            No quiz history yet. Complete a mock interview to start tracking.
-          </div>
+          <EmptyState
+            icon={TrendingUp}
+            title="No quiz history yet"
+            description="Complete a mock interview or quiz to start tracking your performance over time."
+            className="max-w-none py-8"
+          />
         </CardContent>
       </Card>
     );
@@ -55,7 +58,7 @@ export default function PerformanceChart({ assessments }) {
     <Card className="glass">
       <CardHeader className="flex flex-row items-start justify-between space-y-0">
         <div>
-          <CardTitle className="aurora-text text-2xl md:text-3xl">Performance trend</CardTitle>
+          <CardTitle className="text-xl font-bold tracking-tight text-foreground md:text-2xl">Performance trend</CardTitle>
           <CardDescription>Your quiz scores over time</CardDescription>
         </div>
         {chartData.length >= 2 && (

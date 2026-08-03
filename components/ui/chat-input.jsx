@@ -14,7 +14,7 @@ export default function ChatInput({
   onSend,
   disabled = false,
   loading = false,
-  placeholder = "Ask your AI career coach anything…",
+  placeholder = "Ask your AI copilot anything…",
   className,
 }) {
   const [value, setValue] = useState("");
@@ -57,7 +57,7 @@ export default function ChatInput({
         disabled={disabled}
         rows={1}
         placeholder={placeholder}
-        aria-label="Message your AI career coach"
+        aria-label="Message your AI copilot"
         className="max-h-40 flex-1 resize-none bg-transparent px-2 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none disabled:opacity-50"
       />
       <button

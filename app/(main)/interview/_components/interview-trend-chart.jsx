@@ -19,6 +19,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/site/state-block";
 import { Mic, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { getInterviewTrends } from "@/actions/mock-interview";
 
@@ -63,7 +64,7 @@ export default function InterviewTrendChart() {
           <CardDescription>Mock interview scores + sub-metrics over time.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="h-[300px] animate-pulse rounded-xl bg-muted/30" />
+          <div className="h-[300px] shimmer rounded-xl" />
         </CardContent>
       </Card>
     );
@@ -82,10 +83,12 @@ export default function InterviewTrendChart() {
           <CardDescription>Mock interview scores + sub-metrics over time.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex h-[260px] flex-col items-center justify-center gap-2 text-center text-sm text-muted-foreground">
-            <Mic className="h-8 w-8 text-primary/50" />
-            No mock interviews yet. Run a voice mock to start tracking your interview performance.
-          </div>
+          <EmptyState
+            icon={Mic}
+            title="No mock interviews yet"
+            description="Run a voice mock interview to start tracking your scores, communication, technical, and structure over time."
+            className="max-w-none py-8"
+          />
         </CardContent>
       </Card>
     );

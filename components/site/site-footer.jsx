@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { Github, Twitter, Linkedin, Mail } from "lucide-react";
 import { Logo } from "@/components/site/logo";
 
+// Only real, reachable destinations are listed. Dead "#" / non-existent
+// routes (/docs, Privacy/Terms) were removed rather than shipped as
+// non-functional links — add them back when the real pages exist.
 const columns = [
   {
     title: "Product",
@@ -9,48 +11,23 @@ const columns = [
       { label: "Resume Builder", href: "/resume" },
       { label: "Cover Letters", href: "/ai-cover-letter" },
       { label: "Interview Prep", href: "/interview" },
-      { label: "Industry Insights", href: "/dashboard" },
+      { label: "Dashboard", href: "/dashboard" },
     ],
   },
   {
-    title: "Company",
+    title: "Career OS",
     links: [
-      { label: "About", href: "#" },
-      { label: "Careers", href: "#" },
-      { label: "Blog", href: "#" },
-      { label: "Contact", href: "#" },
+      { label: "Applications", href: "/applications" },
+      { label: "Career Twin", href: "/twin" },
+      { label: "GitHub Analyzer", href: "/github" },
+      { label: "Learning Engine", href: "/learning" },
     ],
   },
-  {
-    title: "Resources",
-    links: [
-      { label: "Documentation", href: "/docs" },
-      { label: "Architecture", href: "#" },
-      { label: "Changelog", href: "#" },
-      { label: "Support", href: "#" },
-    ],
-  },
-  {
-    title: "Legal",
-    links: [
-      { label: "Privacy", href: "#" },
-      { label: "Terms", href: "#" },
-      { label: "Security", href: "#" },
-      { label: "Cookies", href: "#" },
-    ],
-  },
-];
-
-const socials = [
-  { icon: Twitter, label: "Twitter", href: "#" },
-  { icon: Github, label: "GitHub", href: "#" },
-  { icon: Linkedin, label: "LinkedIn", href: "#" },
-  { icon: Mail, label: "Email", href: "#" },
 ];
 
 /**
- * SiteFooter — multi-column marketing footer with brand, link columns,
- * socials, and a legal bar. Decorative top border carries the aurora gradient.
+ * SiteFooter — multi-column marketing footer with brand and link columns.
+ * Decorative top border carries the aurora gradient.
  */
 export function SiteFooter() {
   return (
@@ -61,21 +38,9 @@ export function SiteFooter() {
           <div className="col-span-2 space-y-4">
             <Logo />
             <p className="max-w-xs text-sm text-muted-foreground">
-              The AI career growth platform — build standout resumes, ace
-              interviews, and stay ahead of your industry.
+              The AI Career Operating System. One workspace that remembers your
+              career — and thinks alongside you.
             </p>
-            <div className="flex items-center gap-2">
-              {socials.map(({ icon: Icon, label, href }) => (
-                <a
-                  key={label}
-                  href={href}
-                  aria-label={label}
-                  className="grid h-9 w-9 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  <Icon className="h-4 w-4" />
-                </a>
-              ))}
-            </div>
           </div>
 
           {columns.map((col) => (
@@ -100,7 +65,7 @@ export function SiteFooter() {
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border/60 pt-6 text-sm text-muted-foreground sm:flex-row">
           <p>© 2026 NovaNest AI. All rights reserved.</p>
           <p className="flex items-center gap-1.5">
-            Crafted with <span className="text-primary">♦</span> for ambitious careers.
+            Crafted with <span className="text-primary">♦</span> for careers that compound.
           </p>
         </div>
       </div>

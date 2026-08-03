@@ -38,6 +38,7 @@ import {
 import useFetch from "@/hooks/use-fetch";
 import { SpotlightCard } from "@/components/site/spotlight-card";
 import { Reveal } from "@/components/site/reveal";
+import { EmptyState } from "@/components/site/state-block";
 import { cn } from "@/lib/utils";
 
 const STATUS_META = {
@@ -186,12 +187,11 @@ export default function GitHubAnalyzer({ initialRepos = [] }) {
 
       {/* Repo list */}
       {repos.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-border py-16 text-center">
-          <Github className="h-10 w-10 text-muted-foreground/40" />
-          <p className="text-sm text-muted-foreground">
-            No repos connected yet. Add one above to get a senior-engineer review.
-          </p>
-        </div>
+        <EmptyState
+          icon={Github}
+          title="No repos connected yet"
+          description="Add a repository above to get a senior-engineer-grade review across architecture, security, performance, and more."
+        />
       ) : (
         <div className="space-y-4">
           {repos.map((repo) => {

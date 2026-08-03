@@ -7,7 +7,7 @@ import dynamic from "next/dynamic";
 // Server Components, so the heavy chart lives behind this thin client island.
 const PerformanceChart = dynamic(() => import("./performace-chart"), {
   ssr: false,
-  loading: () => <div className="h-[360px] animate-pulse rounded-2xl bg-muted/30" />,
+  loading: () => <div className="h-[360px] shimmer rounded-2xl" />,
 });
 
 export default function LazyPerformanceChart(props) {

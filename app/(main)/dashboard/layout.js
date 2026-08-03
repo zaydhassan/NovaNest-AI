@@ -7,8 +7,8 @@ export default function Layout({ children }) {
     <div className="container mx-auto">
       <PageHeader
         eyebrow="Dashboard"
-        title="Industry Insights"
-        description="AI-analyzed trends, salaries, and skills for your field."
+        title="Career Command Center"
+        description="Your career at a glance — mission, momentum, and the moves that matter next."
       />
       <Suspense
         fallback={

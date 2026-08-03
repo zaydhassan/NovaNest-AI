@@ -114,6 +114,7 @@ export function EntryForm({ type, entries, onChange }) {
                 size="icon"
                 type="button"
                 onClick={() => handleDelete(index)}
+                aria-label={`Delete ${type.toLowerCase()} entry`}
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -142,6 +143,7 @@ export function EntryForm({ type, entries, onChange }) {
               <div className="space-y-2">
                 <Input
                   placeholder="Title/Position"
+                  aria-label="Title or position"
                   {...register("title")}
                   error={errors.title}
                 />
@@ -152,6 +154,7 @@ export function EntryForm({ type, entries, onChange }) {
               <div className="space-y-2">
                 <Input
                   placeholder="Organization/Company"
+                  aria-label="Organization or company"
                   {...register("organization")}
                   error={errors.organization}
                 />
@@ -167,6 +170,7 @@ export function EntryForm({ type, entries, onChange }) {
               <div className="space-y-2">
                 <Input
                   type="month"
+                  aria-label="Start date"
                   {...register("startDate")}
                   error={errors.startDate}
                 />
@@ -179,6 +183,7 @@ export function EntryForm({ type, entries, onChange }) {
               <div className="space-y-2">
                 <Input
                   type="month"
+                  aria-label="End date"
                   {...register("endDate")}
                   disabled={current}
                   error={errors.endDate}
@@ -209,6 +214,7 @@ export function EntryForm({ type, entries, onChange }) {
             <div className="space-y-2">
               <Textarea
                 placeholder={`Description of your ${type.toLowerCase()}`}
+                aria-label={`Description of your ${type.toLowerCase()}`}
                 className="h-32"
                 {...register("description")}
                 error={errors.description}

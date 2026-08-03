@@ -9,18 +9,18 @@ const buttonVariants = cva(
   "group/btn relative inline-flex select-none items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-md text-sm font-medium transition-all duration-200 ease-spring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 active:scale-[0.97] [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
-      // Solid brand action — purple, with a soft glow on hover.
+      // Solid brand action — purple, lit-from-above, soft glow on hover.
       default:
-        "bg-primary text-primary-foreground shadow-sm hover:bg-primary-strong hover:shadow-glow",
+        "bg-primary text-primary-foreground shadow-card hover:bg-primary-strong hover:shadow-glow before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-white/20",
       // The reserved accent gradient — CTAs only. Sheen sweep on hover.
       gradient:
-        "cta-gradient text-white shadow-glow hover:shadow-glass-lg bg-[length:200%_100%] hover:bg-[position:100%_0]",
+        "cta-gradient text-white shadow-glow hover:shadow-glass-lg bg-[length:200%_100%] hover:bg-[position:100%_0] before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-white/25",
       destructive:
-        "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 hover:shadow-[0_12px_40px_-12px_hsl(var(--destructive)/0.55)]",
+        "bg-destructive text-destructive-foreground shadow-card hover:bg-destructive/90 hover:shadow-[0_12px_40px_-12px_hsl(var(--destructive)/0.55)] before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-white/20",
       outline:
         "border border-input bg-background/60 backdrop-blur-sm hover:bg-muted hover:border-foreground/25 hover:text-accent-foreground text-foreground",
       secondary:
-        "bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:border-white/10",
+        "bg-secondary text-secondary-foreground shadow-card hover:bg-secondary/80 hover:border-white/10 before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-white/10",
       ghost: "hover:bg-muted text-foreground/90 hover:text-foreground",
       link: "text-primary underline-offset-4 hover:underline",
     },

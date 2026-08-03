@@ -5,7 +5,11 @@ import {
   getSkillGrowth,
   getRecentTimeline,
   getRecentCoachInsights,
+  getCareerGoal,
 } from "@/actions/career";
+import { getApplications } from "@/actions/applications";
+import { listChatSessions } from "@/actions/chat";
+import { getTopics, recommendedTopics } from "@/actions/learning";
 import DashboardView from "./_component/dashboard-view";
 import { getUserOnboardingStatus } from "@/actions/user";
 import { requireUser } from "@/lib/auth";
@@ -18,8 +22,10 @@ export default async function DashboardPage() {
     redirect("/onboarding");
   }
 
-  // Run insight resolution, the user lookup, the NovaScore, and the Career OS
-  // dashboard payloads in parallel — one round trip per surface.
+  // Run insight resolution, the user lookup, the NovaScore, the Career OS
+  // payloads, and the Command Center surfaces in parallel — one round trip
+  // per surface. Every fetch is wrapped in withErrorHandling and returns
+  // null on failure, so the view null-guards each prop.
   const [
     insights,
     user,
@@ -29,6 +35,11 @@ export default async function DashboardPage() {
     skillGrowth,
     recentTimeline,
     coachInsights,
+    applications,
+    chatSessions,
+    learningTopics,
+    recommendations,
+    goal,
   ] = await Promise.all([
     getIndustryInsights(),
     requireUser({
@@ -44,7 +55,12 @@ export default async function DashboardPage() {
     getReadiness(),
     getSkillGrowth(),
     getRecentTimeline(6),
-    getRecentCoachInsights(4),
+    getRecentCoachInsights(6),
+    getApplications(),
+    listChatSessions({}),
+    getTopics(),
+    recommendedTopics(),
+    getCareerGoal(),
   ]);
 
   return (
@@ -62,6 +78,11 @@ export default async function DashboardPage() {
       skillGrowth={skillGrowth}
       recentTimeline={recentTimeline}
       coachInsights={coachInsights}
+      applications={applications}
+      chatSessions={chatSessions}
+      learningTopics={learningTopics}
+      recommendations={recommendations}
+      goal={goal}
     />
   );
 }

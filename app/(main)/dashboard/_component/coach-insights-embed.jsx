@@ -40,7 +40,7 @@ export default function CoachInsightsEmbed({ insights = [] }) {
             </span>
             Coach insights
           </CardTitle>
-          <CardDescription className="mt-1">Proactive guidance from your AI coach.</CardDescription>
+          <CardDescription className="mt-1">Proactive guidance from your AI copilot — grounded in your activity and memory.</CardDescription>
         </div>
         <Link
           href="/coach"

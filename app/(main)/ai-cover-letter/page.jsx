@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/site/page-header";
 import CoverLetterList from "./_components/cover-letter-list";
 
+export const metadata = { title: "Cover Letters" };
+
 export default async function CoverLetterPage() {
   await ensureOnboarded();
   const coverLetters = await getCoverLetters();

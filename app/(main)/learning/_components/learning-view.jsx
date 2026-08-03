@@ -94,6 +94,7 @@ export default function LearningView({
                 if (e.key === "Enter") onAdd();
               }}
               placeholder="Add a skill to track (e.g. System Design)"
+              aria-label="Add a skill to track"
               className="border-0 bg-transparent shadow-none focus-visible:bg-transparent focus-visible:ring-0"
             />
           </div>

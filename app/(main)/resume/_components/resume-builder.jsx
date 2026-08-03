@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId, cloneElement } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -43,7 +43,7 @@ import { motion } from "framer-motion";
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), {
   ssr: false,
   loading: () => (
-    <div className="h-[680px] w-full animate-pulse rounded-lg bg-muted/40" />
+    <div className="h-[680px] w-full shimmer rounded-lg" />
   ),
 });
 const MDMarkdown = dynamic(
@@ -391,7 +391,7 @@ export default function ResumeBuilder({ initialContent }) {
 
             {/* Live preview column — sticky on large screens */}
             <div className="lg:sticky lg:top-24 lg:self-start">
-              <div className="overflow-hidden rounded-xl border border-border bg-card shadow-elevated">
+              <div className="overflow-hidden rounded-xl border border-border bg-card shadow-card">
                 <div className="flex items-center justify-between border-b border-border bg-muted/40 px-4 py-2.5">
                   <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                     <Eye className="h-3.5 w-3.5" />
@@ -427,7 +427,7 @@ export default function ResumeBuilder({ initialContent }) {
 
         {/* ============ Markdown tab: raw editor ============ */}
         <TabsContent value="preview">
-          <div className="overflow-hidden rounded-xl border border-border bg-card shadow-elevated">
+          <div className="overflow-hidden rounded-xl border border-border bg-card shadow-card">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-muted/40 px-4 py-3">
               <Button
                 variant="ghost"
@@ -491,10 +491,11 @@ export default function ResumeBuilder({ initialContent }) {
 /* ---------- Local helpers ---------- */
 
 function Field({ label, error, children }) {
+  const id = useId();
   return (
     <div className="space-y-1.5">
-      <label className="text-xs font-medium text-muted-foreground">{label}</label>
-      {children}
+      <label htmlFor={id} className="text-xs font-medium text-muted-foreground">{label}</label>
+      {cloneElement(children, { id })}
       {error && <p className="text-xs text-destructive">{error}</p>}
     </div>
   );
@@ -507,7 +508,7 @@ function SectionCard({ icon: Icon, title, hint, count, delay = 0, children }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.45, delay, ease: EASE }}
-      className="overflow-hidden rounded-xl border border-border bg-card shadow-elevated transition-colors duration-300 hover:border-white/10"
+      className="overflow-hidden rounded-xl border border-border bg-card shadow-card transition-colors duration-300 hover:border-white/10"
     >
       <div className="flex items-center gap-3 border-b border-border bg-muted/30 px-5 py-3.5">
         <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">

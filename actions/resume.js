@@ -148,6 +148,25 @@ export async function scoreResume(jobDescription) {
     },
   });
 
+  // Career OS — timeline "achievement" milestone when the ATS score strictly
+  // improves. Idempotent per score level: sourceId is `${resume.id}#ats-${n}`,
+  // so re-reaching the same score dedupes while each new high watermark is a
+  // fresh event. Fire-and-forget; never blocks the score write. (Live-only —
+  // no score history is stored to backfill.)
+  const oldScore = resume.atsScore;
+  const newScore = updated.atsScore;
+  if (typeof oldScore === "number" && typeof newScore === "number" && newScore > oldScore) {
+    recordTimelineEvent({
+      userId: user.id,
+      type: "achievement",
+      title: `Resume ATS score reached ${Math.round(newScore)}%`,
+      description: `Up from ${Math.round(oldScore)}% — keep closing the keyword gap.`,
+      metadata: { resumeId: resume.id, from: oldScore, to: newScore },
+      sourceType: "resume",
+      sourceId: `${resume.id}#ats-${Math.round(newScore)}`,
+    }).catch((e) => console.error("[NovaNest] timeline ats:", e?.message));
+  }
+
   createNotification(user.id, {
     type: "ats_score",
     title: `Resume ATS score: ${Math.round(Number(result?.score ?? 0))}%`,

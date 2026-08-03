@@ -4,13 +4,14 @@ import { Button } from "@/components/ui/button";
 import { ensureOnboarded } from "@/lib/onboarding";
 import { requireUser } from "@/lib/auth";
 import { PageHeader } from "@/components/site/page-header";
+import { DREAM_COMPANIES } from "@/lib/constants";
 import VoiceMockInterview from "../_components/voice-mock-interview";
 
 export const metadata = { title: "Voice Mock Interview" };
 
 export default async function MockInterviewPage() {
   await ensureOnboarded();
-  const user = await requireUser({ select: { industry: true } });
+  const user = await requireUser({ select: { industry: true, targetCompany: true } });
 
   return (
     <div className="container mx-auto space-y-6 py-6">
@@ -27,7 +28,11 @@ export default async function MockInterviewPage() {
         description="Speak your answers out loud — the AI interviewer asks, you respond, and we score the conversation."
       />
 
-      <VoiceMockInterview userIndustry={user.industry} />
+      <VoiceMockInterview
+        userIndustry={user.industry}
+        userTargetCompany={user.targetCompany}
+        companies={DREAM_COMPANIES}
+      />
     </div>
   );
 }

@@ -95,6 +95,7 @@ export default function TopicCard({ topic, onChange, allTopics }) {
               autoFocus
               value={draft.skill}
               onChange={(e) => setDraft({ ...draft, skill: e.target.value })}
+              aria-label="Skill name"
               className="w-full rounded-md border border-input bg-transparent px-2 py-1 text-sm font-semibold text-foreground focus:outline-none focus:border-primary/60"
             />
           ) : (
@@ -140,6 +141,7 @@ export default function TopicCard({ topic, onChange, allTopics }) {
           onChange={(e) => setDraft({ ...draft, notes: e.target.value })}
           placeholder="Notes…"
           rows={2}
+          aria-label="Notes"
           className="mt-3 w-full rounded-md border border-input bg-transparent px-2 py-1 text-xs text-foreground focus:outline-none focus:border-primary/60"
         />
       )}

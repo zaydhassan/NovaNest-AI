@@ -8,6 +8,8 @@ import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = { title: "AI Copilot" };
+
 export default async function CoachPage() {
   const { isOnboarded } = await getUserOnboardingStatus();
   if (!isOnboarded) redirect("/onboarding");

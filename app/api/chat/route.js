@@ -29,6 +29,7 @@ import {
 } from "@/lib/errors";
 import { generateTextStream } from "@/lib/ai/gemini";
 import { recallMemory } from "@/lib/career/memory/memory-service";
+import { retrieveRelevantMemories } from "@/lib/career/memory/memory-engine";
 import { recordTimelineEvent } from "@/lib/career/timeline/timeline-engine";
 import { createNotification } from "@/lib/notifications";
 import { bumpActivity } from "@/lib/gamify";
@@ -94,7 +95,10 @@ export async function POST(req) {
   }
 
   // 2) Recall memory + gather context data (parallel).
-  const [memory, ctxData] = await Promise.all([
+  //    The Memory Engine retrieval (structured memories) is additive: when its
+  //    block is empty (no memories / any error), the synthesis prompt is
+  //    byte-identical to today, so existing chat behavior is unchanged.
+  const [memory, ctxData, structured] = await Promise.all([
     recallMemory({ userId: user.id, query: text, limit: 12 }).catch(() => []),
     gatherChatContextData(user).catch((e) => {
       console.error("[NovaNest] chat context gather failed:", e?.message);
@@ -108,6 +112,10 @@ export async function POST(req) {
         recommendedTopics: [],
       };
     }),
+    retrieveRelevantMemories({ userId: user.id, query: text }).catch(() => ({
+      block: "",
+      manifest: { sources: [], citations: [], totalItems: 0 },
+    })),
   ]);
 
   // 3) Coordinator plan (non-streaming).
@@ -123,9 +131,15 @@ export async function POST(req) {
   });
 
   // Fallback synthesis prompt if the coordinator failed entirely.
-  const synthesisPrompt =
+  const basePrompt =
     plan?.synthesisPrompt ??
     `You are NovaNest, an AI career companion. Answer the user's message warmly and concretely.\n\nUser message:\n${text}\n\nReply:`;
+
+  // Memory Engine: prepend the retrieved structured-memory block ONLY when
+  // non-empty. Empty block (no memories / retrieval error) → prompt unchanged.
+  const synthesisPrompt = structured?.block
+    ? `${structured.block}\n\n${basePrompt}`
+    : basePrompt;
 
   // 4) Upsert session + persist user message (one tx up front).
   let session = null;
@@ -168,6 +182,8 @@ export async function POST(req) {
     agentIds: plan?.agentIds ?? ["coach"],
     followUps: plan?.followUps ?? [],
     memoryBlocks: plan?.memoryBlocks ?? [],
+    // Memory Engine — retrieved structured memories (for the chat drawer chips).
+    structuredMemories: structured?.manifest ?? null,
   };
 
   const headers = new Headers({

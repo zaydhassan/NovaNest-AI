@@ -5,9 +5,9 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Brain,
-  FileCheck2,
-  Target,
-  Route,
+  Workflow,
+  Fingerprint,
+  History,
   LayoutDashboard,
   ShieldCheck,
   ArrowRight,
@@ -35,44 +35,44 @@ const ease = [0.22, 1, 0.36, 1];
 const features = [
   {
     icon: Brain,
-    title: "AI Career Intelligence",
+    title: "Remembers your whole career",
     description:
-      "Get personalized career guidance powered by AI that adapts to your goals and experience.",
+      "Not session state — durable memory that recalls your roles, mocks, and goals across every conversation, so every answer starts from you.",
     accent: "purple",
   },
   {
-    icon: FileCheck2,
-    title: "ATS Resume Optimization",
+    icon: Workflow,
+    title: "Coordinates specialist agents",
     description:
-      "Create resumes designed to pass ATS systems while remaining recruiter-friendly.",
+      "An intent router dispatches the right agent — interview, resume, application, analytics, learning — instead of one bloated prompt doing everything badly.",
     accent: "cyan",
   },
   {
-    icon: Target,
-    title: "Personalized Interview Preparation",
+    icon: Fingerprint,
+    title: "A Career Twin that talks like you",
     description:
-      "Practice role-specific interviews with AI feedback and real-world questions.",
+      "An AI model of you, rebuilt from your history, that answers questions in your voice and surfaces what you'd say in the room.",
     accent: "emerald",
   },
   {
-    icon: Route,
-    title: "Career Growth Roadmaps",
+    icon: History,
+    title: "A timeline that builds itself",
     description:
-      "Receive structured learning paths and actionable milestones tailored to your dream role.",
+      "Every action auto-derives a career timeline — no manual journaling, no separate log. Your history writes itself as you work.",
     accent: "cyan",
   },
   {
     icon: LayoutDashboard,
-    title: "All-in-One Workspace",
+    title: "One workspace, not five tabs",
     description:
-      "Manage resumes, applications, interviews, cover letters, and career planning from one dashboard.",
+      "Resume, applications, interviews, insights, and learning — connected, not copy-pasted between disconnected tools.",
     accent: "purple",
   },
   {
     icon: ShieldCheck,
-    title: "Private & Secure",
+    title: "Private by default",
     description:
-      "Your career data stays protected with secure authentication and modern cloud infrastructure.",
+      "Encrypted at rest, scoped to your account, and never used to train shared models. Your career stays yours.",
     accent: "emerald",
   },
 ];
@@ -250,7 +250,7 @@ export default function WhyNovaNest() {
             transition={{ duration: 0.6, delay: 0.06, ease }}
             className="mt-6 text-3xl font-extrabold tracking-tight text-foreground md:text-5xl lg:text-[3.4rem] lg:leading-[1.05]"
           >
-            Why ambitious professionals choose NovaNest
+            What makes it an operating system
           </motion.h2>
 
           <motion.p
@@ -283,10 +283,11 @@ export default function WhyNovaNest() {
           className="mx-auto mt-20 max-w-2xl text-center"
         >
           <h3 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
-            Ready to accelerate your career?
+            Run your career on AI.
           </h3>
           <p className="mx-auto mt-4 max-w-xl text-muted-foreground md:text-lg">
-            Join thousands of professionals building smarter careers with AI.
+            Stop starting from zero. NovaNest remembers your career, coordinates
+            the work, and compounds with every step.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link href="/dashboard">
@@ -295,9 +296,9 @@ export default function WhyNovaNest() {
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
-            <Link href="#features">
+            <Link href="#demo">
               <Button size="lg" variant="outline" className="w-full rounded-full px-7 sm:w-auto">
-                Explore features
+                See the OS
               </Button>
             </Link>
           </div>

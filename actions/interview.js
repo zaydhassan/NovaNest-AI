@@ -12,16 +12,22 @@ import { createNotification } from "@/lib/notifications";
 import { fromQuiz } from "@/lib/career/memory/memory-extractors";
 import { recordTimelineEvent } from "@/lib/career/timeline/timeline-engine";
 import { deriveFromAssessment } from "@/lib/career/timeline/timeline-derivers";
+import { resolveCompanyContext } from "@/lib/career/dream-company/company-context";
 import { revalidatePath } from "next/cache";
 
-export async function generateQuiz() {
+export async function generateQuiz(companySlug = null) {
   const user = await requireUser();
 
   // Quizzes are the most expensive call — tighten the budget.
   rateLimit({ key: `quiz:${user.clerkUserId}`, limit: 8, windowMs: 10 * 60_000 });
 
   try {
-    const quiz = await generateJSON(quizPrompt(user.industry, user.skills));
+    // Dream Company Mode — null companySlug → null context → byte-identical
+    // baseline quiz prompt. The selected slug travels back to the page via the
+    // page's own state (it owns the selector), so the return shape stays the
+    // questions array exactly as today.
+    const company = await resolveCompanyContext(companySlug);
+    const quiz = await generateJSON(quizPrompt(user.industry, user.skills, company));
     if (!Array.isArray(quiz?.questions)) {
       throw new Error("The AI returned an unexpected quiz format.");
     }
@@ -32,13 +38,14 @@ export async function generateQuiz() {
   }
 }
 
-export async function saveQuizResult(questions, answers, score) {
+export async function saveQuizResult(questions, answers, score, company = null) {
   const user = await requireUser();
 
-  const parsed = saveQuizResultSchema.safeParse({ questions, answers, score });
+  const parsed = saveQuizResultSchema.safeParse({ questions, answers, score, company });
   if (!parsed.success) {
     throw new ValidationError("Invalid quiz submission.");
   }
+  const companySlug = parsed.data.company || null;
 
   const questionResults = questions.map((q, index) => ({
     question: q.question,
@@ -61,8 +68,10 @@ export async function saveQuizResult(questions, answers, score) {
       .join("\n\n");
 
     try {
+      // Dream Company Mode — null company → null context → byte-identical tip.
+      const companyCtx = await resolveCompanyContext(companySlug);
       improvementTip = await generateText(
-        improvementTipPrompt(user.industry, wrongQuestionsText)
+        improvementTipPrompt(user.industry, wrongQuestionsText, companyCtx)
       );
     } catch (error) {
       // Tip generation is best-effort — persist the result without it.
@@ -77,6 +86,7 @@ export async function saveQuizResult(questions, answers, score) {
         quizScore: score,
         questions: questionResults,
         category: "Technical",
+        company: companySlug,
         improvementTip,
       },
     });

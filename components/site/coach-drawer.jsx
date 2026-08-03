@@ -69,9 +69,9 @@ export function CoachDrawer({ className }) {
         <DialogPrimitive.Portal>
           <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0" />
           <DialogPrimitive.Content className="fixed right-0 top-0 z-50 flex h-full w-[92vw] max-w-md flex-col gap-0 border-l border-white/10 bg-background shadow-glass-lg outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right">
-            <DialogPrimitive.Title className="sr-only">Ask your AI coach</DialogPrimitive.Title>
+            <DialogPrimitive.Title className="sr-only">Ask your AI copilot</DialogPrimitive.Title>
             <DialogPrimitive.Description className="sr-only">
-              Chat with NovaNest&apos;s AI career coach.
+              Chat with NovaNest&apos;s AI career copilot.
             </DialogPrimitive.Description>
 
             {/* Header */}
@@ -81,7 +81,7 @@ export function CoachDrawer({ className }) {
                   <Sparkles className="h-4 w-4" />
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">AI Coach</p>
+                  <p className="text-sm font-semibold text-foreground">AI Copilot</p>
                   <p className="text-[11px] text-muted-foreground">
                     Remembers your whole career
                   </p>

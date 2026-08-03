@@ -30,7 +30,7 @@ export default function QuizList({ assessments }) {
         <CardHeader>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <CardTitle className="gradient-title text-3xl md:text-4xl">
+              <CardTitle className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
                 Recent Quizzes
               </CardTitle>
               <CardDescription>
@@ -57,7 +57,7 @@ export default function QuizList({ assessments }) {
                 onClick={() => setSelectedQuiz(assessment)}
               >
                 <CardHeader>
-                  <CardTitle className="gradient-title text-2xl">
+                  <CardTitle className="text-xl font-bold tracking-tight text-foreground">
                     Quiz {i + 1}
                   </CardTitle>
                   <CardDescription className="flex justify-between w-full">

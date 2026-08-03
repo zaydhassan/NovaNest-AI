@@ -71,7 +71,11 @@ export default {
         glow: '0 0 0 1px hsl(var(--purple) / 0.25), 0 12px 40px -8px hsl(var(--purple) / 0.45)',
         'glow-cyan': '0 0 0 1px hsl(var(--cyan) / 0.20), 0 16px 50px -12px hsl(var(--cyan) / 0.45)',
         'glow-emerald': '0 0 0 1px hsl(var(--emerald) / 0.20), 0 16px 50px -12px hsl(var(--emerald) / 0.40)',
-        elevated: '0 1px 0 0 hsl(0 0% 100% / 0.04) inset, 0 20px 50px -24px hsl(0 0% 0% / 0.7)'
+        elevated: '0 1px 0 0 hsl(0 0% 100% / 0.04) inset, 0 20px 50px -24px hsl(0 0% 0% / 0.7)',
+        // Neutral elevation — "lit from above". Used by solid cards/popovers.
+        card: 'inset 0 1px 0 0 hsl(0 0% 100% / 0.06), 0 1px 2px 0 hsl(0 0% 0% / 0.30), 0 8px 24px -12px hsl(0 0% 0% / 0.55)',
+        popover: 'inset 0 1px 0 0 hsl(0 0% 100% / 0.07), 0 4px 12px -4px hsl(0 0% 0% / 0.5), 0 24px 64px -20px hsl(0 0% 0% / 0.7)',
+        float: 'inset 0 1px 0 0 hsl(0 0% 100% / 0.08), 0 2px 6px -2px hsl(0 0% 0% / 0.4), 0 32px 80px -24px hsl(0 0% 0% / 0.65)'
   		},
       transitionTimingFunction: {
         spring: 'cubic-bezier(0.22, 1, 0.36, 1)',

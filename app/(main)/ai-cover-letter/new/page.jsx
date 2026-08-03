@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { ensureOnboarded } from "@/lib/onboarding";
 import CoverLetterGenerator from "../_components/cover-letter-generator";
 
+export const metadata = { title: "New Cover Letter" };
+
 export default async function NewCoverLetterPage() {
   await ensureOnboarded();
 
@@ -18,7 +20,7 @@ export default async function NewCoverLetterPage() {
         </Link>
 
         <div className="pb-6">
-          <h1 className="aurora-text animate-aurora text-4xl font-extrabold md:text-5xl">
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground md:text-4xl">
             Create Cover Letter
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">

@@ -127,7 +127,7 @@ const OnboardingForm = ({ industries }) => {
       {/* Form panel */}
       <Card className="w-full overflow-hidden">
         <CardHeader>
-          <CardTitle className="gradient-title text-3xl md:text-4xl">
+          <CardTitle className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
             Complete Your Profile
           </CardTitle>
           <CardDescription>
