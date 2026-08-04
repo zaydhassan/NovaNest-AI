@@ -7,16 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { CheckoutButton } from "@/components/site/checkout-button";
 import { plans, CURRENCY_SYMBOL } from "@/data/pricing";
 
-/**
- * PlanStatusCard — shows the signed-in user's current subscription status on
- * the dashboard. For paid plans (PRO/TEAMS) it confirms the plan + renewal
- * date. For STARTER it surfaces an in-app upgrade CTA (reuses CheckoutButton,
- * same flow as the home page) so users don't have to bounce back to the
- * landing page to upgrade.
- *
- * Props are passed down from the server (dashboard page → DashboardView), so
- * this stays a pure presentational + checkout client island.
- */
 const PLAN_LABEL = { STARTER: "Free", PRO: "Pro", TEAMS: "Teams" };
 
 export default function PlanStatusCard({ plan = "STARTER", subscriptionStatus, currentPeriodEnd }) {

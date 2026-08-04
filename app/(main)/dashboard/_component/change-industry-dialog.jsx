@@ -28,11 +28,6 @@ import useFetch from "@/hooks/use-fetch";
 import { changeIndustry } from "@/actions/user";
 import { industries } from "@/data/industries";
 
-/**
- * Lets an onboarded user switch the industry they track. On confirm we update
- * user.industry (which re-points the User→IndustryInsight relation) and refresh
- * the dashboard so the new industry's trends render.
- */
 export default function ChangeIndustryDialog({ currentIndustry }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -45,7 +40,6 @@ export default function ChangeIndustryDialog({ currentIndustry }) {
     data: result,
   } = useFetch(changeIndustry);
 
-  // Reset the form whenever the dialog is (re)opened.
   useEffect(() => {
     if (open) {
       setIndustryId(null);
@@ -53,7 +47,6 @@ export default function ChangeIndustryDialog({ currentIndustry }) {
     }
   }, [open]);
 
-  // Refresh the dashboard once the server confirms the change.
   useEffect(() => {
     if (result?.success && !changing) {
       toast.success(result.unchanged

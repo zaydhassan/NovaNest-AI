@@ -2,13 +2,6 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-/**
- * Input — premium focus state.
- *
- * Smooth border-color transition into focus, a soft brand glow shadow on
- * focus, and a slightly lifted placeholder. Structure is unchanged so
- * react-hook-form registrations keep working.
- */
 const Input = React.forwardRef(({ className, type, ...props }, ref) => {
   return (
     (<input

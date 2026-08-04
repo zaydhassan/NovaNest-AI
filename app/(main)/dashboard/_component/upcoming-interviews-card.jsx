@@ -18,12 +18,6 @@ const STATUS_META = {
   OFFER: { label: "Offer", className: "bg-chart-4/15 text-foreground" },
 };
 
-/**
- * UpcomingInterviewsCard — live opportunities in the INTERVIEW/OFFER stages.
- * Derived from real `getApplications()` data (no new action needed).
- *
- * @param {{ applications: any[] }} props
- */
 export default function UpcomingInterviewsCard({ applications = [] }) {
   const upcoming = (applications ?? [])
     .filter((a) => a.status === "INTERVIEW" || a.status === "OFFER")

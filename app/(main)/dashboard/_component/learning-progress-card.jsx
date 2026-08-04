@@ -20,12 +20,6 @@ const STATUS_META = {
 };
 const STATUS_ORDER = ["learning", "learned", "needs_review", "todo"];
 
-/**
- * LearningProgressCard — skill-building status from real `getTopics()` data.
- * Shows total topics, a learned-progress bar, and a per-status breakdown.
- *
- * @param {{ learningTopics: any[] }} props
- */
 export default function LearningProgressCard({ learningTopics = [] }) {
   const list = learningTopics ?? [];
   const total = list.length;

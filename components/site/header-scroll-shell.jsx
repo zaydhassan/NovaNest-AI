@@ -3,13 +3,6 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
-/**
- * HeaderScrollShell — client wrapper that gives the server-rendered SiteHeader
- * its sticky-glass behavior: invisible border + light blur at the top of the
- * page, then a hairline border, stronger blur, and a slightly shorter bar once
- * the user scrolls. The actual nav markup is passed as `children` so the
- * server-side `checkUser()` / Clerk islands stay intact.
- */
 export function HeaderScrollShell({ children }) {
   const [scrolled, setScrolled] = useState(false);
 

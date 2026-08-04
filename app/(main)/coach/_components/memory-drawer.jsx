@@ -15,12 +15,6 @@ import MemoryChip from "./memory-chip";
 import { MEMORY_TYPES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
-/**
- * Memory drawer — the long-term memory management surface. Lists everything
- * NovaNest remembers (manual + auto-extracted), filterable by type, with a
- * soft-forget toggle on each entry. Controlled open state (parent owns it so a
- * header button or keyboard shortcut can open it).
- */
 export default function MemoryDrawer({ open, onOpenChange }) {
   const [memories, setMemories] = useState([]);
   const [filter, setFilter] = useState(null);

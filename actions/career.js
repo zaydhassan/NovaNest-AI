@@ -19,13 +19,6 @@ import { listTimeline } from "@/lib/career/timeline/timeline-engine";
 import { fromGoal } from "@/lib/career/memory/memory-extractors";
 import { revalidatePath } from "next/cache";
 
-/**
- * Compute + persist the user's Career Health Score. Caches the blended result
- * on `User.careerHealthScore` (best-effort, never blocks the read) so future
- * renders can short-circuit, and so other surfaces (Twin/Coach) can read it.
- *
- * Returns the full Career Health payload (nova + extended pillars + score).
- */
 export const getCareerHealth = withErrorHandling(async function getCareerHealth() {
   const user = await requireUser({
     select: {
@@ -80,7 +73,6 @@ export const getCareerHealth = withErrorHandling(async function getCareerHealth(
       }),
     ]);
 
-  // Distinct skills touched = union of profile skills + skills tagged on memory.
   const skillSet = new Set(
     (user.skills || []).map((s) => String(s).toLowerCase()).filter(Boolean)
   );
@@ -99,14 +91,11 @@ export const getCareerHealth = withErrorHandling(async function getCareerHealth(
     learningTopics: topics,
   });
 
-  // Attach the existing dashboard extras so callers can render NovaScoreCard +
-  // WeeklyDigestCard from the same payload (keeps getNovaScore untouched).
   const payload = {
     ...health,
     nova: { ...health.nova, xp: user.xp, streak: user.streak, digest: digest ?? null },
   };
 
-  // Cache best-effort — a write failure here must never break the read.
   db.user
     .update({
       where: { id: user.id },
@@ -127,10 +116,6 @@ export const getCareerHealth = withErrorHandling(async function getCareerHealth(
   return payload;
 }, "Couldn't load your Career Health. Please try again.");
 
-/**
- * Interview readiness for the dashboard card. Uses a recent window (last ~6
- * weeks) so the score reflects current form, not lifetime totals.
- */
 export const getReadiness = withErrorHandling(async function getReadiness() {
   const user = await requireUser({ select: { id: true } });
 
@@ -158,9 +143,6 @@ export const getReadiness = withErrorHandling(async function getReadiness() {
   return computeInterviewReadiness({ mocks, assessments, since });
 }, "Couldn't load your interview readiness. Please try again.");
 
-/**
- * Skill-growth time series for the dashboard chart (quiz + mock history).
- */
 export const getSkillGrowth = withErrorHandling(async function getSkillGrowth() {
   const user = await requireUser({ select: { id: true } });
 
@@ -180,19 +162,11 @@ export const getSkillGrowth = withErrorHandling(async function getSkillGrowth() 
   return computeSkillGrowth({ assessments, mocks });
 }, "Couldn't load your skill growth. Please try again.");
 
-/**
- * Recent timeline events for the dashboard embed. Newest-first, capped.
- */
 export const getRecentTimeline = withErrorHandling(async function getRecentTimeline(limit = 6) {
   const user = await requireUser({ select: { id: true } });
   return listTimeline({ userId: user.id, limit: Math.min(20, Math.max(1, Number(limit) || 6)) });
 }, "Couldn't load your timeline. Please try again.");
 
-/**
- * Recent unread coach insights for the dashboard embed. Newest-first, capped.
- * Empty until the Coach (M5) starts producing insights — the embed renders a
- * graceful empty state in that case.
- */
 export const getRecentCoachInsights = withErrorHandling(
   async function getRecentCoachInsights(limit = 4) {
     const user = await requireUser({ select: { id: true } });
@@ -215,13 +189,7 @@ export const getRecentCoachInsights = withErrorHandling(
   "Couldn't load your coach insights. Please try again."
 );
 
-// ── Career Goal (M9) ───────────────────────────────────────────────
 
-/**
- * Set the user's active career goal. Retires any prior active goal first so
- * only one goal is "active" at a time (the /learning board + recommendation
- * service key off the active goal). Persists a career memory best-effort.
- */
 export const setCareerGoal = withErrorHandling(async function setCareerGoal(data) {
   const user = await requireUser({ select: { id: true, clerkUserId: true } });
   rateLimit({ key: `goal-set:${user.clerkUserId}`, limit: 10, windowMs: 10 * 60_000 });
@@ -235,7 +203,6 @@ export const setCareerGoal = withErrorHandling(async function setCareerGoal(data
   const { targetRole, targetLevel, timeframe, rationale } = parsed.data;
 
   const goal = await db.$transaction(async (tx) => {
-    // Retire any currently-active goal so only one remains active.
     await tx.careerGoal.updateMany({
       where: { userId: user.id, status: "active" },
       data: { status: "retired" },
@@ -252,7 +219,6 @@ export const setCareerGoal = withErrorHandling(async function setCareerGoal(data
     });
   });
 
-  // Atomic side-effects: goal memory + activity bump + notification.
   fromGoal(user.id, goal).catch((e) =>
     console.error("[NovaNest] fromGoal memory:", e?.message)
   );
@@ -272,10 +238,6 @@ export const setCareerGoal = withErrorHandling(async function setCareerGoal(data
   return goal;
 }, "Couldn't save your career goal. Please try again.");
 
-/**
- * Get the user's active career goal (or null if none set). Also returns the
- * most-recent retired/achieved goal so the UI can show history context.
- */
 export const getCareerGoal = withErrorHandling(async function getCareerGoal() {
   const user = await requireUser({ select: { id: true } });
   const active = await db.careerGoal.findFirst({
@@ -285,10 +247,6 @@ export const getCareerGoal = withErrorHandling(async function getCareerGoal() {
   return active;
 }, "Couldn't load your career goal. Please try again.");
 
-/**
- * Retire a career goal by id (ownership-validated). Used when the user clears
- * their active goal or marks it achieved.
- */
 export const retireCareerGoal = withErrorHandling(
   async function retireCareerGoal(id, status = "retired") {
     const user = await requireUser({ select: { id: true } });

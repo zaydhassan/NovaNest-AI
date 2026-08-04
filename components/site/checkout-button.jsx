@@ -14,8 +14,6 @@ import {
 
 const CHECKOUT_SRC = "https://checkout.razorpay.com/v1/checkout.js";
 
-// Load the Razorpay checkout script once and memoize the promise so multiple
-// buttons don't race to inject the same <script>.
 let scriptPromise = null;
 function loadCheckoutScript() {
   if (typeof window === "undefined") return Promise.reject(new Error("client only"));
@@ -27,7 +25,7 @@ function loadCheckoutScript() {
     s.async = true;
     s.onload = () => resolve();
     s.onerror = () => {
-      scriptPromise = null; // allow a retry on a later click
+      scriptPromise = null;
       reject(new Error("Couldn't load the checkout. Please try again."));
     };
     document.body.appendChild(s);
@@ -35,12 +33,6 @@ function loadCheckoutScript() {
   return scriptPromise;
 }
 
-/**
- * CheckoutButton — opens the Razorpay Standard Checkout modal for a
- * purchasable plan. Handles signed-out users by sending them to Clerk
- * sign-in. The server creates the order; on a successful modal payment the
- * client posts the signature back for server-side verification.
- */
 export function CheckoutButton({
   plan,
   billingCycle,
@@ -59,7 +51,6 @@ export function CheckoutButton({
 
   const { fn: verifyPayment, loading: verifying } = useFetch(verifyPaymentAction);
 
-  // Preload the checkout script on mount so the modal opens fast on click.
   useEffect(() => {
     loadCheckoutScript().catch(() => {});
   }, []);

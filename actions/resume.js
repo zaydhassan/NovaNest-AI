@@ -25,25 +25,18 @@ export async function saveResume(content) {
       create: { userId: user.id, content },
     });
 
-    // Best-effort gamification — never fail a successful save because of it.
     bumpActivity(user.id, "resume_saved").catch((e) =>
       console.error("[NovaNest] bumpActivity resume_saved:", e?.message)
     );
 
-    // Career OS — extract identity + skill memories from the saved resume.
-    // Idempotent (dedupes on source+sourceId+content), so re-saves never dupe.
     fromResume(user.id, resume).catch((e) =>
       console.error("[NovaNest] fromResume memory:", e?.message)
     );
 
-    // Career OS — timeline "building" milestone. Idempotent on type+sourceId.
     recordTimelineEvent({ userId: user.id, ...deriveFromResume(resume) }).catch((e) =>
       console.error("[NovaNest] timeline resume:", e?.message)
     );
 
-    // Career OS (M10) — dispatch a background ATS score against the user's
-    // industry. Best-effort: a dispatch failure never blocks the save. The
-    // on-demand scoreResume action still handles the JD-specific case live.
     inngest
       .send({ name: "resume/saved", data: { userId: user.id, resumeId: resume.id } })
       .catch((e) => console.error("[NovaNest] resume/saved dispatch:", e?.message));
@@ -68,13 +61,11 @@ export async function getResume() {
 export async function improveWithAI({ current, type }) {
   const user = await requireUser();
 
-  // Boundary validation — keeps bad/malicious payloads away from the model.
   const parsed = improveEntrySchema.safeParse({ current, type });
   if (!parsed.success) {
     throw new ValidationError(parsed.error.issues?.[0]?.message ?? "Invalid input.");
   }
 
-  // Rate-limit AI improvement to a sane per-user budget.
   rateLimit({ key: `improve:${user.clerkUserId}`, limit: 20, windowMs: 5 * 60_000 });
 
   const prompt = improveEntryPrompt(user.industry, parsed.data.type, parsed.data.current);
@@ -82,23 +73,12 @@ export async function improveWithAI({ current, type }) {
   try {
     return await generateText(prompt);
   } catch (error) {
-    // generateText already maps to AIServiceError; surface its public message.
     throw error instanceof Error && error.message
       ? error
       : new Error("Failed to improve content. Please try again.");
   }
 }
 
-/**
- * Score the saved resume against a job description (preferred) or, when none is
- * supplied, against the user's industry standard (topSkills + recommendedSkills
- * from IndustryInsight). Persists `atsScore` + `feedback` (JSON-stringified)
- * on the Resume row so the resume builder + Application Detail + Career Health
- * can read it without re-running the model. This closes the M1-declared-but-
- * never-written gap.
- *
- * @param {string} [jobDescription] optional JD; falls back to industry brief.
- */
 export async function scoreResume(jobDescription) {
   const user = await requireUser({ select: { id: true, industry: true } });
 
@@ -113,8 +93,6 @@ export async function scoreResume(jobDescription) {
     throw new NotFoundError("Save a resume first, then we can score it.");
   }
 
-  // Build the "JD" to score against: the supplied JD, or an industry brief
-  // synthesized from the user's IndustryInsight (no specific role in mind).
   let jd = jobDescription;
   if (!jd) {
     const insight = user.industry
@@ -148,11 +126,6 @@ export async function scoreResume(jobDescription) {
     },
   });
 
-  // Career OS — timeline "achievement" milestone when the ATS score strictly
-  // improves. Idempotent per score level: sourceId is `${resume.id}#ats-${n}`,
-  // so re-reaching the same score dedupes while each new high watermark is a
-  // fresh event. Fire-and-forget; never blocks the score write. (Live-only —
-  // no score history is stored to backfill.)
   const oldScore = resume.atsScore;
   const newScore = updated.atsScore;
   if (typeof oldScore === "number" && typeof newScore === "number" && newScore > oldScore) {

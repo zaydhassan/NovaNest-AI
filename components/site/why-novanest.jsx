@@ -17,21 +17,6 @@ import { Button } from "@/components/ui/button";
 
 const ease = [0.22, 1, 0.36, 1];
 
-/**
- * WhyNovaNest — premium value-proposition section.
- *
- * Replaces the generic testimonial grid. Communicates what makes NovaNest
- * different through six interactive feature cards on an obsidian backdrop:
- * soft grid, faint radial spotlight, very subtle animated aurora, cursor-
- * following glow, animated gradient borders, and spring-based hover lifts.
- *
- * Design rules respected (Obsidian system):
- *  - Section heading stays SOLID text-foreground (no aurora-text — that is
- *    reserved for the hero + final CTA only).
- *  - The reserved cyan→purple→emerald gradient appears only on icon rings,
- *    borders, glows, and the CTA — exactly the sanctioned surfaces.
- *  - Surfaces are near-black glass with hairline white borders.
- */
 const features = [
   {
     icon: Brain,
@@ -77,11 +62,6 @@ const features = [
   },
 ];
 
-/**
- * FeatureCard — the interactive unit.
- * Mouse-follow glow is driven by CSS vars (--mx/--my) set via a rAF-throttled
- * pointer handler, mirroring the hero's spotlight technique so it stays 60fps.
- */
 function FeatureCard({ feature, index }) {
   const cardRef = useRef(null);
   const rafRef = useRef(null);
@@ -112,7 +92,6 @@ function FeatureCard({ feature, index }) {
       style={{ "--glow": glowVar, willChange: "transform" }}
       className="group relative overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 backdrop-blur-xl transition-[box-shadow,border-color] duration-500 hover:border-white/[0.14] hover:shadow-glass-lg"
     >
-      {/* Cursor-following radial glow */}
       <span
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
@@ -122,14 +101,12 @@ function FeatureCard({ feature, index }) {
         }}
       />
 
-      {/* Ambient corner blur, lit on hover */}
       <span
         aria-hidden="true"
         className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-30"
         style={{ background: `hsl(${glowVar})` }}
       />
 
-      {/* Animated gradient border — fades + pans in on hover */}
       <span
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
@@ -146,7 +123,6 @@ function FeatureCard({ feature, index }) {
         }}
       />
 
-      {/* Very subtle floating particles */}
       <span
         aria-hidden="true"
         className="pointer-events-none absolute left-7 top-10 h-1 w-1 rounded-full bg-white/25"
@@ -159,7 +135,6 @@ function FeatureCard({ feature, index }) {
       />
 
       <div className="relative z-10">
-        {/* Gradient icon with spring micro-rotation on hover */}
         <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl ring-aurora text-white shadow-glow transition-transform duration-500 ease-spring group-hover:-rotate-6 group-hover:scale-110">
           <Icon className="h-6 w-6" />
         </div>
@@ -171,7 +146,6 @@ function FeatureCard({ feature, index }) {
           {feature.description}
         </p>
 
-        {/* Small accent line — lengthens on hover */}
         <span
           aria-hidden="true"
           className="mt-5 block h-px w-8 origin-left scale-x-100 bg-gradient-to-r from-transparent via-white/40 to-transparent transition-all duration-500 ease-spring group-hover:w-16"
@@ -187,12 +161,10 @@ export default function WhyNovaNest() {
       id="why-novanest"
       className="relative overflow-hidden px-4 py-24 md:py-32"
     >
-      {/* Soft grid mesh */}
       <div
         className="grid-mesh pointer-events-none absolute inset-0 opacity-60"
         aria-hidden="true"
       />
-      {/* Faint radial spotlight from the top */}
       <div
         className="pointer-events-none absolute inset-0"
         aria-hidden="true"
@@ -201,7 +173,6 @@ export default function WhyNovaNest() {
             "radial-gradient(60% 50% at 50% 0%, hsl(var(--purple) / 0.10), transparent 70%)",
         }}
       />
-      {/* Very subtle animated aurora */}
       <div
         className="aurora-blob pointer-events-none"
         aria-hidden="true"
@@ -230,7 +201,6 @@ export default function WhyNovaNest() {
       />
 
       <div className="container relative mx-auto">
-        {/* Heading block */}
         <div className="mx-auto max-w-3xl text-center">
           <motion.span
             initial={{ opacity: 0, y: 10 }}
@@ -267,14 +237,12 @@ export default function WhyNovaNest() {
           </motion.p>
         </div>
 
-        {/* Feature grid — 3×2 desktop, 2×3 tablet, 1 column mobile */}
         <div className="mx-auto mt-16 grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, index) => (
             <FeatureCard key={feature.title} feature={feature} index={index} />
           ))}
         </div>
 
-        {/* Bottom CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

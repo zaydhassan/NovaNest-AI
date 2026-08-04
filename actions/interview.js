@@ -18,14 +18,9 @@ import { revalidatePath } from "next/cache";
 export async function generateQuiz(companySlug = null) {
   const user = await requireUser();
 
-  // Quizzes are the most expensive call — tighten the budget.
   rateLimit({ key: `quiz:${user.clerkUserId}`, limit: 8, windowMs: 10 * 60_000 });
 
   try {
-    // Dream Company Mode — null companySlug → null context → byte-identical
-    // baseline quiz prompt. The selected slug travels back to the page via the
-    // page's own state (it owns the selector), so the return shape stays the
-    // questions array exactly as today.
     const company = await resolveCompanyContext(companySlug);
     const quiz = await generateJSON(quizPrompt(user.industry, user.skills, company));
     if (!Array.isArray(quiz?.questions)) {
@@ -57,7 +52,6 @@ export async function saveQuizResult(questions, answers, score, company = null) 
 
   const wrongAnswers = questionResults.filter((q) => !q.isCorrect);
 
-  // Only generate an improvement tip when there are wrong answers.
   let improvementTip = null;
   if (wrongAnswers.length > 0) {
     const wrongQuestionsText = wrongAnswers
@@ -68,13 +62,11 @@ export async function saveQuizResult(questions, answers, score, company = null) 
       .join("\n\n");
 
     try {
-      // Dream Company Mode — null company → null context → byte-identical tip.
       const companyCtx = await resolveCompanyContext(companySlug);
       improvementTip = await generateText(
         improvementTipPrompt(user.industry, wrongQuestionsText, companyCtx)
       );
     } catch (error) {
-      // Tip generation is best-effort — persist the result without it.
       console.error("[NovaNest] improvementTip failed:", error?.message);
     }
   }
@@ -104,12 +96,10 @@ export async function saveQuizResult(questions, answers, score, company = null) 
       data: { score },
     }).catch((e) => console.error("[NovaNest] quiz notify:", e?.message));
 
-    // Career OS — remember the quiz result + weak area. Idempotent + pure.
     fromQuiz(user.id, assessment).catch((e) =>
       console.error("[NovaNest] fromQuiz memory:", e?.message)
     );
 
-    // Career OS — timeline "learning" milestone. Idempotent on type+sourceId.
     recordTimelineEvent({ userId: user.id, ...deriveFromAssessment(assessment) }).catch((e) =>
       console.error("[NovaNest] timeline quiz:", e?.message)
     );

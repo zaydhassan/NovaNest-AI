@@ -17,21 +17,11 @@ const STATIC_PROMPTS = [
   "Help me plan my next 30 days",
 ];
 
-/**
- * CoachDrawer — global "ask the Coach" surface (M5). Opens from any route via
- * the ⌘J / Ctrl+J shortcut or the header trigger. A lightweight single-turn
- * chat that streams a reply and links to /coach for the full experience.
- *
- * We deliberately use a separate shortcut (⌘J) from the existing command palette
- * (⌘K) so we don't disturb that feature — see the plan's non-negotiable
- * "do not remove/simplify existing features" constraint.
- */
 export function CoachDrawer({ className }) {
   const [open, setOpen] = useState(false);
   const scrollRef = useRef(null);
   const { messages, streaming, send } = useCoachChat({});
 
-  // Global ⌘J / Ctrl+J toggles the drawer.
   useEffect(() => {
     const onKey = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "j") {
@@ -74,7 +64,6 @@ export function CoachDrawer({ className }) {
               Chat with NovaNest&apos;s AI career copilot.
             </DialogPrimitive.Description>
 
-            {/* Header */}
             <div className="flex items-center justify-between border-b border-border px-5 py-4">
               <div className="flex items-center gap-2">
                 <span className="grid h-8 w-8 place-items-center rounded-lg ring-aurora text-white shadow-glow">
@@ -96,7 +85,6 @@ export function CoachDrawer({ className }) {
               </Link>
             </div>
 
-            {/* Messages */}
             <div ref={scrollRef} className="flex-1 space-y-5 overflow-y-auto px-5 py-5">
               {isEmpty ? (
                 <div className="flex h-full flex-col items-center justify-center gap-5 text-center">
@@ -119,7 +107,6 @@ export function CoachDrawer({ className }) {
               )}
             </div>
 
-            {/* Input */}
             <div className="border-t border-border p-3">
               <ChatInput onSend={send} disabled={streaming} loading={streaming} />
             </div>

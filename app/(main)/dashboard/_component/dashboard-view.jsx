@@ -44,9 +44,6 @@ import LearningProgressCard from "./learning-progress-card";
 import RecentConversationsCard from "./recent-conversations-card";
 import RecommendedActionsCard from "./recommended-actions-card";
 
-// recharts is the single biggest dependency on this page. Code-split every
-// chart into its own chunk so the dashboard's First Load JS stays small and
-// the charting library only downloads as each card hydrates.
 const NovaScoreCard = dynamic(() => import("./nova-score-card"), {
   ssr: false,
   loading: () => <div className="h-[220px] shimmer rounded-2xl" />,
@@ -60,9 +57,6 @@ const GrowthRadialChart = dynamic(() => import("./growth-radial-chart"), {
   loading: () => <div className="h-[420px] shimmer rounded-2xl" />,
 });
 
-// Career OS cards (M4). The two recharts-backed cards are code-split (ssr:false)
-// to keep the dashboard's First Load JS small; the three lightweight cards are
-// imported directly.
 const CareerHealthCard = dynamic(() => import("./career-health-card"), {
   ssr: false,
   loading: () => <div className="h-[260px] shimmer rounded-2xl" />,
@@ -163,8 +157,6 @@ function KpiCard({ icon: Icon, label, value, sub, children, delay = 0 }) {
   );
 }
 
-// Section divider — the eyebrow pill motif reused from PageHeader so each
-// Command Center section reads as a deliberate group, not a flat list.
 function SectionLabel({ children }) {
   return (
     <div className="flex items-center gap-2 pt-2">
@@ -203,21 +195,18 @@ export default function DashboardView({
     addSuffix: true,
   });
 
-  // Skill-gap analysis: which recommended skills the user already has vs gaps.
   const userSkillSet = new Set(userSkills.map((s) => String(s).toLowerCase()));
   const recommended = insights.recommendedSkills || [];
   const have = recommended.filter((s) => userSkillSet.has(String(s).toLowerCase()));
   const gaps = recommended.filter((s) => !userSkillSet.has(String(s).toLowerCase()));
   const haveRatio = recommended.length ? Math.round((have.length / recommended.length) * 100) : 0;
 
-  // Recommendation-kind coach insights feed Today's Mission + Recommended Actions.
   const recommendationInsights = (coachInsights ?? []).filter(
     (i) => i?.kind === "recommendation"
   );
 
   return (
     <div className="space-y-8">
-      {/* ── Plan status ── */}
       {planInfo && (
         <PlanStatusCard
           plan={planInfo.plan}
@@ -226,7 +215,6 @@ export default function DashboardView({
         />
       )}
 
-      {/* ── Command tier: today's mission + data freshness ── */}
       <Reveal>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <div className="lg:col-span-2">
@@ -268,10 +256,8 @@ export default function DashboardView({
         </div>
       </Reveal>
 
-      {/* ── Quick actions ── */}
       <QuickActions />
 
-      {/* ── Vital signs ── */}
       <div className="space-y-4">
         <SectionLabel>Vital signs</SectionLabel>
         <Reveal>
@@ -288,7 +274,6 @@ export default function DashboardView({
         </Reveal>
       </div>
 
-      {/* ── Your pipeline ── */}
       <div className="space-y-4">
         <SectionLabel>Your pipeline</SectionLabel>
         <Reveal>
@@ -299,7 +284,6 @@ export default function DashboardView({
         </Reveal>
       </div>
 
-      {/* ── Learning ── */}
       <div className="space-y-4">
         <SectionLabel>Learning</SectionLabel>
         <Reveal>
@@ -313,7 +297,6 @@ export default function DashboardView({
         </Reveal>
       </div>
 
-      {/* ── AI guidance ── */}
       <div className="space-y-4">
         <SectionLabel>AI guidance</SectionLabel>
         <Reveal>
@@ -324,7 +307,6 @@ export default function DashboardView({
         </Reveal>
       </div>
 
-      {/* ── The record ── */}
       <div className="space-y-4">
         <SectionLabel>The record</SectionLabel>
         <Reveal>
@@ -335,11 +317,9 @@ export default function DashboardView({
         </Reveal>
       </div>
 
-      {/* ── Industry intelligence ── */}
       <div className="space-y-4">
         <SectionLabel>Industry intelligence</SectionLabel>
 
-        {/* KPI row */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           <KpiCard icon={OutlookIcon} label="Market outlook" value={insights.marketOutlook} delay={0}>
             <p className={`mt-1 text-xs ${outlookColor}`}>{insights.marketOutlook} outlook</p>
@@ -362,7 +342,6 @@ export default function DashboardView({
           </KpiCard>
         </div>
 
-        {/* Salary + growth radial */}
         <Reveal>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.6fr_1fr]">
             <SalaryChart salaryRanges={insights.salaryRanges} />
@@ -370,7 +349,6 @@ export default function DashboardView({
           </div>
         </Reveal>
 
-        {/* Skill gap + trends */}
         <Reveal delay={0.05}>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Card className="glass">
@@ -447,7 +425,6 @@ export default function DashboardView({
           </div>
         </Reveal>
 
-        {/* Recommended skills */}
         <Reveal delay={0.1}>
           <Card className="glass">
             <CardHeader>

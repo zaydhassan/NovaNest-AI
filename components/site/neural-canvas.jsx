@@ -3,19 +3,6 @@
 import React, { useEffect, useRef } from "react";
 import { useReducedMotion } from "framer-motion";
 
-/**
- * NeuralCanvas — a lightweight interactive particle field.
- *
- * Nodes drift slowly and draw hairline connections to nearby neighbours,
- * forming a living neural mesh. The cursor exerts a gentle attractive force
- * and brightens the links it touches, so the hero reacts to the visitor
- * without being noisy.
- *
- * Performance: a single rAF loop, capped node count scaled to viewport area
- * (max ~70), device-pixel-ratio aware, pauses when offscreen/hidden, and
- * renders nothing animated when the user prefers reduced motion (a static,
- * sparse field is drawn once).
- */
 export function NeuralCanvas({ className, density = 1 }) {
   const canvasRef = useRef(null);
   const reduced = useReducedMotion();
@@ -38,8 +25,6 @@ export function NeuralCanvas({ className, density = 1 }) {
       const css = getComputedStyle(document.documentElement);
       const toRgb = (v) => {
         const h = v.trim();
-        // hsl channels are stored as "H S% L%" — wrap into hsl() and let the
-        // browser parse to rgb for canvas use.
         const probe = document.createElement("span");
         probe.style.color = `hsl(${h})`;
         probe.style.display = "none";
@@ -66,7 +51,6 @@ export function NeuralCanvas({ className, density = 1 }) {
       canvas.width = Math.max(1, Math.floor(width * dpr));
       canvas.height = Math.max(1, Math.floor(height * dpr));
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      // Node count scales with area, capped for perf.
       const target = Math.min(70, Math.floor((width * height) / 22000) * density);
       nodes = Array.from({ length: target }, () => ({
         x: Math.random() * width,
@@ -82,7 +66,6 @@ export function NeuralCanvas({ className, density = 1 }) {
       ctx.clearRect(0, 0, width, height);
       const { purple, cyan, emerald, fg } = tokens;
 
-      // Update + draw links.
       for (let i = 0; i < nodes.length; i++) {
         const a = nodes[i];
         if (!reduced) {
@@ -90,7 +73,6 @@ export function NeuralCanvas({ className, density = 1 }) {
           a.y += a.vy;
           if (a.x < 0 || a.x > width) a.vx *= -1;
           if (a.y < 0 || a.y > height) a.vy *= -1;
-          // Cursor attraction.
           const dxm = mouse.x - a.x;
           const dym = mouse.y - a.y;
           const dm = Math.hypot(dxm, dym);
@@ -120,7 +102,6 @@ export function NeuralCanvas({ className, density = 1 }) {
         }
       }
 
-      // Draw nodes on top.
       for (let i = 0; i < nodes.length; i++) {
         const a = nodes[i];
         const nearMouse = Math.hypot(a.x - mouse.x, a.y - mouse.y) < 200;

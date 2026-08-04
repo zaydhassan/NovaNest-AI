@@ -24,7 +24,6 @@ import {
 } from "@/components/ui/card";
 import { WhyNote } from "@/components/site/why-note";
 
-// Unique gradient ids per metric key so multiple gauges on one page don't clash.
 const GRADIENT_IDS = {
   careerHealth: "intelGaugeCareerHealth",
   resume: "intelGaugeResume",
@@ -36,21 +35,6 @@ const GRADIENT_IDS = {
   productivity: "intelGaugeProductivity",
 };
 
-/**
- * MetricCard — the reusable Career Intelligence card. Renders one metric:
- *  - a radial gauge (the score, 0-100)
- *  - the level + levelBlurb
- *  - Why / How to improve / What to improve (WhyNote blocks)
- *  - the evidence list (concrete data points that back the score — always shown)
- *  - an optional chart (AreaChart for series, BarChart for funnel) when the
- *    metric carries that payload.
- *
- * The gauge recipe is copied from career-health-card.jsx (the codebase's
- * established inlined RadialBarChart pattern — no shared Gauge component
- * exists, and extracting one is a no-regression-risky refactor, out of scope).
- *
- * @param {{ metric: object, icon: React.ComponentType, accent?: string, className?: string }} props
- */
 export default function MetricCard({ metric, icon: Icon, accent = "hsl(var(--primary))", className = "" }) {
   if (!metric) return null;
 
@@ -81,7 +65,6 @@ export default function MetricCard({ metric, icon: Icon, accent = "hsl(var(--pri
       </CardHeader>
 
       <CardContent className="flex flex-col gap-4">
-        {/* Gauge + score */}
         <div className="grid gap-4 sm:grid-cols-[140px_1fr]">
           <div className="relative h-[140px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -121,7 +104,6 @@ export default function MetricCard({ metric, icon: Icon, accent = "hsl(var(--pri
             </div>
           </div>
 
-          {/* Why / How / What blocks */}
           <div className="flex flex-col gap-1">
             <WhyNote label="Why">{why}</WhyNote>
             <WhyNote label="How to improve">{how}</WhyNote>
@@ -129,7 +111,6 @@ export default function MetricCard({ metric, icon: Icon, accent = "hsl(var(--pri
           </div>
         </div>
 
-        {/* Optional chart: AreaChart for series (skill growth, learning velocity) */}
         {hasSeries && (
           <div className="h-[120px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -177,7 +158,6 @@ export default function MetricCard({ metric, icon: Icon, accent = "hsl(var(--pri
           </div>
         )}
 
-        {/* Optional chart: BarChart for funnel (application success rate) */}
         {hasFunnel && (
           <div className="h-[140px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -215,8 +195,6 @@ export default function MetricCard({ metric, icon: Icon, accent = "hsl(var(--pri
           </div>
         )}
 
-        {/* Evidence list — always shown. This is the "supporting evidence" the
-            product requires: concrete data points that produced the score. */}
         {evidence.length > 0 && (
           <div className="rounded-lg border border-border/70 bg-muted/20 p-3">
             <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">

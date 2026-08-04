@@ -11,17 +11,6 @@ import { NeuralCanvas } from "@/components/site/neural-canvas";
 
 const EASE = [0.22, 1, 0.36, 1];
 
-/**
- * HeroSection — obsidian hero with:
- *  - an interactive neural-mesh canvas that reacts to the cursor
- *  - a cursor-following radial spotlight + floating gradient orbs
- *  - a staggered blur-in headline and magnetic CTAs
- *  - a glass product mock with a mini salary chart and stat tiles
- *
- * All decorative layers are aria-hidden and pointer-events-none. Reduced
- * motion: the canvas renders a static field and entrance animations collapse
- * to instant.
- */
 export default function HeroSection() {
   const sectionRef = useRef(null);
   const rafRef = useRef(null);
@@ -56,12 +45,10 @@ export default function HeroSection() {
       onMouseMove={handleMouseMove}
       className="spotlight relative w-full overflow-hidden px-4 pt-36 pb-16 md:pt-44 md:pb-28"
     >
-      {/* Interactive neural mesh — sits behind everything, fades out at edges. */}
       <div className="pointer-events-none absolute inset-0 z-0 opacity-70 [mask-image:radial-gradient(ellipse_70%_60%_at_50%_35%,#000_30%,transparent_85%)]">
         <NeuralCanvas className="h-full w-full" />
       </div>
 
-      {/* Floating gradient orbs */}
       <div
         className="aurora-blob pointer-events-none"
         style={{ width: 280, height: 280, top: "12%", left: "8%", background: "hsl(var(--cyan))", opacity: 0.18, animation: "floaty 8s ease-in-out infinite" }}
@@ -142,7 +129,6 @@ export default function HeroSection() {
           </motion.p>
         </motion.div>
 
-        {/* Product mock */}
         <motion.div
           initial={reduced ? false : { opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -151,7 +137,6 @@ export default function HeroSection() {
         >
           <div className="border-gradient shadow-float">
             <div className="rounded-[calc(var(--radius-2xl)-1px)] p-2">
-              {/* window chrome */}
               <div className="mb-2 flex items-center gap-1.5 px-3 py-2">
                 <span className="h-3 w-3 rounded-full bg-rose-500/70" />
                 <span className="h-3 w-3 rounded-full bg-amber-400/70" />
@@ -163,7 +148,6 @@ export default function HeroSection() {
               </div>
 
               <div className="grid gap-4 rounded-xl bg-background/40 p-4 md:grid-cols-[1.4fr_1fr]">
-                {/* left: chart card */}
                 <div className="glass rounded-xl p-5 shadow-card">
                   <div className="mb-4 flex items-center justify-between">
                     <div>
@@ -174,7 +158,6 @@ export default function HeroSection() {
                       <TrendingUp className="h-3 w-3 text-accent-warm" /> +12.4%
                     </Badge>
                   </div>
-                  {/* SVG bar chart */}
                   <svg viewBox="0 0 320 140" className="h-32 w-full" role="img" aria-label="Salary ranges bar chart">
                     <defs>
                       <linearGradient id="bar1" x1="0" y1="0" x2="0" y2="1">
@@ -210,7 +193,6 @@ export default function HeroSection() {
                   </svg>
                 </div>
 
-                {/* right: stat tiles */}
                 <div className="grid gap-4">
                   <div className="glass rounded-xl p-5">
                     <div className="flex items-center gap-2 text-muted-foreground">

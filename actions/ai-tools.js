@@ -17,9 +17,6 @@ import {
 import { rateLimit } from "@/lib/rate-limit";
 import { ValidationError } from "@/lib/errors";
 
-/**
- * Rewrite a raw resume bullet into 3 quantified achievement variants (STAR/XYZ).
- */
 export async function rewriteAchievement(input) {
   const user = await requireUser();
   const parsed = rewriteAchievementSchema.safeParse(input);
@@ -41,9 +38,6 @@ export async function rewriteAchievement(input) {
   return variants.length ? variants : [String(out).trim()];
 }
 
-/**
- * Generate an 8-week upskilling roadmap toward a target role.
- */
 export async function generateRoadmap(input) {
   const user = await requireUser();
   const parsed = roadmapSchema.safeParse(input);
@@ -59,10 +53,6 @@ export async function generateRoadmap(input) {
   return generateJSON(skillRoadmapPrompt(currentSkills, parsed.data.targetRole));
 }
 
-/**
- * Generate a cold-outreach message (LinkedIn note or email) tailored to the
- * user's background.
- */
 export async function generateOutreach(input) {
   const user = await requireUser();
   const parsed = outreachSchema.safeParse(input);
@@ -83,10 +73,6 @@ export async function generateOutreach(input) {
   );
 }
 
-/**
- * Score job-fit for a given JD against the user's profile and return what to
- * emphasize/address in a cover letter.
- */
 export async function getJobFit(input) {
   const user = await requireUser();
   const parsed = jobFitSchema.safeParse(input);

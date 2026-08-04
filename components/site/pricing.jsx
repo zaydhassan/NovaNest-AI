@@ -11,16 +11,11 @@ import { cn } from "@/lib/utils";
 
 const ease = [0.22, 1, 0.36, 1];
 
-/**
- * Pricing — three-tier plan grid with a monthly/annual toggle. The middle
- * plan is highlighted with the reserved accent gradient ring.
- */
 export function Pricing({ plans }) {
   const [annual, setAnnual] = useState(true);
 
   return (
     <div>
-      {/* Billing toggle */}
       <div className="mb-10 flex items-center justify-center gap-3">
         <span className={cn("text-sm", !annual ? "text-foreground" : "text-muted-foreground")}>
           Monthly

@@ -12,12 +12,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-/**
- * RecentConversationsCard — jump back into a copilot thread. Reads real
- * `listChatSessions()` data ({ id, title, updatedAt, _count.messages }).
- *
- * @param {{ chatSessions: any[] }} props
- */
 export default function RecentConversationsCard({ chatSessions = [] }) {
   const sessions = (chatSessions ?? []).slice(0, 5);
 

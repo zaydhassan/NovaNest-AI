@@ -27,8 +27,6 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "@/components/site/theme-toggle";
 
-// Navigation grouped by the product pillars of the AI Career Operating System.
-// Routes are unchanged — this is a regrouping of the same links.
 const groups = [
   {
     label: "Home",
@@ -73,11 +71,6 @@ const groups = [
   },
 ];
 
-/**
- * MobileMenu — client island for the small-viewport nav. The signed-in
- * navigation items collapse into a slide-over Sheet grouped by OS pillar;
- * the theme toggle lives here too so users can switch themes on mobile.
- */
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
 

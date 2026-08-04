@@ -17,8 +17,6 @@ import { EmptyState } from "@/components/site/state-block";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-// The metric card uses recharts — code-split it so the page's First Load JS
-// stays small (same convention as dashboard-view.jsx).
 const MetricCard = dynamic(() => import("./metric-card"), {
   ssr: false,
   loading: () => <div className="h-[420px] shimmer rounded-2xl" />,
@@ -35,7 +33,6 @@ function SectionLabel({ children }) {
   );
 }
 
-// Metric → { icon, accent } metadata. Accents use CSS vars so they stay on-brand.
 const READINESS = [
   { key: "careerHealth", icon: Activity, accent: "hsl(var(--primary))" },
   { key: "resume", icon: FileText, accent: "hsl(var(--chart-1))" },
@@ -50,12 +47,6 @@ const MOMENTUM = [
   { key: "productivity", icon: Zap, accent: "hsl(var(--primary))" },
 ];
 
-/**
- * IntelligenceView — renders the 8 Career Intelligence metrics in two sections
- * (Readiness + Momentum). Each metric card carries its score, Why/How/What
- * explanation, and supporting evidence. A header strip summarizes the
- * strongest metric and the one to focus on.
- */
 export default function IntelligenceView({ snapshot }) {
   if (!snapshot || !snapshot.metrics) {
     return (
@@ -69,7 +60,6 @@ export default function IntelligenceView({ snapshot }) {
 
   const metrics = snapshot.metrics;
 
-  // Derive the strongest + weakest metric labels from the 8 scores.
   const ranked = Object.values(metrics)
     .map((m) => ({ label: m.label, score: m.score }))
     .sort((a, b) => b.score - a.score);
@@ -78,7 +68,6 @@ export default function IntelligenceView({ snapshot }) {
 
   return (
     <div className="flex flex-col gap-5">
-      {/* Summary strip */}
       <RevealStagger className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <RevealItem>
           <Card className="glass">

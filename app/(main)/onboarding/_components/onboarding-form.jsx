@@ -79,7 +79,6 @@ const OnboardingForm = ({ industries }) => {
 
   return (
     <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-2 lg:items-stretch">
-      {/* Brand / value panel */}
       <div className="border-gradient relative hidden overflow-hidden p-8 lg:flex lg:flex-col lg:justify-between">
         <div
           className="aurora-blob"
@@ -124,7 +123,6 @@ const OnboardingForm = ({ industries }) => {
         </div>
       </div>
 
-      {/* Form panel */}
       <Card className="w-full overflow-hidden">
         <CardHeader>
           <CardTitle className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">

@@ -37,13 +37,12 @@ import { getTwin, rebuildTwin, twinChat } from "@/actions/twin";
 export default function TwinView({ initialTwin }) {
   const [twin, setTwin] = useState(initialTwin);
   const [building, setBuilding] = useState(false);
-  const [messages, setMessages] = useState([]); // {role, text}
+  const [messages, setMessages] = useState([]);
   const chatRef = useRef(null);
 
   const { fn: rebuildFn } = useFetch(rebuildTwin);
   const { loading: asking, fn: askFn } = useFetch(twinChat);
 
-  // After dispatching a rebuild, poll getTwin until the version bumps (or timeout).
   useEffect(() => {
     if (!building) return;
     const prevVersion = twin?.version ?? 0;
@@ -92,7 +91,6 @@ export default function TwinView({ initialTwin }) {
     ]);
   };
 
-  // No twin yet — build CTA.
   if (!twin) {
     return (
       <Reveal>
@@ -123,7 +121,6 @@ export default function TwinView({ initialTwin }) {
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-      {/* Profile */}
       <div className="space-y-6 lg:col-span-2">
         <Reveal>
           <SpotlightCard className="rounded-2xl border border-border bg-card/40 p-5">
@@ -237,7 +234,6 @@ export default function TwinView({ initialTwin }) {
         )}
       </div>
 
-      {/* Chat */}
       <div className="lg:col-span-1">
         <Reveal delay={0.05}>
           <Card className="glass sticky top-24">

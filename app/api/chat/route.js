@@ -1,23 +1,3 @@
-/**
- * Chat streaming route (M5) — the persistent Coach surface entrypoint.
- *
- * POST /api/chat  { text, sessionId? }
- *
- * Flow:
- *  1. auth + resolve DB user (requireUser), validate (chatSchema), rate-limit.
- *  2. Recall long-term memory + gather per-turn context data.
- *  3. Coordinator.route → {intent, agentIds, agentResults, memoryBlocks,
- *     synthesisPrompt, followUps}.
- *  4. Upsert session + persist the user message (one tx up front).
- *  5. Stream the synthesized reply via generateTextStream, sending metadata
- *     (session id, intent, agent ids, follow-ups, memory blocks for the
- *     drawer) in response *headers* so the client has it before the first token.
- *  6. After the stream completes: in one tx persist the assistant message
- *     (with parsed citations) + a timeline "coach" event + a coach_nudge
- *     notification; fire-and-forget memory extraction + bumpActivity.
- *
- * Dynamic by default (uses auth() + headers).
- */
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/prisma";
@@ -72,7 +52,6 @@ export async function POST(req) {
     return NextResponse.json({ error: e.message || "Unauthorized" }, { status });
   }
 
-  // Validate + rate-limit.
   let parsed;
   try {
     const body = await req.json();
@@ -94,10 +73,6 @@ export async function POST(req) {
     return NextResponse.json({ error: e.message }, { status: 429 });
   }
 
-  // 2) Recall memory + gather context data (parallel).
-  //    The Memory Engine retrieval (structured memories) is additive: when its
-  //    block is empty (no memories / any error), the synthesis prompt is
-  //    byte-identical to today, so existing chat behavior is unchanged.
   const [memory, ctxData, structured] = await Promise.all([
     recallMemory({ userId: user.id, query: text, limit: 12 }).catch(() => []),
     gatherChatContextData(user).catch((e) => {
@@ -118,7 +93,6 @@ export async function POST(req) {
     })),
   ]);
 
-  // 3) Coordinator plan (non-streaming).
   const plan = await Coordinator.route({
     userId: user.id,
     input: text,
@@ -130,18 +104,14 @@ export async function POST(req) {
     return null;
   });
 
-  // Fallback synthesis prompt if the coordinator failed entirely.
   const basePrompt =
     plan?.synthesisPrompt ??
     `You are NovaNest, an AI career companion. Answer the user's message warmly and concretely.\n\nUser message:\n${text}\n\nReply:`;
 
-  // Memory Engine: prepend the retrieved structured-memory block ONLY when
-  // non-empty. Empty block (no memories / retrieval error) → prompt unchanged.
   const synthesisPrompt = structured?.block
     ? `${structured.block}\n\n${basePrompt}`
     : basePrompt;
 
-  // 4) Upsert session + persist user message (one tx up front).
   let session = null;
   let userMessage = null;
   try {
@@ -176,13 +146,11 @@ export async function POST(req) {
 
   const finalSessionId = session.id;
 
-  // 5) Build metadata for the client (sent in headers, available before tokens).
   const meta = {
     intent: plan?.intent ?? "general",
     agentIds: plan?.agentIds ?? ["coach"],
     followUps: plan?.followUps ?? [],
     memoryBlocks: plan?.memoryBlocks ?? [],
-    // Memory Engine — retrieved structured memories (for the chat drawer chips).
     structuredMemories: structured?.manifest ?? null,
   };
 
@@ -218,7 +186,6 @@ export async function POST(req) {
         controller.close();
       }
 
-      // 6) Persist the assistant message + timeline + notification in one tx.
       if (replyText.trim()) {
         const citations = parseCitations(replyText, meta.memoryBlocks);
         try {
@@ -254,7 +221,6 @@ export async function POST(req) {
           console.error("[NovaNest] chat assistant-message persist failed:", e?.message);
         }
 
-        // Side-effects fire-and-forget (never affect the streamed reply).
         createNotification(user.id, {
           type: "coach_nudge",
           title: "Coach conversation updated",

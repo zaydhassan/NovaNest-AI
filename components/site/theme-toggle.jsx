@@ -5,10 +5,6 @@ import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-/**
- * ThemeToggle — switches between light/dark. Renders a stable placeholder
- * until mounted to avoid hydration mismatch (next-themes needs the client).
- */
 export function ThemeToggle({ className }) {
   const { theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);

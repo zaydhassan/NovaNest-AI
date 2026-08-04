@@ -27,9 +27,6 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 
-// The reserved brand gradient is allowed on the Career Health gauge (progress /
-// key-stat usage per the gradient-reservation rule). Everything else in this
-// card uses solid semantic colors.
 const PILLARS = [
   { key: "resume", label: "Resume", icon: FileText },
   { key: "interview", label: "Interview", icon: GraduationCap },
@@ -69,7 +66,6 @@ export default function CareerHealthCard({ health }) {
 
       <CardContent>
         <div className="grid gap-6 md:grid-cols-[200px_1fr]">
-          {/* Radial gauge with the reserved gradient */}
           <div className="relative h-[200px]">
             <ResponsiveContainer width="100%" height="100%">
               <RadialBarChart
@@ -109,7 +105,6 @@ export default function CareerHealthCard({ health }) {
             </div>
           </div>
 
-          {/* Level + full pillar breakdown (5 NovaScore pillars + 2 new) */}
           <div className="flex flex-col justify-between gap-4">
             <div>
               <p className="text-sm font-semibold text-foreground">{level}</p>

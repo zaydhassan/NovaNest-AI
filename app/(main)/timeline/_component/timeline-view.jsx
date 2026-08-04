@@ -25,8 +25,6 @@ import { cn } from "@/lib/utils";
 import useFetch from "@/hooks/use-fetch";
 import { getTimeline, backfillTimelineAction } from "@/actions/timeline";
 
-// Type → icon + human label + accent class. Mirrors the dashboard
-// timeline-embed.jsx meta, extended with labels for the filter chips.
 const TYPE_META = {
   learning: { icon: BookOpen, label: "Learning", className: "text-accent" },
   building: { icon: Hammer, label: "Building", className: "text-primary" },
@@ -40,10 +38,8 @@ const TYPE_META = {
   milestone: { icon: Flag, label: "Milestones", className: "text-accent-warm" },
 };
 
-// Reserved-gradient dot types — matches the embed's gradient reservation.
 const GRADIENT_TYPES = new Set(["offer", "achievement", "milestone"]);
 
-// sourceType → short badge label for the milestone meta line.
 const SOURCE_LABELS = {
   resume: "Resume",
   application: "Application",
@@ -70,7 +66,6 @@ const FILTER_ORDER = [
   "milestone",
 ];
 
-/** Case-insensitive search across the fields a user would think in. */
 function matchesQuery(ev, q) {
   if (!q) return true;
   const hay = [ev.title, ev.description, ev.metadata?.company, ev.metadata?.role, ev.metadata?.skill]
@@ -80,12 +75,6 @@ function matchesQuery(ev, q) {
   return hay.includes(q.toLowerCase());
 }
 
-/**
- * TimelineView — the full-page career timeline. The server hands the whole
- * fetched set (≤500) in; search + type-filtering happen client-side in memory
- * (zero network per keystroke/chip). A "Sync milestones" button runs the
- * idempotent backfill (pulls in newly-derivable events) then re-fetches.
- */
 export default function TimelineView({ initialEvents = [] }) {
   const [events, setEvents] = useState(initialEvents);
   const [query, setQuery] = useState("");
@@ -95,7 +84,6 @@ export default function TimelineView({ initialEvents = [] }) {
   const syncFetch = useFetch(backfillTimelineAction);
   const refreshFetch = useFetch(getTimeline);
 
-  // Per-type counts drive the chip badges; "all" is the full length.
   const counts = useMemo(() => {
     const map = { all: events.length };
     for (const ev of events) map[ev.type] = (map[ev.type] ?? 0) + 1;
@@ -111,7 +99,6 @@ export default function TimelineView({ initialEvents = [] }) {
     [events, activeType, query]
   );
 
-  // Bucket the filtered (already newest-first from the server) by month.
   const grouped = useMemo(() => {
     const buckets = new Map();
     for (const ev of filtered) {
@@ -125,7 +112,6 @@ export default function TimelineView({ initialEvents = [] }) {
   const handleSync = async () => {
     const res = await syncFetch.fn();
     if (res) {
-      // Backfill recorded (or skipped) — re-fetch to pick up any new rows.
       const fresh = await refreshFetch.fn({ limit: 500 });
       if (fresh) setEvents(fresh);
     }
@@ -137,7 +123,6 @@ export default function TimelineView({ initialEvents = [] }) {
 
   return (
     <div className="space-y-5">
-      {/* Toolbar — search + filter chips + sync */}
       <Card className="glass">
         <CardContent className="space-y-3 p-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -173,7 +158,6 @@ export default function TimelineView({ initialEvents = [] }) {
             </Button>
           </div>
 
-          {/* Filter chips — horizontally scrollable on small screens */}
           <div className="flex flex-wrap gap-1.5">
             {FILTER_ORDER.map((key) => {
               const isAll = key === "all";
@@ -181,8 +165,6 @@ export default function TimelineView({ initialEvents = [] }) {
               const Icon = meta?.icon ?? Flag;
               const label = isAll ? "All" : meta?.label ?? key;
               const count = counts[key] ?? 0;
-              // Hide empty type chips (except "all") once events exist to keep
-              // the row tight; show all when empty so the structure is visible.
               if (!isAll && !hasEvents) return null;
               if (!isAll && count === 0) return null;
               const active = activeType === key;
@@ -210,7 +192,6 @@ export default function TimelineView({ initialEvents = [] }) {
         </CardContent>
       </Card>
 
-      {/* Timeline rail */}
       {!hasEvents ? (
         <Card className="glass">
           <CardContent className="py-10 text-center text-sm text-muted-foreground">

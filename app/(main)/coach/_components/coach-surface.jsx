@@ -42,7 +42,6 @@ export default function CoachSurface({
     },
   });
 
-  // Auto-scroll to the latest message.
   useEffect(() => {
     const el = scrollRef.current;
     if (el) el.scrollTop = el.scrollHeight;
@@ -77,8 +76,6 @@ export default function CoachSurface({
   const sendMessage = useCallback(
     (text) => {
       send(text);
-      // After the (possibly new) session is created the hook calls
-      // onSessionCreated → refreshSessions; also refresh once the send resolves.
       refreshSessions();
     },
     [send, refreshSessions]
@@ -88,7 +85,6 @@ export default function CoachSurface({
 
   return (
     <div className="grid h-[calc(100vh-9rem)] grid-cols-1 gap-4 lg:h-[calc(100vh-7rem)] lg:grid-cols-[260px_1fr_320px]">
-      {/* Sessions rail — desktop */}
       <aside className="hidden flex-col gap-2 lg:flex">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-muted-foreground">Conversations</h2>
@@ -128,9 +124,7 @@ export default function CoachSurface({
         </div>
       </aside>
 
-      {/* Chat column */}
       <main className="glass flex min-w-0 flex-col overflow-hidden rounded-2xl border border-border">
-        {/* Mobile header */}
         <div className="flex items-center justify-between border-b border-border px-4 py-2 lg:hidden">
           <Button size="sm" variant="ghost" onClick={() => setMobileNavOpen(true)} className="gap-1.5">
             <Menu className="h-4 w-4" /> Chats
@@ -140,7 +134,6 @@ export default function CoachSurface({
           </Button>
         </div>
 
-        {/* Messages */}
         <div ref={scrollRef} className="flex-1 space-y-5 overflow-y-auto px-4 py-5">
           {isEmpty ? (
             <div className="flex h-full flex-col items-center justify-center gap-6 text-center">
@@ -171,13 +164,11 @@ export default function CoachSurface({
           )}
         </div>
 
-        {/* Input */}
         <div className="border-t border-border p-3">
           <ChatInput onSend={sendMessage} disabled={streaming} loading={streaming} />
         </div>
       </main>
 
-      {/* Insights rail — desktop */}
       <aside className="hidden flex-col gap-3 lg:flex">
         <InsightFeed insights={insights} onUpdated={refreshInsights} />
         <Button
@@ -190,7 +181,6 @@ export default function CoachSurface({
         </Button>
       </aside>
 
-      {/* Mobile sessions drawer */}
       <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
         <SheetContent side="left" className="w-3/4 p-0 sm:max-w-xs">
           <SheetHeader className="border-b border-border px-5 pt-5">
@@ -225,7 +215,6 @@ export default function CoachSurface({
         </SheetContent>
       </Sheet>
 
-      {/* Memory drawer (shared desktop+mobile) */}
       <MemoryDrawer open={memoryOpen} onOpenChange={setMemoryOpen} />
     </div>
   );

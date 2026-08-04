@@ -10,19 +10,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-// Sentinel value for the "None" option — Radix Select disallows empty-string
-// values, so "none" represents "no company → byte-identical baseline behavior".
 const NONE = "none";
 
-/**
- * TargetCompanySelect — the Dream Company Mode in-place selector shared by the
- * mock + quiz pages. Defaults to the user's saved dream company (`userTargetCompany`)
- * or "None". "None" → the caller passes `null` to the action → byte-identical
- * baseline prompts/behavior. A company selected → the caller passes the slug and
- * the interview/quiz is personalized to that company.
- *
- * `value`/`onChange` use the raw slug (or `null` for None) so callers stay clean.
- */
 export default function TargetCompanySelect({
   value,
   onChange,

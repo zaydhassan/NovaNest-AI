@@ -60,7 +60,6 @@ export default function NovaScoreCard({ nova }) {
 
       <CardContent>
         <div className="grid gap-6 md:grid-cols-[200px_1fr]">
-          {/* Radial score */}
           <div className="relative h-[200px]">
             <ResponsiveContainer width="100%" height="100%">
               <RadialBarChart
@@ -93,7 +92,6 @@ export default function NovaScoreCard({ nova }) {
             </div>
           </div>
 
-          {/* Level + pillar breakdown */}
           <div className="flex flex-col justify-between gap-4">
             <div>
               <p className="text-sm font-semibold text-foreground">{level}</p>

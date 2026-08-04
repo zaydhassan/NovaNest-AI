@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 import AgentBadge from "./agent-badge";
 import MemoryChip from "./memory-chip";
 
-// Code-split the markdown renderer (it pulls in a sizable dependency).
 const MDMarkdown = dynamic(() => import("@uiw/react-md-editor").then((m) => m.default.Markdown), {
   ssr: false,
   loading: () => <span className="text-sm text-muted-foreground">…</span>,
@@ -14,13 +13,6 @@ const MDMarkdown = dynamic(() => import("@uiw/react-md-editor").then((m) => m.de
 
 const MD_OPTS = { skipHtml: true };
 
-/**
- * One chat message. Assistant messages render markdown + agent badges + cited
- * memory chips; user messages render plain text. `streaming` shows a typing
- * cursor for the in-flight assistant reply.
- *
- * @param {{ message: { role: string, content: string, data?: any }, streaming?: boolean }} props
- */
 export default function MessageBubble({ message, streaming = false }) {
   const isUser = message.role === "user";
   const data = message.data || {};

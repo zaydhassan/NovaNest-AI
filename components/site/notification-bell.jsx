@@ -38,10 +38,6 @@ import {
   markAllNotificationsRead,
 } from "@/actions/notifications";
 
-/**
- * Icon + accent class per notification type. Falls back to the plain Bell so an
- * unknown/future type still renders cleanly.
- */
 const TYPE_META = {
   welcome: { icon: Sparkles, accent: "text-primary" },
   insights_ready: { icon: TrendingUp, accent: "text-emerald-400" },
@@ -55,7 +51,6 @@ const TYPE_META = {
   payment_success: { icon: Crown, accent: "text-amber-400" },
   weekly_digest: { icon: Mail, accent: "text-primary" },
   industry_changed: { icon: RefreshCw, accent: "text-muted-foreground" },
-  // ── Career OS (M5–M10) ──
   coach_nudge: { icon: Sparkles, accent: "text-primary" },
   coach_insight: { icon: Lightbulb, accent: "text-accent" },
   twin_ready: { icon: Fingerprint, accent: "text-violet-400" },
@@ -63,12 +58,6 @@ const TYPE_META = {
   learning_recommendation: { icon: Rocket, accent: "text-accent-warm" },
 };
 
-/**
- * NotificationBell — header bell with an unread count badge and a lightweight
- * dropdown inbox. `count` is the server-resolved unread count (rendered as a
- * badge); the dropdown lazily fetches the latest slice on open. Marking an item
- * read is optimistic + fire-and-forget; "Mark all read" clears the badge.
- */
 export function NotificationBell({ count = 0, className }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -77,7 +66,6 @@ export function NotificationBell({ count = 0, className }) {
   const [unread, setUnread] = useState(count);
   const [pending, startTransition] = useTransition();
 
-  // Keep the badge in sync if the server passes a fresh count (e.g. after nav).
   useEffect(() => {
     setUnread(count);
   }, [count]);

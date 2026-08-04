@@ -1,12 +1,5 @@
 import { cn } from "@/lib/utils";
 
-/**
- * PageHeader — the standard in-app page title block. Gives every authenticated
- * page a consistent eyebrow / title / description / actions layout with the
- * same vertical rhythm, so the product reads as one system.
- *
- * @param {{ eyebrow?: string, title: string, description?: string, actions?: React.ReactNode, className?: string }}
- */
 export function PageHeader({ eyebrow, title, description, actions, className }) {
   return (
     <div

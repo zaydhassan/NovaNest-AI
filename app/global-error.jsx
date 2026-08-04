@@ -2,16 +2,6 @@
 
 import { useEffect } from "react";
 
-/**
- * global-error.jsx — catches errors thrown in the root layout itself
- * (ClerkProvider, ThemeProvider, the html/body shell) that app/error.jsx
- * cannot intercept. Must render its own <html><body>.
- *
- * Intentionally self-contained: NO app CSS, NO app components, NO theme
- * provider. This runs only when the root shell has crashed, so anything it
- * imports from the app could also be broken. Inline styles + system fonts
- * only.
- */
 export default function GlobalError({ error, reset }) {
   useEffect(() => {
     if (process.env.NODE_ENV !== "production") {

@@ -149,7 +149,6 @@ export default function ApplicationDetail({ application, resume, coverLetters = 
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <Reveal>
         <SpotlightCard className="rounded-2xl border border-border bg-card/40 p-5">
           <div className="flex flex-wrap items-start justify-between gap-4">
@@ -200,9 +199,7 @@ export default function ApplicationDetail({ application, resume, coverLetters = 
       </Reveal>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Left: ATS + recommendations */}
         <div className="space-y-6 lg:col-span-2">
-          {/* ATS feedback */}
           <Reveal delay={0.05}>
             <Card className="glass">
               <CardHeader className="flex flex-row items-center justify-between space-y-0">
@@ -255,7 +252,6 @@ export default function ApplicationDetail({ application, resume, coverLetters = 
             </Card>
           </Reveal>
 
-          {/* AI recommendations */}
           <Reveal delay={0.1}>
             <Card className="glass">
               <CardHeader className="flex flex-row items-center justify-between space-y-0">
@@ -305,9 +301,7 @@ export default function ApplicationDetail({ application, resume, coverLetters = 
           </Reveal>
         </div>
 
-        {/* Right: artifacts + outcome + related mocks */}
         <div className="space-y-6">
-          {/* Artifact links */}
           <Reveal delay={0.05}>
             <Card className="glass">
               <CardHeader>
@@ -370,7 +364,6 @@ export default function ApplicationDetail({ application, resume, coverLetters = 
             </Card>
           </Reveal>
 
-          {/* Outcome editor */}
           <Reveal delay={0.1}>
             <Card className="glass">
               <CardHeader>
@@ -455,7 +448,6 @@ export default function ApplicationDetail({ application, resume, coverLetters = 
             </Card>
           </Reveal>
 
-          {/* Related mock interviews */}
           {relatedMocks.length > 0 && (
             <Reveal delay={0.15}>
               <Card className="glass">

@@ -12,14 +12,6 @@ import { SpotlightCard } from "@/components/site/spotlight-card";
 import useFetch from "@/hooks/use-fetch";
 import { setCareerGoal, retireCareerGoal } from "@/actions/career";
 
-/**
- * GoalCard — the user's active career goal. Shows the target role + level +
- * timeframe + rationale, with an inline editor. "Achieved" retires the goal
- * (status=achieved) so the user can set the next one. The reserved gradient is
- * used on the target icon/ring (a key stat), per the gradient-reservation rule.
- *
- * @param {{ initialGoal: any }} props
- */
 export default function GoalCard({ initialGoal }) {
   const [goal, setGoal] = useState(initialGoal);
   const [editing, setEditing] = useState(!initialGoal);
@@ -67,8 +59,6 @@ export default function GoalCard({ initialGoal }) {
         rationale: goal.rationale ?? "",
       });
     } else {
-      // No goal + cancel on a fresh account: leave the form open (nothing else
-      // to show) but clear transient input.
       setForm({ targetRole: "", targetLevel: "", timeframe: "", rationale: "" });
     }
   };

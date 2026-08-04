@@ -8,10 +8,6 @@ import { rateLimit } from "@/lib/rate-limit";
 import { AppError, ValidationError } from "@/lib/errors";
 import { computeNovaScore } from "@/lib/nova-score";
 
-/**
- * Generate fresh industry insights for a given industry via Gemini.
- * Shared by on-demand generation and the weekly Inngest cron.
- */
 export const generateAIInsights = async (industry) => {
   if (!industry || typeof industry !== "string") {
     throw new ValidationError("An industry is required.");
@@ -24,23 +20,14 @@ export async function getIndustryInsights() {
   const user = await requireUser({ include: { industryInsight: true } });
   const existing = user.industryInsight;
 
-  // Return cached insights while they're still fresh (nextUpdate in the
-  // future). When nextUpdate has passed — the weekly Inngest cron missed
-  // (e.g. the Inngest dev server isn't running locally) — fall through and
-  // regenerate on read so the dashboard self-heals instead of staying stale.
   if (existing && existing.nextUpdate && new Date(existing.nextUpdate) > new Date()) {
     return existing;
   }
 
-  // Generate (or regenerate) on demand. Rate-limited to protect AI spend —
-  // a burst of dashboard loads while stale still only refreshes 5×/10min.
-  // If regeneration fails (rate limit, AI error), fall back to the stale row
-  // so the dashboard still renders — the "Refresh overdue" badge surfaces it.
   try {
     rateLimit({ key: `insights:${user.clerkUserId}`, limit: 5, windowMs: 10 * 60_000 });
     const insights = await generateAIInsights(user.industry);
 
-    // Guard against a race where another request created/updated the row first.
     const industryInsight = await db.industryInsight.upsert({
       where: { industry: user.industry },
       update: {
@@ -65,11 +52,6 @@ export async function getIndustryInsights() {
   }
 }
 
-/**
- * Gather the data backing the NovaScore and compute it. Also returns the
- * user's gamification stats (streak / XP) and latest weekly digest, so the
- * dashboard can render the readiness + progress block in one round-trip.
- */
 export async function getNovaScore() {
   const user = await requireUser({
     select: {

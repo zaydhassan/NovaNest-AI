@@ -1,9 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-/**
- * Root loading state — shown for the marketing surface and any top-level
- * navigation. Kept lightweight so first paint stays fast.
- */
 export default function Loading() {
   return (
     <div className="container mx-auto px-4 pt-32 pb-20">

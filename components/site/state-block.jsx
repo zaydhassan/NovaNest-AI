@@ -2,19 +2,6 @@ import * as React from "react";
 import { Inbox, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/**
- * StateBlock — the canonical empty / error / loading surfaces for NovaNest.
- *
- * Premium SaaS apps treat empty and error states as first-class UI, not
- * afterthoughts. These three exports give every page one consistent,
- * on-brand way to say "nothing here yet", "something went wrong", and
- * "we're loading" — without each page reinventing the layout.
- *
- * Visual: centered, generous spacing, a soft glass tile, a gradient icon
- * ring, and an optional action. Pure CSS — no JS, no animations that hurt
- * Lighthouse (a single fade-in via the `reveal` utility, gated on reduced
- * motion through the global stylesheet).
- */
 
 function Tile({ children, className }) {
   return (
@@ -47,10 +34,6 @@ function IconRing({ children, tone = "neutral" }) {
   );
 }
 
-/**
- * EmptyState — "nothing here yet". Pass an icon, a short title, a one-line
- * description, and an optional action (usually a Button).
- */
 export function EmptyState({
   icon: Icon = Inbox,
   title = "Nothing here yet",
@@ -76,10 +59,6 @@ export function EmptyState({
   );
 }
 
-/**
- * ErrorState — "something went wrong". Pass an optional `onRetry` to render
- * a retry button; otherwise just the message.
- */
 export function ErrorState({
   icon: Icon = AlertTriangle,
   title = "Something went wrong",
@@ -112,10 +91,6 @@ export function ErrorState({
   );
 }
 
-/**
- * SkeletonCard — premium loading placeholder. A glass card with skeleton
- * lines that read as one system with the `.skeleton` utility.
- */
 export function SkeletonCard({ className, lines = 3 }) {
   return (
     <div

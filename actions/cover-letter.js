@@ -16,7 +16,6 @@ import { revalidatePath } from "next/cache";
 export async function generateCoverLetter(data) {
   const user = await requireUser();
 
-  // Boundary validation.
   const parsed = coverLetterSchema.safeParse(data);
   if (!parsed.success) {
     throw new ValidationError(parsed.error.issues?.[0]?.message ?? "Invalid cover letter input.");
@@ -49,7 +48,6 @@ export async function generateCoverLetter(data) {
       data: { companyName: parsed.data.companyName, jobTitle: parsed.data.jobTitle },
     }).catch((e) => console.error("[NovaNest] cover_letter notify:", e?.message));
 
-    // Career OS — timeline "applying" milestone for the cover-letter artifact.
     recordTimelineEvent({ userId: user.id, ...deriveFromCoverLetter(coverLetter) }).catch((e) =>
       console.error("[NovaNest] timeline cover letter:", e?.message)
     );

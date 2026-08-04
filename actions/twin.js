@@ -11,10 +11,6 @@ import { inngest } from "@/lib/inngest/client";
 import { gatherTwinSources, buildTwinProfile } from "@/lib/career/twin/twin-builder";
 import { revalidatePath } from "next/cache";
 
-/**
- * Get the signed-in user's built Career Twin (profile + version + lastUpdated).
- * Returns null if no twin has been built yet — the UI shows a build CTA.
- */
 export const getTwin = withErrorHandling(async function getTwin() {
   const user = await requireUser({ select: { id: true, twinVersion: true } });
   const twin = await db.careerTwin.findUnique({
@@ -24,19 +20,6 @@ export const getTwin = withErrorHandling(async function getTwin() {
   return twin;
 }, "Couldn't load your Career Twin. Please try again.");
 
-/**
- * Dispatch a background rebuild of the user's Career Twin. Returns immediately
- * with a pending state; the Inngest `rebuild-career-twin` job upserts the twin
- * and bumps `User.twinVersion`. Rate-limited so a client loop can't spam it.
- *
- * Local-dev fallback: if Inngest isn't configured (e.g. no dev server / event
- * key → 401 "Event key not found"), we build the twin inline within the action
- * instead of throwing — reusing the same `gatherTwinSources`/`buildTwinProfile`
- * the Inngest job runs. This honors the "Inngest optional for local dev" contract:
- * the feature works without the background queue, just synchronously. The UI's
- * version-bump poll picks up the new twin either way. `buildTwinProfile` never
- * throws — it returns `{ twin, error }`.
- */
 export const rebuildTwin = withErrorHandling(async function rebuildTwin() {
   const user = await requireUser({ select: { id: true, clerkUserId: true, twinVersion: true } });
   rateLimit({ key: `twin-rebuild:${user.clerkUserId}`, limit: 5, windowMs: 10 * 60_000 });
@@ -50,7 +33,6 @@ export const rebuildTwin = withErrorHandling(async function rebuildTwin() {
     return { dispatched: true };
   } catch (e) {
     console.error("[NovaNest] twin/rebuild.requested dispatch:", e?.message);
-    // Inline fallback (Inngest unavailable — local dev without the dev server).
     const sources = await gatherTwinSources(user.id);
     const built = await buildTwinProfile(sources);
     if (!built.twin) {
@@ -68,12 +50,6 @@ export const rebuildTwin = withErrorHandling(async function rebuildTwin() {
   }
 }, "Couldn't rebuild your Career Twin. Please try again.");
 
-/**
- * Ask the user's Career Twin a question — answered in the user's voice,
- * grounded in the built profile + a few recalled memories. Requires a built
- * twin. Uses generateText for a natural prose reply (no streaming here; the
- * twin surface renders the full reply).
- */
 export const twinChat = withErrorHandling(async function twinChat(question) {
   const user = await requireUser({ select: { id: true, clerkUserId: true } });
   if (!question || typeof question !== "string" || question.trim().length < 1) {

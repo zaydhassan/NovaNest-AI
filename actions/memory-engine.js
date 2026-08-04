@@ -1,11 +1,5 @@
 "use server";
 
-/**
- * Memory Engine server actions — the CRUD + preview surface for structured
- * memories. Follows the exact pattern of actions/memory.js: `"use server"`,
- * `requireUser`, `rateLimit`, Zod validation, `withErrorHandling`-wrapped, all
- * ownership-checked on `user.id`.
- */
 import { requireUser } from "@/lib/auth";
 import { rateLimit } from "@/lib/rate-limit";
 import { db } from "@/lib/prisma";
@@ -20,13 +14,6 @@ import { recordTimelineEvent } from "@/lib/career/timeline/timeline-engine";
 
 const DEFAULT_LIST_LIMIT = 200;
 
-/**
- * Record a timeline milestone for a freshly created structured memory — only
- * the two "milestone-shaped" categories earn an event: `certificate` →
- * "achievement", `project` → "building`. Other categories return null (no
- * event). Fire-and-forget by the caller. Mirrors the derivers in
- * `timeline-derivers.js` so live writes + backfill produce identical rows.
- */
 function recordTimelineEventForMemory(userId, mem) {
   if (!mem) return null;
   if (mem.category === "certificate") {
@@ -54,11 +41,6 @@ function recordTimelineEventForMemory(userId, mem) {
   return null;
 }
 
-/**
- * Add a structured memory. The `category` decides which payload schema
- * validates `structured`. Idempotency by (userId, source, sourceId) is NOT
- * applied for manual entries (no sourceId) — same rule as addMemory.
- */
 export const addStructuredMemory = withErrorHandling(async function addStructuredMemory(data) {
   const user = await requireUser();
   rateLimit({ key: `smemory:${user.clerkUserId}`, limit: 60, windowMs: 60_000 });
@@ -70,8 +52,6 @@ export const addStructuredMemory = withErrorHandling(async function addStructure
   const { category, title, summary, detail, tags, importance, linkedType, linkedId, structured } =
     parsed.data;
 
-  // Re-validate the typed payload (the schema's refine only checks safeParse
-  // success; surface a clean error here if it's malformed for the category).
   if (structured != null) {
     const payloadSchema = STRUCTURED_MEMORY_PAYLOAD_SCHEMAS[category];
     if (payloadSchema) {
@@ -98,8 +78,6 @@ export const addStructuredMemory = withErrorHandling(async function addStructure
     },
   });
 
-  // Career OS — timeline milestone for the two milestone-shaped categories
-  // (certificate/project). Fire-and-forget; never blocks the memory write.
   recordTimelineEventForMemory(user.id, created)?.catch((e) =>
     console.error("[NovaNest] timeline memory:", e?.message)
   );
@@ -107,11 +85,6 @@ export const addStructuredMemory = withErrorHandling(async function addStructure
   return created;
 }, "Couldn't save that memory. Please try again.");
 
-/**
- * List the signed-in user's structured memories, optionally filtered by
- * category / substring / archived. Grouped by the caller (UI) — here we return
- * a flat list ordered by recency.
- */
 export const listStructuredMemories = withErrorHandling(async function listStructuredMemories({
   category,
   q,
@@ -139,7 +112,6 @@ export const listStructuredMemories = withErrorHandling(async function listStruc
   });
 }, "Couldn't load your memories. Please try again.");
 
-/** Count per category — used by the UI tab badges. */
 export const countStructuredMemories = withErrorHandling(async function countStructuredMemories() {
   const user = await requireUser();
   const rows = await db.structuredMemory.groupBy({
@@ -156,7 +128,6 @@ export const countStructuredMemories = withErrorHandling(async function countStr
   return { byCategory: map, total };
 }, "Couldn't load memory counts. Please try again.");
 
-/** Patch-update a structured memory (ownership-checked). */
 export const updateStructuredMemory = withErrorHandling(async function updateStructuredMemory(data) {
   const user = await requireUser();
   const parsed = structuredMemoryUpdateSchema.safeParse(data);
@@ -171,7 +142,6 @@ export const updateStructuredMemory = withErrorHandling(async function updateStr
   });
   if (!owned) throw new NotFoundError("Memory not found.");
 
-  // Re-validate a new payload against the row's category.
   if (structured != null) {
     const payloadSchema = STRUCTURED_MEMORY_PAYLOAD_SCHEMAS[owned.category];
     if (payloadSchema) {
@@ -195,7 +165,6 @@ export const updateStructuredMemory = withErrorHandling(async function updateStr
   });
 }, "Couldn't update that memory. Please try again.");
 
-/** Soft-archive a structured memory (excluded from retrieval). */
 export const archiveStructuredMemory = withErrorHandling(async function archiveStructuredMemory(id) {
   const user = await requireUser();
   if (!id) throw new ValidationError("Memory id is required.");
@@ -207,7 +176,6 @@ export const archiveStructuredMemory = withErrorHandling(async function archiveS
   return { success: true };
 }, "Couldn't archive that memory. Please try again.");
 
-/** Restore an archived structured memory. */
 export const unarchiveStructuredMemory = withErrorHandling(async function unarchiveStructuredMemory(id) {
   const user = await requireUser();
   if (!id) throw new ValidationError("Memory id is required.");
@@ -219,7 +187,6 @@ export const unarchiveStructuredMemory = withErrorHandling(async function unarch
   return { success: true };
 }, "Couldn't restore that memory. Please try again.");
 
-/** Hard delete a structured memory (GDPR/CCPA). Cascades from User.onDelete. */
 export const deleteStructuredMemory = withErrorHandling(async function deleteStructuredMemory(id) {
   const user = await requireUser();
   if (!id) throw new ValidationError("Memory id is required.");
@@ -228,11 +195,6 @@ export const deleteStructuredMemory = withErrorHandling(async function deleteStr
   return { success: true };
 }, "Couldn't delete that memory. Please try again.");
 
-/**
- * Preview what the Memory Engine would retrieve for a given query — no AI call,
- * just the retrieval + rendered block. Powers the /memory retrieval-preview
- * panel so the user can see exactly what the AI would receive.
- */
 export const previewRetrievalAction = withErrorHandling(async function previewRetrievalAction(query) {
   const user = await requireUser();
   if (!query || !query.trim()) {
@@ -242,11 +204,6 @@ export const previewRetrievalAction = withErrorHandling(async function previewRe
   return previewRetrieval({ userId: user.id, query });
 }, "Couldn't run that retrieval preview. Please try again.");
 
-/**
- * Snapshot the current resume as a resume_version structured memory. The only
- * auto-creator in v1 — callable from the Resume Versions tab. Leaves the
- * single Resume model untouched; just records a timestamped copy.
- */
 export const snapshotResumeVersion = withErrorHandling(async function snapshotResumeVersion(label) {
   const user = await requireUser();
   rateLimit({ key: `smsnapshot:${user.clerkUserId}`, limit: 20, windowMs: 60_000 });

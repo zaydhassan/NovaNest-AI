@@ -3,9 +3,6 @@
 import React from "react";
 import dynamic from "next/dynamic";
 
-// The Markdown editor (~300kB) is the entire weight of this component.
-// Code-split it so it loads in its own chunk after hydration instead of
-// blocking the cover-letter route's First Load JS.
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), {
   ssr: false,
   loading: () => (

@@ -18,11 +18,6 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-/**
- * Renders the user's latest weekly AI career digest. The digest is generated
- * by the Monday Inngest cron and stored as JSON; if none exists yet we show a
- * friendly empty state.
- */
 export default function WeeklyDigestCard({ digest }) {
   const content = digest?.content;
 

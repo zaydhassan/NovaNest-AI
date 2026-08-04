@@ -1,11 +1,5 @@
 import { cn } from "@/lib/utils";
 
-/**
- * SectionHeading — eyebrow + title + subtitle, centered or left-aligned.
- * Used across the landing page for visual consistency.
- *
- * @param {{ eyebrow?: string, title: string, subtitle?: string, align?: "center" | "left", className?: string }}
- */
 export function SectionHeading({ eyebrow, title, subtitle, align = "center", className }) {
   return (
     <div

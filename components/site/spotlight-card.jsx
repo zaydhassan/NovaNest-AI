@@ -3,17 +3,6 @@
 import React, { useCallback, useRef } from "react";
 import { cn } from "@/lib/utils";
 
-/**
- * SpotlightCard — a surface that reacts to the cursor with a soft radial
- * light and a gradient hairline that traces the pointer. Purely decorative
- * layers (`.spotlight-card__glow` / `__ring`, defined in globals.css) are
- * driven by `--mx` / `--my` CSS vars set here via a rAF-throttled handler.
- *
- * Rests as a normal card; only comes alive on hover. Respects reduced-motion
- * (the glow still shows statically on hover, just no cursor tracking).
- *
- * @param {{ className?: string, children: React.ReactNode, as?: keyof JSX.IntrinsicElements }}
- */
 export function SpotlightCard({ className, children, as: Tag = "div", ...props }) {
   const ref = useRef(null);
   const rafRef = useRef(null);

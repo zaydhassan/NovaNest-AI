@@ -13,11 +13,6 @@ import {
   deleteMemory,
 } from "@/lib/career/memory/memory-service";
 
-/**
- * Add a manual memory entry (from the /coach memory drawer). Idempotent only by
- * content for manual entries (no sourceId), so the same fact added twice
- * creates two rows — that's acceptable for user-typed memories.
- */
 export const addMemory = withErrorHandling(async function addMemory(data) {
   const user = await requireUser();
   rateLimit({ key: `memory:${user.clerkUserId}`, limit: 60, windowMs: 60_000 });
@@ -39,10 +34,6 @@ export const addMemory = withErrorHandling(async function addMemory(data) {
   );
 }, "Couldn't save that memory. Please try again.");
 
-/**
- * List the signed-in user's memories with optional filters. Excludes forgotten
- * unless `includeForgotten` is set.
- */
 export const listMemories = withErrorHandling(async function listMemories({
   type,
   tag,
@@ -63,7 +54,6 @@ export const listMemories = withErrorHandling(async function listMemories({
   );
 }, "Couldn't load your memories. Please try again.");
 
-/** Soft-forget a memory (excluded from recall, retained for audit/unforget). */
 export const forgetMemoryAction = withErrorHandling(async function forgetMemoryAction(id) {
   const user = await requireUser();
   if (!id) throw new ValidationError("Memory id is required.");
@@ -72,7 +62,6 @@ export const forgetMemoryAction = withErrorHandling(async function forgetMemoryA
   return { success: true };
 }, "Couldn't forget that memory. Please try again.");
 
-/** Restore a soft-forgotten memory. */
 export const unforgetMemoryAction = withErrorHandling(async function unforgetMemoryAction(id) {
   const user = await requireUser();
   if (!id) throw new ValidationError("Memory id is required.");
@@ -81,7 +70,6 @@ export const unforgetMemoryAction = withErrorHandling(async function unforgetMem
   return { success: true };
 }, "Couldn't restore that memory. Please try again.");
 
-/** Hard delete a memory (GDPR/CCPA). */
 export const deleteMemoryAction = withErrorHandling(async function deleteMemoryAction(id) {
   const user = await requireUser();
   if (!id) throw new ValidationError("Memory id is required.");

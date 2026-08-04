@@ -4,13 +4,6 @@ import React, { useRef } from "react";
 import { motion, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-/**
- * Magnetic — wraps a child (usually a Button or icon button) and pulls it
- * toward the cursor on hover with soft spring physics, then settles back on
- * leave. No-ops to a plain wrapper when the user prefers reduced motion.
- *
- * @param {{ children: React.ReactNode, strength?: number, className?: string }}
- */
 export function Magnetic({ children, strength = 0.35, className, ...props }) {
   const reduced = useReducedMotion();
   const ref = useRef(null);

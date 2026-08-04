@@ -16,16 +16,12 @@ export default async function ApplicationDetailPage({ params }) {
 
   const application = await getApplication(id);
 
-  // Pickers + context for the detail view. Each is ownership-scoped to the
-  // signed-in user by its action, so a forged id can't leak another user's docs.
   const [resume, coverLetters, mocks] = await Promise.all([
     getResume(),
     getCoverLetters(),
     getMockInterviews(),
   ]);
 
-  // Related mocks: same role keyword (case-insensitive substring) so the detail
-  // view can show practice history relevant to this application.
   const roleKey = (application.role || "").toLowerCase();
   const relatedMocks = roleKey
     ? mocks.filter((m) => (m.role || "").toLowerCase().includes(roleKey)).slice(0, 5)

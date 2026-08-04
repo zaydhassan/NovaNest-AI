@@ -11,14 +11,6 @@ const decodeMeta = (b64) => {
   }
 };
 
-/**
- * useCoachChat — the shared streaming chat hook for the /coach surface (M5)
- * and the global CoachDrawer. Posts to /api/chat, streams the assistant reply
- * token-by-token into state, parses metadata from response headers, and
- * finalizes the assistant message with parsed citations when the stream ends.
- *
- * @param {{ initialMessages?: any[], initialSessionId?: string|null, onSessionCreated?: (id:string)=>void }} opts
- */
 export function useCoachChat({ initialMessages = [], initialSessionId = null, onSessionCreated } = {}) {
   const [messages, setMessages] = useState(initialMessages);
   const [streaming, setStreaming] = useState(false);

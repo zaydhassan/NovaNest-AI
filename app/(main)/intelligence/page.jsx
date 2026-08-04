@@ -8,8 +8,6 @@ export const metadata = { title: "Career Intelligence" };
 export default async function IntelligencePage() {
   await ensureOnboarded();
 
-  // Single gatherer → pure computation. Every fetch is wrapped in
-  // withErrorHandling (returns null on failure), so the view null-guards.
   const snapshot = await getIntelligence().catch(() => null);
 
   return (

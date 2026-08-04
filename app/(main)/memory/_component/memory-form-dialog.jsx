@@ -26,10 +26,6 @@ import {
 import useFetch from "@/hooks/use-fetch";
 import { addStructuredMemory, updateStructuredMemory } from "@/actions/memory-engine";
 
-/**
- * Per-category typed payload fields. `name` is the key inside `structured`.
- * Common fields (title/summary/detail/tags/importance) are always rendered.
- */
 const FIELD_DEFS = {
   project: [
     { name: "stack", label: "Stack (comma-separated)", type: "text", arrayFromCSV: true },
@@ -69,7 +65,7 @@ const FIELD_DEFS = {
     { name: "relatedSkill", label: "Related skill", type: "text" },
   ],
   note: [{ name: "context", label: "Context", type: "text" }],
-  resume_version: [], // created via the Snapshot button, not this form
+  resume_version: [],
 };
 
 const EMPTY = { title: "", summary: "", detail: "", tags: "", importance: 50, structured: {} };
@@ -103,7 +99,6 @@ export default function MemoryFormDialog({ category, memory, trigger, onSaved })
 
   const buildPayload = () => {
     const tags = form.tags.split(",").map((t) => t.trim()).filter(Boolean);
-    // Build the typed structured payload, coercing CSV/number fields per defs.
     const structured = {};
     for (const def of FIELD_DEFS[category] ?? []) {
       let v = form.structured[def.name];
@@ -129,7 +124,6 @@ export default function MemoryFormDialog({ category, memory, trigger, onSaved })
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    // Validate required common + category fields client-side for a clean toast.
     if (!form.title.trim()) {
       toast.error("Title is required.");
       return;

@@ -10,9 +10,6 @@ export const metadata = { title: "Memory Engine" };
 
 export default async function MemoryPage() {
   await ensureOnboarded();
-  // Read actions are withErrorHandling-wrapped (throw on failure). The page
-  // guards with .catch so a transient DB hiccup renders an empty board instead
-  // of a 500 — the client view re-fetches on mutation anyway.
   const [memories, counts] = await Promise.all([
     listStructuredMemories({}).catch(() => []),
     countStructuredMemories().catch(() => ({ byCategory: {}, total: 0 })),

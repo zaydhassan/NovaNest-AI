@@ -34,14 +34,12 @@ function ResumePreview() {
 
   return (
     <div className="grid gap-4 md:grid-cols-[1.3fr_1fr]">
-      {/* Resume document mockup — a real "paper" sheet, not skeleton bars */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease }}
         className="overflow-hidden rounded-xl bg-white p-5 text-slate-800 shadow-glass-lg md:p-6"
       >
-        {/* Header */}
         <div className="border-b border-slate-200 pb-3">
           <h3 className="text-lg font-bold tracking-tight text-slate-900">
             Jordan Avery
@@ -54,7 +52,6 @@ function ResumePreview() {
           </p>
         </div>
 
-        {/* Summary */}
         <div className="pt-3">
           <h4 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
             Summary
@@ -65,7 +62,6 @@ function ResumePreview() {
           </p>
         </div>
 
-        {/* Experience */}
         <div className="pt-3">
           <h4 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
             Experience
@@ -96,7 +92,6 @@ function ResumePreview() {
           </div>
         </div>
 
-        {/* Skills */}
         <div className="pt-3">
           <h4 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
             Skills
@@ -116,7 +111,6 @@ function ResumePreview() {
         </div>
       </motion.div>
 
-      {/* AI suggestions panel */}
       <div className="glass rounded-xl p-4">
         <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
           <Sparkles className="h-4 w-4 text-primary" /> AI suggestions
@@ -252,10 +246,6 @@ function InsightsPreview() {
   );
 }
 
-/**
- * ProductDemo — interactive tabbed showcase. Lets visitors flip between the
- * three core products and watch an animated, self-running preview of each.
- */
 export function ProductDemo() {
   const [active, setActive] = useState("resume");
 
@@ -263,7 +253,6 @@ export function ProductDemo() {
     <div className="border-gradient mx-auto max-w-5xl shadow-glass-lg">
       <div className="rounded-[calc(var(--radius-2xl)-1px)] p-2">
         <div className="rounded-xl bg-background/40 p-4 md:p-6">
-          {/* Tabs */}
           <div className="mb-5 flex flex-wrap gap-2">
             {TABS.map((t) => {
               const Icon = t.icon;
@@ -291,7 +280,6 @@ export function ProductDemo() {
             })}
           </div>
 
-          {/* Panel */}
           <div className="min-h-[300px]">
             <AnimatePresence mode="wait">
               <motion.div

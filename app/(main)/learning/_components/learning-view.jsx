@@ -20,14 +20,6 @@ const COLUMNS = [
   { key: "needs_review", label: "Needs review", hint: "Refresh soon" },
 ];
 
-/**
- * LearningView — the /learning board. Top: active GoalCard + "Add a skill"
- * row. Below: 4-column kanban (todo/learning/learned/needs_review) of tracked
- * topics + a recommendations panel (one click to adopt a recommended topic).
- * A header "Log session" dialog logs practice without a topic.
- *
- * @param {{ initialTopics: any[], initialRecommendations: any[], initialGoal: any }} props
- */
 export default function LearningView({
   initialTopics = [],
   initialRecommendations = [],
@@ -48,7 +40,6 @@ export default function LearningView({
       setTopics(nextTopics ?? []);
       setRecommendations(nextRecs ?? []);
     } catch {
-      // useFetch already toasts; bare refresh swallows.
     } finally {
       setRefreshing(false);
     }
@@ -82,7 +73,6 @@ export default function LearningView({
     <div className="space-y-8">
       <GoalCard initialGoal={initialGoal} />
 
-      {/* Add a skill + log session row */}
       <Reveal>
         <div className="glass-strong flex flex-col gap-3 rounded-2xl border border-border p-4 sm:flex-row sm:items-center">
           <div className="flex flex-1 items-center gap-2">
@@ -118,7 +108,6 @@ export default function LearningView({
         </div>
       </Reveal>
 
-      {/* Recommendations panel */}
       {recommendations.length > 0 && (
         <Reveal>
           <SpotlightCard className="p-5">
@@ -152,7 +141,6 @@ export default function LearningView({
         </Reveal>
       )}
 
-      {/* Kanban */}
       <div className="grid gap-4 lg:grid-cols-4">
         {COLUMNS.map((col, i) => (
           <Reveal key={col.key} delay={i * 60}>

@@ -14,10 +14,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-/**
- * Industry-growth radial gauge. Extracted from DashboardView so recharts can
- * be code-split out of the dashboard route's initial bundle.
- */
 export default function GrowthRadialChart({ growthRate }) {
   const radialData = [{ name: "growth", value: Math.min(100, Math.max(0, growthRate)) }];
 

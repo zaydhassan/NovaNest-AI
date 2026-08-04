@@ -1,8 +1,5 @@
 import { Logo } from "@/components/site/logo";
 
-/**
- * Auth layout — centered card with brandmark above. Used by /sign-in & /sign-up.
- */
 export default function AuthLayout({ children }) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 pt-28 pb-16">

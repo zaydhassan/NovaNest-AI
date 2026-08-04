@@ -12,15 +12,6 @@ import { bumpActivity } from "@/lib/gamify";
 import { createNotification } from "@/lib/notifications";
 import { fromOnboarding } from "@/lib/career/memory/memory-extractors";
 
-/**
- * Persist onboarding data. Creates the matching IndustryInsight row (generating
- * it via Gemini if it doesn't exist yet) within a transaction.
- *
- * Returns `{ success: true, user }` so the onboarding form can reliably detect
- * completion and redirect. (Previously this returned `result.user`, which was
- * `undefined` since `result` was `{ updatedUser, industryInsight }` — so the
- * form's success branch never fired.)
- */
 export async function updateUser(data) {
   const user = await requireUser();
 
@@ -57,8 +48,6 @@ export async function updateUser(data) {
           },
         });
 
-        // Welcome-to-onboarding notification — created inside the tx so it
-        // commits only if the profile save succeeds.
         await createNotification(user.id, {
           type: "insights_ready",
           title: "Your industry insights are ready 📊",
@@ -67,10 +56,6 @@ export async function updateUser(data) {
           tx,
         });
 
-        // Career OS — seed identity + skill memories from onboarding, inside
-        // the tx (tx-join) so the user's career memory is populated atomically
-        // with their profile. Best-effort: a memory failure must not roll back
-        // the onboarding save, so swallow + log here.
         try {
           await fromOnboarding(user.id, parsed.data, tx);
         } catch (memErr) {
@@ -82,9 +67,6 @@ export async function updateUser(data) {
       { timeout: 10000 }
     );
 
-    // Best-effort onboarding XP — awarded once, fire-and-forget so a gamify
-    // hiccup never rolls back the profile save. (This was dead code: the
-    // `onboarding` XP value existed in the map but had no call site.)
     bumpActivity(user.id, "onboarding").catch((e) =>
       console.error("[NovaNest] bumpActivity onboarding:", e?.message)
     );
@@ -97,8 +79,6 @@ export async function updateUser(data) {
 }
 
 export async function getUserOnboardingStatus() {
-  // Returns gracefully when there's no session — this is called from server
-  // components (onboarding/dashboard pages) that may run before auth resolves.
   const { userId } = await auth();
   if (!userId) return { isOnboarded: false };
 
@@ -112,23 +92,10 @@ export async function getUserOnboardingStatus() {
   return { isOnboarded: !!user.industry };
 }
 
-/**
- * Build the combined industry slug the app stores on User.industry, matching
- * the onboarding form's format: `${industryId}-${subIndustry}` where the
- * sub-industry is lowercased and spaces become dashes.
- */
 function buildIndustrySlug(industryId, subIndustry) {
   return `${industryId}-${subIndustry.toLowerCase().replace(/ /g, "-")}`;
 }
 
-/**
- * Let an onboarded user switch the industry they track. Validates the choice
- * against the known industry list, updates `user.industry` (which re-points
- * the User→IndustryInsight relation automatically), and best-effort generates
- * fresh insights for the new industry so the dashboard shows its trends on the
- * next load. If insight generation fails (e.g. AI down/quota), the industry
- * still changes — getIndustryInsights will retry on demand from the dashboard.
- */
 export async function changeIndustry({ industry, subIndustry }) {
   const user = await requireUser();
 
@@ -143,22 +110,16 @@ export async function changeIndustry({ industry, subIndustry }) {
 
   const slug = buildIndustrySlug(industry, subIndustry);
 
-  // No-op if they re-selected their current industry.
   if (user.industry === slug) {
     return { success: true, industry: slug, unchanged: true };
   }
 
   try {
-    // The User→IndustryInsight relation is enforced by a foreign key on
-    // User.industry, so the IndustryInsight row for the new slug MUST exist
-    // before we can point the user at it. Ensure it exists first (generate via
-    // AI if it doesn't), then update the user.
     const existing = await db.industryInsight.findUnique({
       where: { industry: slug },
     });
     if (!existing) {
       const insights = await generateAIInsights(slug);
-      // upsert guards against a concurrent request creating the same row.
       await db.industryInsight.upsert({
         where: { industry: slug },
         update: {

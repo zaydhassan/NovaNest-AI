@@ -6,14 +6,6 @@ import { cn } from "@/lib/utils";
 
 const EASE = [0.22, 1, 0.36, 1];
 
-/**
- * Reveal — blur-in + rise entrance, triggered when scrolled into view.
- * Use for sections/blocks. Pairs with `RevealStagger` + `RevealItem` for
- * staggered grids. Falls back to a plain div with no motion when the user
- * prefers reduced motion.
- *
- * @param {{ children: React.ReactNode, className?: string, delay?: number, y?: number, once?: boolean }}
- */
 export function Reveal({ children, className, delay = 0, y = 16, once = true, ...props }) {
   const reduced = useReducedMotion();
   if (reduced) return <div className={className}>{children}</div>;
@@ -31,11 +23,6 @@ export function Reveal({ children, className, delay = 0, y = 16, once = true, ..
   );
 }
 
-/**
- * RevealStagger — orchestrates a staggered reveal for its RevealItem children.
- * Set `stagger` (seconds between items) and an optional `delay` before the
- * first item. Children must be <RevealItem />.
- */
 export function RevealStagger({ children, className, stagger = 0.08, delay = 0, once = true, ...props }) {
   const reduced = useReducedMotion();
   if (reduced) return <div className={className}>{children}</div>;
@@ -56,9 +43,6 @@ export function RevealStagger({ children, className, stagger = 0.08, delay = 0, 
   );
 }
 
-/**
- * RevealItem — a single staggered item. Must be a descendant of RevealStagger.
- */
 export function RevealItem({ children, className, y = 18, ...props }) {
   const reduced = useReducedMotion();
   if (reduced) return <div className={className}>{children}</div>;

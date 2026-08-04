@@ -9,43 +9,31 @@ datasource db {
 
 model User {
   id            String    @id @default(uuid())
-  clerkUserId   String    @unique // clerk user id
+  clerkUserId   String    @unique
   email         String    @unique
   name          String?
   imageUrl      String?
-  industry      String?    // Combined industry-subindustry (e.g., "tech-software-development")
+  industry      String?
   industryInsight IndustryInsight? @relation(fields: [industry], references: [industry])
-  // Dream Company Mode — validated slug from DREAM_COMPANIES (Google, OpenAI,
-  // …). NOT a FK to CompanyProfile (profile is generated lazily on-demand); this
-  // is a plain string so the user can set a target before any profile exists.
   targetCompany String?
   companyProfile CompanyProfile? @relation(fields: [targetCompany], references: [company])
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  // Profile fields
   bio           String?
-  experience    Int?      // Years of experience
+  experience    Int?
 
-  // Gamification — NovaScore streaks & XP. Bumped from server actions when
-  // the user does something productive (completes a quiz, saves a resume,
-  // logs an application, finishes a mock interview).
   xp            Int       @default(0)
   streak        Int       @default(0)
   lastActiveAt  DateTime?
 
-  // Subscription — set by the Razorpay checkout flow. `plan` is the
-  // effective tier ("STARTER" | "PRO" | "TEAMS"); `currentPeriodEnd` drives
-  // entitlement expiry; `razorpayCustomerId` holds the last successful
-  // payment id (Razorpay has no persistent customer id for one-off orders).
   plan               String    @default("STARTER")
   subscriptionStatus String?
   currentPeriodEnd   DateTime?
   razorpayCustomerId String?
   paymentOrders      PaymentOrder[]
 
-  // Relations
-  skills        String[]  // Array of skills
+  skills        String[]
   assessments   Assessment[]
   resume        Resume?
   coverLetter   CoverLetter[]
@@ -54,12 +42,9 @@ model User {
   digests       WeeklyDigest[]
   notifications Notification[]
 
-  // ── Career OS ────────────────────────────────────────────────
-  // Long-term-memory + timeline + persistent chat + coach insights.
-  // All additive (nullable / default), so existing rows stay valid.
-  preferredName      String?    // how the Coach + Twin address the user
-  careerHealthScore  Json?      // cached CareerEngine.computeHealthScore result
-  twinVersion        Int?       // last-built CareerTwin version (cache invalidation)
+  preferredName      String?
+  careerHealthScore  Json?
+  twinVersion        Int?
   memoryEntries      MemoryEntry[]
   timelineEvents     TimelineEvent[]
   chatSessions       ChatSession[]
@@ -73,26 +58,18 @@ model User {
   dreamCompanyPlan   DreamCompanyPlan?
 }
 
-// ── Career OS — long-term memory ─────────────────────────────────
-// One row per durable fact the AI has learned about the user. `type` is one of
-// MEMORY_TYPES (lib/constants.js); `content` is the human-readable memory;
-// `structured` holds an optional typed payload ({ skill, level, evidence }).
-// `tags` power keyword recall; `importance` (0..1) weights retrieval.
-// `source`/`sourceId` make extraction idempotent (one memory per source row).
-// `embedding` is an optional Float[] (pgvector-free; cosine computed in JS
-// when EMBEDDINGS_ENABLED). `isForgotten` soft-hides a memory from recall.
 model MemoryEntry {
   id          String    @id @default(cuid())
   userId      String
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type        String    // MEMORY_TYPES: identity|career|interview|application|learning|project|github|preference|skill|achievement
+  type        String
   content     String    @db.Text
   structured  Json?
   tags        String[]  @default([])
   importance  Float     @default(0.5)
-  source      String    @default("manual") // chat|interview|resume|application|github|quiz|mock|onboarding|manual|coach
+  source      String    @default("manual")
   sourceId    String?
-  embedding   Json?     // Float[] when EMBEDDINGS_ENABLED
+  embedding   Json?
   isForgotten Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -103,35 +80,20 @@ model MemoryEntry {
   @@index([userId, importance])
 }
 
-// ── Career OS — structured memory (Memory Engine) ────────────────
-// Purpose-built, queryable, typed structured memories: the discrete career
-// artifacts that don't have a dedicated model (Projects, Skills-as-records,
-// Achievements, Certificates, Preferences, Resume Versions, Lessons/mistakes,
-// Notes). `category` is one of STRUCTURED_MEMORY_CATEGORIES (lib/constants.js);
-// `structured` holds the Zod-validated typed payload per category; `tags` +
-// `importance` power keyword/tag retrieval ranking. `linkedType`/`linkedId`
-// optionally point at a dedicated row (resume|mockInterview|assessment|
-// application|learningTopic|goal) when the structured memory is derived from
-// one, so the retrieval engine can dedupe across sources. Retrieval is
-// keyword/tag/importance/recency based (no vectors); pg_trgm GIN indexes on
-// title/summary/tags (added via raw-SQL migration) power fast ILIKE + overlap.
-// `isArchived` soft-hides a row from retrieval (the curated equivalent of
-// MemoryEntry.isForgotten). Idempotent on (userId, source, sourceId) when a
-// source row is provided (mirrors MemoryEntry).
 model StructuredMemory {
   id          String   @id @default(cuid())
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  category    String   // STRUCTURED_MEMORY_CATEGORIES: project|skill|achievement|certificate|preference|resume_version|lesson|note
+  category    String
   title       String
-  summary     String?                 // one-line WHY / context
-  detail      String?  @db.Text       // rich long-form
-  structured  Json?                   // Zod-validated typed payload per category
+  summary     String?
+  detail      String?  @db.Text
+  structured  Json?
   tags        String[] @default([])
-  importance  Float    @default(0.5)  // 0..1, boosts retrieval rank
-  source      String   @default("manual") // manual|ai-extracted|import|resume|mock|...
+  importance  Float    @default(0.5)
+  source      String   @default("manual")
   sourceId    String?
-  linkedType  String?  // resume|mockInterview|assessment|application|learningTopic|goal
+  linkedType  String?
   linkedId    String?
   isArchived  Boolean  @default(false)
   createdAt   DateTime @default(now())
@@ -143,20 +105,16 @@ model StructuredMemory {
   @@index([userId, importance])
 }
 
-// ── Career OS — auto-generated career timeline ───────────────────
-// One row per career activity, derived from existing data (resume, application,
-// mock interview, quiz, cover letter, chat) + new activity. `type` is one of
-// TIMELINE_TYPES. `sourceType`/`sourceId` make derivation idempotent.
 model TimelineEvent {
   id          String    @id @default(cuid())
   userId      String
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type        String    // TIMELINE_TYPES: learning|building|applying|interviewing|offer|rejection|achievement|coach|github|milestone
+  type        String
   title       String
   description String?   @db.Text
   occurredAt  DateTime
   metadata    Json?
-  sourceType  String    // resume|application|mockInterview|assessment|chat|github|learning|memory|manual
+  sourceType  String
   sourceId    String?
   createdAt   DateTime  @default(now())
 
@@ -165,10 +123,6 @@ model TimelineEvent {
   @@index([userId, type])
 }
 
-// ── Career OS — persistent chat ("ChatGPT with career memory") ──
-// A ChatSession groups ChatMessages; the Coach surface shows a sessions
-// sidebar. `data` on each message holds { agentIds, sources, citations,
-// followUps } so the UI can render memory chips + agent badges.
 model ChatSession {
   id        String    @id @default(cuid())
   userId    String
@@ -185,29 +139,26 @@ model ChatSession {
 
 model ChatMessage {
   id        String    @id @default(cuid())
-  userId    String    // denormalized for ownership queries; cascades via session.user
+  userId    String
   sessionId String
   session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  role      String    // SESSION_ROLES: user|assistant|system
+  role      String
   content   String    @db.Text
-  data      Json?     // { agentIds, sources, citations, followUps }
+  data      Json?
   createdAt DateTime  @default(now())
 
   @@index([userId])
   @@index([sessionId, createdAt])
 }
 
-// ── Career OS — proactive coach insights ────────────────────────
-// Generated by the Coach agent / weekly digest cron. `kind` drives the icon;
-// `severity` drives the color. `isRead`/`isActioned` track engagement.
 model CoachInsight {
   id         String    @id @default(cuid())
   userId     String
   user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  kind       String    // COACH_INSIGHT_KINDS: nudge|progress|risk|recommendation|celebration
+  kind       String
   title      String
   body       String?   @db.Text
-  severity   String    @default("info") // COACH_SEVERITIES: info|warn|good|critical
+  severity   String    @default("info")
   href       String?
   data       Json?
   isRead     Boolean   @default(false)
@@ -219,27 +170,20 @@ model CoachInsight {
   @@index([userId, createdAt])
 }
 
-// ── Career OS — GitHub Project Analyzer (M7) ───────────────────
-// One row per connected repository. `fullName` is owner/repo. `patHash` is the
-// sha256 of a user-supplied Personal Access Token (null for public repos — no
-// PAT needed). The PAT itself is NEVER stored: it travels only in the
-// `github/repo.connected` Inngest event payload, the job uses it once to fetch
-// the tree + key files, then discards it. `analysis` holds the Senior-Engineer
-// 6-section review JSON; `analysisStatus` drives the UI badge.
 model GitHubRepo {
   id             String    @id @default(cuid())
   userId         String
   user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  fullName       String    // owner/repo
+  fullName       String
   provider       String    @default("github")
-  patHash        String?   // sha256 of the PAT; null for public repos
+  patHash        String?
   defaultBranch  String?
   description    String?
   language       String?
   stars          Int?
   isPrivate      Boolean   @default(false)
-  analysis       Json?     // 6-section Senior-Engineer review
-  analysisStatus String    @default("pending") // GITHUB_ANALYSIS_STATUS
+  analysis       Json?
+  analysisStatus String    @default("pending")
   analysisError  String?
   connectedAt    DateTime  @default(now())
   lastSyncedAt   DateTime?
@@ -250,12 +194,6 @@ model GitHubRepo {
   @@index([userId])
 }
 
-// ── Career OS — AI Career Twin (M8) ─────────────────────────────
-// One row per user (userId @unique). `profile` is the synthesized twin JSON
-// built from all non-forgotten memory + resume + GitHub + recent mocks +
-// applications (see twinBuildPrompt). `version` is bumped on each rebuild so
-// the UI/Coach can detect a stale twin. The twin answers questions in the
-// user's voice via twinChatPrompt.
 model CareerTwin {
   id           String    @id @default(cuid())
   userId       String    @unique
@@ -269,10 +207,6 @@ model CareerTwin {
   @@index([userId])
 }
 
-// ── Career OS — Learning Engine (M9) ─────────────────────────────
-// A user's active career goal drives learning recommendations + the dashboard
-// GoalCard. `status` is active|achieved|retired. One active goal at a time is
-// enforced in the action layer (retiring the prior goal on set).
 model CareerGoal {
   id          String    @id @default(cuid())
   userId      String
@@ -281,7 +215,7 @@ model CareerGoal {
   targetLevel String?
   timeframe   String?
   rationale   String?   @db.Text
-  status      String    @default("active") // GOAL_STATUSES: active|achieved|retired
+  status      String    @default("active")
   metadata    Json?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -290,14 +224,12 @@ model CareerGoal {
   @@index([userId, status])
 }
 
-// A skill/topic the user is learning. `status` is todo|learning|learned|needs_review;
-// `proficiency` (0..1) feeds the Career Health learning pillar (M9).
 model LearningTopic {
   id            String    @id @default(cuid())
   userId        String
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   skill         String
-  status        String    @default("todo") // LEARNING_TOPIC_STATUSES
+  status        String    @default("todo")
   proficiency   Float     @default(0)
   notes         String?   @db.Text
   resources     Json?
@@ -310,15 +242,13 @@ model LearningTopic {
   @@index([userId, status])
 }
 
-// A single learning activity (quiz / mock / chat / resource / project) tied
-// optionally to a topic. Drives the timeline + memory + the learning pillar.
 model LearningSession {
   id          String    @id @default(cuid())
   userId      String
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   topicId     String?
   topic       LearningTopic? @relation(fields: [topicId], references: [id], onDelete: SetNull)
-  kind        String    // quiz | mock | chat | resource | project
+  kind        String
   sourceId    String?
   summary     String?   @db.Text
   outcome     Json?
@@ -334,11 +264,11 @@ model Assessment {
   id            String    @id @default(cuid())
   userId        String
   user          User      @relation(fields: [userId], references: [id])
-  quizScore     Float     // Overall quiz score
-  questions     Json[]    // Array of {question, answer, userAnswer, isCorrect}
-  category      String    // "Technical", "Behavioral", etc.
-  company       String?   // Dream Company slug when the quiz was company-tailored
-  improvementTip String?  // AI-generated improvement tip
+  quizScore     Float
+  questions     Json[]
+  category      String
+  company       String?
+  improvementTip String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -347,9 +277,9 @@ model Assessment {
 
 model Resume {
   id          String    @id @default(cuid())
-  userId      String    @unique    // One resume per user
+  userId      String    @unique
   user        User      @relation(fields: [userId], references: [id])
-  content     String    @db.Text // Markdown content
+  content     String    @db.Text
   atsScore    Float?
   feedback    String?
   createdAt   DateTime  @default(now())
@@ -360,100 +290,77 @@ model CoverLetter {
   id              String    @id @default(cuid())
   userId          String
   user            User      @relation(fields: [userId], references: [id])
-  content         String    // Markdown content
+  content         String
   jobDescription  String?
-  companyName     String    // Name of the company applying to
-  jobTitle        String    // Position applying for
-  status          String    @default("draft") // draft, completed
+  companyName     String
+  jobTitle        String
+  status          String    @default("draft")
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
   @@index([userId])
 }
 
-// Combined Industry Trends and Salary Insights
 model IndustryInsight {
   id            String    @id @default(cuid())
-  industry      String    @unique  // The industry this data belongs to (e.g., "tech-software-development")
+  industry      String    @unique
   
-  // Users in this industry
   users         User[]
   
-  // Salary data
-  salaryRanges  Json[]    // Array of { role: string, min: float, max: float, median: float, location: string? }
+  salaryRanges  Json[]
   
-  // Industry trends
-  growthRate    Float     // Industry growth rate
-  demandLevel   String    // "High", "Medium", "Low"
-  topSkills     String[]  // Most in-demand skills
+  growthRate    Float
+  demandLevel   String
+  topSkills     String[]
   
-  // Market conditions
-  marketOutlook String    // "Positive", "Neutral", "Negative"
-  keyTrends     String[]  // Array of current industry trends
+  marketOutlook String
+  keyTrends     String[]
   
-  // Learning suggestions
-  recommendedSkills String[]  // Skills recommended for the industry
+  recommendedSkills String[]
   
   lastUpdated   DateTime  @default(now())
-  nextUpdate    DateTime  // Scheduled update time
+  nextUpdate    DateTime
 
   @@index([industry])
 }
 
-// ── Dream Company Mode ─────────────────────────────────────────
-// Company-grained market + interview knowledge for one of the 8 dream
-// companies (Google, OpenAI, …). Mirrors IndustryInsight: generated on-demand
-// (upsert in getOrGenerateCompanyProfile) + refreshed by the weekly
-// `generateCompanyProfiles` Inngest cron. `company` is the slug from
-// DREAM_COMPANIES; `displayName` is the human label.
 model CompanyProfile {
   id                String   @id @default(cuid())
-  company           String   @unique  // slug from DREAM_COMPANIES (the FK target)
+  company           String   @unique
   displayName       String
 
-  // Salary data — rendered directly (rule-based, no AI), mirrors IndustryInsight.
-  salaryRanges      Json[]    // Array of { role, min, max, median, location? }
+  salaryRanges      Json[]
 
-  // Skills this company hires for / expects
   topSkills         String[]
   recommendedSkills String[]
 
-  // Interview knowledge — themes per round + famous questions to lean into
-  interviewThemes   Json?     // [{ round, focus, examples[] }]
+  interviewThemes   Json?
   famousQuestions   String[]
-  values            String[]  // culture tenets (e.g. "Customer obsession")
-  bar               String?   // hiring-bar summary
+  values            String[]
+  bar               String?
   keyTrends         String[]
 
-  raw               Json?     // full model response, kept for debugging/audit
+  raw               Json?
   lastUpdated       DateTime  @default(now())
-  nextUpdate        DateTime  // scheduled refresh time
+  nextUpdate        DateTime
 
   users             User[]
 
   @@index([company])
 }
 
-// One personalized 7-area Dream Company plan per user, cached. Regenerated
-// when the user changes their target company, when stale (>7d via nextUpdate),
-// or via the "Regenerate" button. `plan` is the 7-area JSON from
-// dreamCompanyPlanPrompt — each item carries a `why` grounded in the
-// candidate's background + the company's bar/values.
 model DreamCompanyPlan {
   id          String   @id @default(cuid())
-  userId      String   @unique  // one plan per user
+  userId      String   @unique
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  company     String   // slug the plan was generated for
-  plan        Json     // the 7-area object
+  company     String
+  plan        Json
   generatedAt DateTime @default(now())
-  nextUpdate  DateTime // generatedAt + 7d
+  nextUpdate  DateTime
 
   @@index([userId])
 }
 
-// Job-application pipeline tracker. Each application can optionally link to
-// the resume version and cover letter used, and store an ATS match score
-// against its job description.
 model Application {
   id             String    @id @default(cuid())
   userId         String
@@ -464,13 +371,12 @@ model Application {
   salary         String?
   jobUrl         String?
   jobDescription String?   @db.Text
-  status         String    @default("SAVED") // SAVED | APPLIED | SCREENING | INTERVIEW | OFFER | REJECTED
+  status         String    @default("SAVED")
   resumeId       String?
   coverLetterId  String?
   notes          String?   @db.Text
   atsScore       Float?
   atsFeedback    String?   @db.Text
-  // Career OS (M6) — outcome context for the two terminal statuses.
   rejectionReason String? @db.Text
   offerDetails    Json?
   appliedAt      DateTime?
@@ -481,20 +387,15 @@ model Application {
   @@index([userId, status])
 }
 
-// In-app notifications — persistent event feed surfaced via the header bell
-// and the /notifications page. `type` drives the icon + color in the UI;
-// `data` holds optional structured context (score, company, stage). Created
-// fire-and-forget from server actions at milestone events via the
-// createNotification helper (lib/notifications.js).
 model Notification {
   id        String   @id @default(cuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type      String   // welcome | insights_ready | quiz_completed | mock_scored | cover_letter_ready | application_logged | application_advanced | application_rejected | ats_score | payment_success | weekly_digest | industry_changed
+  type      String
   title     String
   body      String?
-  href      String?  // deep link, e.g. "/applications"
-  data      Json?    // optional payload (score, company, stage)
+  href      String?
+  data      Json?
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 
@@ -502,23 +403,17 @@ model Notification {
   @@index([userId, isRead])
 }
 
-// Voice/text mock-interview sessions. `transcript` is the turn-by-turn
-// conversation; `score`/`feedback` are AI-generated at the end of the session.
-// `feedback` is JSON-stringified for back-compat; the denormalized fields below
-// mirror its structured shape so the Career OS can query them without
-// re-parsing (Interview Memory trend analysis, M6). All additive/nullable.
 model MockInterview {
   id          String    @id @default(cuid())
   userId      String
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   role        String
   industry    String?
-  company     String?   // Dream Company slug when the session was company-tailored
-  transcript  Json      // [{ role: "interviewer" | "candidate", text }]
+  company     String?
+  transcript  Json
   score       Float?
   feedback    String?   @db.Text
-  // Denormalized from `feedback` (additive — old rows stay valid without them):
-  questions             Json?     // array of { question, answer, score }
+  questions             Json?
   strengths             String[]  @default([])
   improvements          String[]  @default([])
   communicationScore    Float?
@@ -529,9 +424,6 @@ model MockInterview {
   @@index([userId])
 }
 
-// Weekly AI career digest — one per user per ISO week. Generated by the
-// Inngest cron. `content` is the structured digest payload (trending skills,
-// salary movement, practice question, resume tweak suggestion).
 model WeeklyDigest {
   id          String    @id @default(cuid())
   userId      String
@@ -544,22 +436,18 @@ model WeeklyDigest {
   @@index([userId])
 }
 
-// Razorpay payment orders — one row per checkout attempt. Created before the
-// Razorpay modal opens (status "created"), updated to "paid" once the client
-// posts back a verified signature. `amount` is in paise; `billingCycle` is
-// "monthly" | "annual". Acts as the audit trail for every plan purchase.
 model PaymentOrder {
   id                String   @id @default(cuid())
   userId            String
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  plan              String   // "PRO" | "TEAMS"
-  billingCycle      String   // "monthly" | "annual"
-  amount            Int      // paise
+  plan              String
+  billingCycle      String
+  amount            Int
   currency          String   @default("INR")
   razorpayOrderId   String   @unique
   razorpayPaymentId String?
   razorpaySignature String?
-  status            String   @default("created") // created | paid | failed
+  status            String   @default("created")
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 

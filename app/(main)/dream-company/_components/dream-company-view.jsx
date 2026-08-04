@@ -37,14 +37,6 @@ const TABS = [
   { key: "strategy", label: "Strategy", icon: Sparkles },
 ];
 
-/**
- * DreamCompanyView — the two-mode surface:
- *  - No target: an 8-card company picker (SpotlightCards). Clicking sets the
- *    target via `setTargetCompany`; the server action revalidates the page and
- *    the dashboard loads on the next render.
- *  - Target set: a header (company name + tagline + Switch/Regenerate) and a
- *    7-tab dashboard rendered from the cached profile + plan.
- */
 export default function DreamCompanyView({ companies, selected, dashboard }) {
   const selectFetch = useFetch(setTargetCompany);
   const clearFetch = useFetch(clearTargetCompany);
@@ -68,10 +60,6 @@ export default function DreamCompanyView({ companies, selected, dashboard }) {
     if (res) toast.success("Plan regenerated.");
   };
 
-  // ── Target set, dashboard unavailable (e.g. AI service temporarily down)
-  // ── Distinct from the picker: the user HAS a target, so falling back to the
-  // 8-card picker would misleadingly imply their selection didn't save. Show a
-  // recovery state with Retry (re-runs the server page) + Switch company.
   if (selected && !dashboard?.company) {
     const name = companies.find((c) => c.slug === selected)?.name ?? selected;
     return (
@@ -107,7 +95,6 @@ export default function DreamCompanyView({ companies, selected, dashboard }) {
     );
   }
 
-  // ── Picker (no target) ────────────────────────────────────────────────
   if (!selected) {
     const busy = selectFetch.loading;
     return (
@@ -146,13 +133,11 @@ export default function DreamCompanyView({ companies, selected, dashboard }) {
     );
   }
 
-  // ── Dashboard (target set) ──────────────────────────────────────────
   const { company, profile, plan } = dashboard;
   const planData = plan?.plan && typeof plan.plan === "object" ? plan.plan : {};
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <Card className="glass">
         <CardContent className="flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-4">
@@ -182,7 +167,6 @@ export default function DreamCompanyView({ companies, selected, dashboard }) {
         </CardContent>
       </Card>
 
-      {/* Tabs */}
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="flex w-full flex-wrap justify-start gap-1">
           {TABS.map((t) => {

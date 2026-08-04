@@ -20,10 +20,6 @@ import { withErrorHandling } from "@/lib/errors";
 import { resolveCompanyContext } from "@/lib/career/dream-company/company-context";
 import { revalidatePath } from "next/cache";
 
-/**
- * Ask the AI interviewer for the next question, given the role and the
- * transcript so far.
- */
 export async function nextInterviewQuestion(role, industry, transcript, companySlug = null) {
   const user = await requireUser();
   if (!role || typeof role !== "string") {
@@ -41,17 +37,11 @@ export async function nextInterviewQuestion(role, industry, transcript, companyS
         .join("\n")
     : "";
 
-  // Dream Company Mode — resolve the company context once (null when no
-  // company is selected → byte-identical baseline prompt).
   const company = await resolveCompanyContext(companySlug);
 
   return generateText(mockInterviewQuestionPrompt(role, industry, soFar, company));
 }
 
-/**
- * Score a finished interview transcript. Persists the MockInterview row with
- * the transcript, score, and structured feedback.
- */
 export async function scoreMockInterview(input) {
   const user = await requireUser();
 
@@ -75,8 +65,6 @@ export async function scoreMockInterview(input) {
     .map((t) => `${t.role === "interviewer" ? "Interviewer" : "Candidate"}: ${t.text}`)
     .join("\n");
 
-  // Dream Company Mode — resolve the company context (null when none selected →
-  // byte-identical baseline scoring prompt).
   const companySlug = parsed.data.company || null;
   const company = await resolveCompanyContext(companySlug);
 
@@ -96,8 +84,6 @@ export async function scoreMockInterview(input) {
       transcript: parsed.data.transcript,
       score,
       feedback,
-      // Career OS — denormalized fields (mirror of `feedback`) for queryable
-      // interview-memory trend analysis without re-parsing the JSON string.
       questions: parsed.data.transcript
         ? parsed.data.transcript
             .filter((t) => t.role === "interviewer")
@@ -122,13 +108,10 @@ export async function scoreMockInterview(input) {
     data: { score, role: parsed.data.role },
   }).catch((e) => console.error("[NovaNest] mock notify:", e?.message));
 
-  // Career OS — remember interview strengths/weaknesses + flagged skill gaps.
-  // Idempotent (dedupes on source+sourceId+content); pure (uses the AI result).
   fromMock(user.id, record, result).catch((e) =>
     console.error("[NovaNest] fromMock memory:", e?.message)
   );
 
-  // Career OS — timeline "interviewing" milestone. Idempotent on type+sourceId.
   recordTimelineEvent({ userId: user.id, ...deriveFromMock(record) }).catch((e) =>
     console.error("[NovaNest] timeline mock:", e?.message)
   );
@@ -156,12 +139,6 @@ export async function getMockInterviews() {
   });
 }
 
-/**
- * Interview trend series for the /interview trend chart (M6). Wraps the pure
- * analytics helper so the client just calls a server action. Returns the
- * per-session score series + sub-metric averages + aggregate trend direction +
- * the most-repeated improvement topic.
- */
 export const getInterviewTrends = withErrorHandling(
   async function getInterviewTrends(limit = 12) {
     const user = await requireUser({ select: { id: true } });

@@ -110,7 +110,6 @@ export default function RootLayout({ children }) {
           footerTextLink: "text-primary hover:text-primary/80",
           formFieldInput:
             "bg-input text-foreground border-border placeholder:text-muted-foreground",
-          // UserButton popover — keep menu actions (Manage account / Sign out) legible on dark.
           userButtonPopoverBox:
             "bg-popover border border-border shadow-glass-lg",
           userButtonPopoverActionButton:
@@ -132,12 +131,7 @@ export default function RootLayout({ children }) {
             enableSystem
             disableTransitionOnChange
           >
-            {/* Honor the user's OS reduced-motion preference across every
-                framer-motion animation in the app. The global CSS rule only
-                covers CSS transitions/animations; MotionConfig also
-                suppresses JS-driven motion.* transforms/opacity. */}
             <MotionProvider>
-              {/* Skip link for keyboard / screen-reader users. */}
               <a
                 href="#main-content"
                 className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"

@@ -18,12 +18,6 @@ import { recallMemory } from "@/lib/career/memory/memory-service";
 import { summarizeMemory } from "@/lib/career/ui/chat-context";
 import { revalidatePath } from "next/cache";
 
-/**
- * Notification copy + type for an application status move. REJECTED is branched
- * out explicitly because it sits AFTER OFFER in APPLICATION_STATUSES (highest
- * orderIndex), so the generic "advanced" check would otherwise mislabel a
- * rejection as progress.
- */
 function applicationStatusNotification(userId, company, status) {
   if (status === "REJECTED") {
     return createNotification(userId, {
@@ -43,11 +37,6 @@ function applicationStatusNotification(userId, company, status) {
   });
 }
 
-/**
- * List all of the signed-in user's applications, newest first.
- * Includes their linked resume id (for ATS matching) — fetched separately on
- * demand to keep this query light.
- */
 export async function getApplications() {
   const user = await requireUser();
   return db.application.findMany({
@@ -87,7 +76,6 @@ export async function createApplication(data) {
       jobDescription: parsed.data.jobDescription || null,
       status,
       notes: parsed.data.notes || null,
-      // Career OS (M6) — link artifacts + terminal-outcome context up front.
       resumeId: parsed.data.resumeId || null,
       coverLetterId: parsed.data.coverLetterId || null,
       rejectionReason: parsed.data.rejectionReason || null,
@@ -108,13 +96,10 @@ export async function createApplication(data) {
     data: { company: created.company, role: created.role, status },
   }).catch((e) => console.error("[NovaNest] application_logged notify:", e?.message));
 
-  // Career OS — remember this application so the Coach/Twin can recall it.
-  // Idempotent (dedupes on source+sourceId+content); content is status-stable.
   fromApplication(user.id, created).catch((e) =>
     console.error("[NovaNest] fromApplication memory:", e?.message)
   );
 
-  // Career OS — timeline milestone for the application's initial stage.
   recordTimelineEvent({ userId: user.id, ...deriveFromApplication(created) }).catch((e) =>
     console.error("[NovaNest] timeline application:", e?.message)
   );
@@ -152,7 +137,6 @@ export async function updateApplication(id, data) {
       jobDescription: parsed.data.jobDescription || null,
       status: parsed.data.status,
       notes: parsed.data.notes || null,
-      // Career OS (M6) — artifact links + terminal-outcome context.
       resumeId: parsed.data.resumeId || null,
       coverLetterId: parsed.data.coverLetterId || null,
       rejectionReason: parsed.data.rejectionReason || null,
@@ -199,8 +183,6 @@ export async function updateApplicationStatus(id, status) {
     );
   }
 
-  // Career OS — timeline milestone for the new stage (interviewing/offer/
-  // rejection). Idempotent on type+sourceId, so only net-new stages record.
   if (status !== existing.status) {
     recordTimelineEvent({ userId: user.id, ...deriveFromApplication(updated) }).catch((e) =>
       console.error("[NovaNest] timeline application status:", e?.message)
@@ -223,10 +205,6 @@ export async function deleteApplication(id) {
   return { success: true };
 }
 
-/**
- * ATS-match a stored application's JD against the user's saved resume.
- * Persists the score + structured feedback on the application row.
- */
 export async function scoreApplicationAts(id) {
   const user = await requireUser();
   rateLimit({
@@ -274,12 +252,6 @@ function orderIndex(status) {
   return APPLICATION_STATUSES.indexOf(status);
 }
 
-/**
- * Link (or unlink) the resume + cover letter used for an application. Both
- * inputs are optional; passing null/undefined clears the link. Ownership of
- * the referenced resume/cover-letter rows is validated against the signed-in
- * user before writing, so a forged id cannot cross-link another user's docs.
- */
 export async function linkApplicationArtifacts(id, { resumeId, coverLetterId } = {}) {
   const user = await requireUser();
   const app = await db.application.findFirst({
@@ -288,7 +260,6 @@ export async function linkApplicationArtifacts(id, { resumeId, coverLetterId } =
   });
   if (!app) throw new NotFoundError("Application not found.");
 
-  // Validate ownership of any non-empty ids; reject a cross-user id.
   const nextResumeId = resumeId ? String(resumeId) : null;
   const nextCoverId = coverLetterId ? String(coverLetterId) : null;
 
@@ -321,12 +292,6 @@ export async function linkApplicationArtifacts(id, { resumeId, coverLetterId } =
   return updated;
 }
 
-/**
- * AI recommendations for a specific application via the application agent. The
- * agent is grounded in the application row + the user's recalled memory, so it
- * can give genuinely personalized next-steps (interview prep, ATS gaps, offer
- * negotiation). Pure agent call — no DB writes; the detail view renders it.
- */
 export async function getApplicationRecommendations(id) {
   const user = await requireUser({ select: { id: true } });
 
@@ -341,8 +306,6 @@ export async function getApplicationRecommendations(id) {
     limit: 8,
   });
 
-  // Light context summary so the agent can reference the linked resume / JD /
-  // ATS score / outcome without us re-fetching + reformatting everything here.
   const resumeMeta = app.resumeId
     ? await db.resume.findUnique({
         where: { id: app.resumeId },
@@ -372,9 +335,6 @@ export async function getApplicationRecommendations(id) {
     rejectionReason: app.rejectionReason,
     offerDetails: app.offerDetails,
     notes: app.notes,
-    // Grounding the BaseAgent reads: a formatted context block the specialist
-    // prompt embeds, + a memory summary string. Without these the agent only
-    // sees the one-line task + input and can't personalize.
     contextText: [
       `APPLICATION: ${app.company} — ${app.role} (status: ${app.status})`,
       app.location ? `Location: ${app.location}` : null,

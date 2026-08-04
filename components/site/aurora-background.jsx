@@ -1,7 +1,3 @@
-/**
- * AuroraBackground — fixed, decorative ambient blobs + grid mesh.
- * Purely presentational: `aria-hidden`, `pointer-events-none`, behind content.
- */
 export function AuroraBackground({ className = "" }) {
   return (
     <div className="aurora-bg" aria-hidden="true">

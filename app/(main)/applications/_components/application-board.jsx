@@ -157,13 +157,11 @@ export default function ApplicationBoard({ initialApplications = [] }) {
       if (!id) return;
       const app = applications.find((a) => a.id === id);
       if (!app || app.status === status) return;
-      // Optimistic update
       setApplications((prev) =>
         prev.map((a) => (a.id === id ? { ...a, status } : a))
       );
       const result = await statusFn(id, status);
       if (!result) {
-        // revert on failure
         setApplications((prev) =>
           prev.map((a) => (a.id === id ? { ...a, status: app.status } : a))
         );
@@ -206,7 +204,6 @@ export default function ApplicationBoard({ initialApplications = [] }) {
         </Badge>
       </div>
 
-      {/* Kanban */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {COLUMNS.map((col) => (
           <div
@@ -348,7 +345,6 @@ export default function ApplicationBoard({ initialApplications = [] }) {
         ))}
       </div>
 
-      {/* Add / Edit dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
@@ -451,7 +447,6 @@ export default function ApplicationBoard({ initialApplications = [] }) {
         </DialogContent>
       </Dialog>
 
-      {/* ATS match dialog */}
       <Dialog open={atsOpen} onOpenChange={setAtsOpen}>
         <DialogContent className="max-w-xl">
           <DialogHeader>

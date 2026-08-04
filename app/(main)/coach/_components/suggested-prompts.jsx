@@ -2,10 +2,6 @@
 
 import { Sparkles } from "lucide-react";
 
-/**
- * Clickable suggested prompts shown when a session is empty. Clicking sends
- * the prompt straight into the chat.
- */
 export default function SuggestedPrompts({ prompts = [], onPick, loading = false }) {
   if (!prompts.length) return null;
   return (

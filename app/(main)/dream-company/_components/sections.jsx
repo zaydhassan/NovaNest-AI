@@ -29,9 +29,6 @@ import { scoreResumeForCompany, getCompanyApplications } from "@/actions/dream-c
 import { WhyNote } from "@/components/site/why-note";
 import Link from "next/link";
 
-// Code-split SalaryChart (recharts) so it stays out of /dream-company First
-// Load JS — the chart only needs to run on the client anyway. Previously a
-// static import, it was the single biggest contributor to the route's bundle.
 const SalaryChart = dynamic(
   () => import("@/app/(main)/dashboard/_component/salary-chart"),
   {
@@ -56,7 +53,6 @@ function SectionEmpty({ children }) {
   );
 }
 
-// ── 1. Interview ──────────────────────────────────────────────────────
 export function InterviewSection({ plan, companyName }) {
   const questions = plan?.interviewQuestions || [];
   return (
@@ -109,10 +105,8 @@ export function InterviewSection({ plan, companyName }) {
   );
 }
 
-// ── 2. Learning ────────────────────────────────────────────────────────
 export function LearningSection({ companyName }) {
   const { data: topics, loading, fn } = useFetch(recommendedTopics);
-  // Lazy-load on mount of this tab.
   useEffect(() => {
     fn().catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -162,7 +156,6 @@ export function LearningSection({ companyName }) {
   );
 }
 
-// ── 3. Projects ───────────────────────────────────────────────────────
 export function ProjectsSection({ plan }) {
   const projects = plan?.recommendedProjects || [];
   return (
@@ -205,7 +198,6 @@ export function ProjectsSection({ plan }) {
   );
 }
 
-// ── 4. Resume ──────────────────────────────────────────────────────────
 export function ResumeSection({ plan, companyName }) {
   const items = plan?.resumeOptimization || [];
   const { data: score, loading, fn } = useFetch(scoreResumeForCompany);
@@ -307,12 +299,9 @@ export function ResumeSection({ plan, companyName }) {
   );
 }
 
-// ── 5. Skill gap ───────────────────────────────────────────────────────
 export function SkillGapSection({ plan, profile }) {
   const gaps = plan?.skillGaps || [];
 
-  // Rule-based fallback: diff user's known skills against the company's
-  // expected skills when the plan is empty/stale.
   const fallback = !gaps.length && profile
     ? Array.from(
         new Set([...(profile.topSkills || []), ...(profile.recommendedSkills || [])])
@@ -366,7 +355,6 @@ export function SkillGapSection({ plan, profile }) {
   );
 }
 
-// ── 6. Salary ──────────────────────────────────────────────────────────
 export function SalarySection({ profile }) {
   const ranges = profile?.salaryRanges || [];
   if (!ranges.length) {
@@ -393,7 +381,6 @@ export function SalarySection({ profile }) {
   );
 }
 
-// ── 7. Strategy ────────────────────────────────────────────────────────
 export function StrategySection({ plan, companyName }) {
   const steps = plan?.applicationStrategy || [];
 
@@ -434,7 +421,6 @@ export function StrategySection({ plan, companyName }) {
         </ol>
       )}
 
-      {/* Your activity at this company */}
       <CompanyActivity companyName={companyName} />
     </div>
   );

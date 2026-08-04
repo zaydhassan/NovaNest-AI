@@ -5,21 +5,11 @@ import { motion, useReducedMotion } from "framer-motion";
 
 const COLORS = ["hsl(var(--cyan))", "hsl(var(--purple))", "hsl(var(--emerald))", "hsl(var(--primary))"];
 
-/**
- * ConfettiBurst — a tiny, dependency-free celebration that fires once on mount.
- * 16 pieces fan outward from the origin with gravity, then fade. Honours
- * reduced motion (renders nothing). Positioned absolute over its container —
- * the parent should be `relative`. Use sparingly, only on genuine success.
- *
- * @param {{ originX?: string, originY?: string, count?: number }}
- */
 export function ConfettiBurst({ originX = "50%", originY = "30%", count = 18 }) {
   const reduced = useReducedMotion();
   if (reduced) return null;
 
   const pieces = Array.from({ length: count });
-  // Pre-compute deterministic-but-varied trajectories per index (no Math.random
-  // at render so SSR/CSR markup match).
   const angleFor = (i) => (Math.PI * 2 * i) / count + (i % 2 ? 0.3 : -0.2);
   const distFor = (i) => 80 + (i % 5) * 28;
 
@@ -29,7 +19,7 @@ export function ConfettiBurst({ originX = "50%", originY = "30%", count = 18 }) 
         const ang = angleFor(i);
         const dist = distFor(i);
         const x = Math.cos(ang) * dist;
-        const y = Math.sin(ang) * dist - 40; // bias upward initially
+        const y = Math.sin(ang) * dist - 40;
         const color = COLORS[i % COLORS.length];
         return (
           <motion.span

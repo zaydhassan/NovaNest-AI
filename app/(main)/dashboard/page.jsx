@@ -22,10 +22,6 @@ export default async function DashboardPage() {
     redirect("/onboarding");
   }
 
-  // Run insight resolution, the user lookup, the NovaScore, the Career OS
-  // payloads, and the Command Center surfaces in parallel — one round trip
-  // per surface. Every fetch is wrapped in withErrorHandling and returns
-  // null on failure, so the view null-guards each prop.
   const [
     insights,
     user,

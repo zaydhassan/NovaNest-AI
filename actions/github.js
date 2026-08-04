@@ -9,15 +9,6 @@ import { sha256 } from "@/lib/crypto";
 import { inngest } from "@/lib/inngest/client";
 import { revalidatePath } from "next/cache";
 
-/**
- * Connect a GitHub repo for Senior-Engineer analysis. The repo row is created
- * `pending`, then the Inngest `analyze-github-repo` job is dispatched.
- *
- * PAT handling (per the confirmed design): the token is NEVER stored. Only its
- * sha256 (`patHash`) is persisted to prove a PAT was supplied. The raw PAT
- * travels only in the Inngest event payload — the job uses it once to fetch the
- * tree, then discards it. Public repos need no PAT (`patHash` stays null).
- */
 export const connectRepo = withErrorHandling(async function connectRepo(input) {
   const user = await requireUser();
   rateLimit({ key: `github:${user.clerkUserId}`, limit: 10, windowMs: 60 * 60_000 });
@@ -51,9 +42,6 @@ export const connectRepo = withErrorHandling(async function connectRepo(input) {
     select: { id: true, fullName: true, analysisStatus: true, patHash: true, isPrivate: true },
   });
 
-  // Dispatch the background analysis. The PAT rides in the event payload
-  // (ephemeral); the job uses it once then drops it. Best-effort: a dispatch
-  // failure surfaces as a pending row the user can re-trigger.
   try {
     await inngest.send({
       name: "github/repo.connected",
@@ -67,7 +55,6 @@ export const connectRepo = withErrorHandling(async function connectRepo(input) {
   return repo;
 }, "Couldn't connect that repository. Please try again.");
 
-/** List all of the signed-in user's connected repos, newest-first. */
 export const listRepos = withErrorHandling(async function listRepos() {
   const user = await requireUser();
   return db.gitHubRepo.findMany({
@@ -76,7 +63,6 @@ export const listRepos = withErrorHandling(async function listRepos() {
   });
 }, "Couldn't load your repositories. Please try again.");
 
-/** Get one repo + its analysis. Ownership-scoped to the signed-in user. */
 export const getRepoAnalysis = withErrorHandling(async function getRepoAnalysis(id) {
   const user = await requireUser();
   const repo = await db.gitHubRepo.findFirst({ where: { id, userId: user.id } });
@@ -84,7 +70,6 @@ export const getRepoAnalysis = withErrorHandling(async function getRepoAnalysis(
   return repo;
 }, "Couldn't load that analysis. Please try again.");
 
-/** Remove a connected repo. Ownership-scoped. */
 export const disconnectRepo = withErrorHandling(async function disconnectRepo(id) {
   const user = await requireUser();
   try {
@@ -96,11 +81,6 @@ export const disconnectRepo = withErrorHandling(async function disconnectRepo(id
   return { success: true };
 }, "Couldn't remove that repository. Please try again.");
 
-/**
- * Re-run the analysis for an already-connected repo. Because the PAT is never
- * stored, a private repo re-analysis requires a fresh `pat` (the job can't
- * reuse the discarded token); public repos re-analyze without one.
- */
 export const reanalyzeRepo = withErrorHandling(async function reanalyzeRepo(id, pat = null) {
   const user = await requireUser();
   rateLimit({ key: `github:${user.clerkUserId}`, limit: 10, windowMs: 60 * 60_000 });

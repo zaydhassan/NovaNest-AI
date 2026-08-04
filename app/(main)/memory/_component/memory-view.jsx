@@ -67,7 +67,6 @@ export default function MemoryView({ initialMemories = [], initialCounts }) {
       setMemories(next ?? []);
       setCounts(nextCounts?.byCategory ?? {});
     } catch {
-      // useFetch already toasted for action calls; bare refresh swallows.
     }
   }, [showArchived]);
 

@@ -1,9 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-/**
- * Separator — lightweight divider (no radix dependency). Oriented via `orientation`.
- */
 const Separator = React.forwardRef(function Separator(
   { className, orientation = "horizontal", decorative = true, ...props },
   ref

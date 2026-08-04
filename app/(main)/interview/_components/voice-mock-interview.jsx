@@ -34,21 +34,11 @@ import {
 } from "@/actions/mock-interview";
 import TargetCompanySelect from "./target-company-select";
 
-/**
- * Voice mock interview using the browser's Web Speech API.
- * - The AI interviewer's questions are spoken (SpeechSynthesis) + shown.
- * - The candidate answers by voice (SpeechRecognition) with a text fallback.
- * - At the end the transcript is scored by Gemini and the session is saved.
- *
- * Dream Company Mode: `userTargetCompany` pre-selects the user's saved target;
- * the optional selector lets them override per-session. `null` (None) → the
- * `askFn`/`scoreFn` calls pass `null` → byte-identical baseline behavior.
- */
 export default function VoiceMockInterview({ userIndustry, userTargetCompany, companies = [] }) {
   const [role, setRole] = useState("");
   const [companySlug, setCompanySlug] = useState(userTargetCompany ?? null);
   const [started, setStarted] = useState(false);
-  const [transcript, setTranscript] = useState([]); // [{role, text}]
+  const [transcript, setTranscript] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [listening, setListening] = useState(false);
   const [interim, setInterim] = useState("");
@@ -62,9 +52,6 @@ export default function VoiceMockInterview({ userIndustry, userTargetCompany, co
   const scrollRef = useRef(null);
   const transcriptRef = useRef([]);
 
-  // Keep a ref in sync with the transcript state so async callbacks (the
-  // speech-recognition onend handler) read fresh history instead of a stale
-  // closure from when listening started.
   const pushTurn = useCallback((turn) => {
     transcriptRef.current = [...transcriptRef.current, turn];
     setTranscript(transcriptRef.current);
@@ -96,7 +83,6 @@ export default function VoiceMockInterview({ userIndustry, userTargetCompany, co
       u.pitch = 1;
       window.speechSynthesis.speak(u);
     } catch {
-      /* no-op */
     }
   }, []);
 
@@ -127,7 +113,6 @@ export default function VoiceMockInterview({ userIndustry, userTargetCompany, co
     setTranscript([]);
     setScoreResult(null);
     setCurrentQuestion("");
-    // Ask the first question on the next tick so state is ready.
     setTimeout(() => askNext([]), 0);
   };
 
@@ -135,7 +120,6 @@ export default function VoiceMockInterview({ userIndustry, userTargetCompany, co
     try {
       recRef.current?.stop();
     } catch {
-      /* no-op */
     }
     setListening(false);
   }, []);
@@ -230,7 +214,6 @@ export default function VoiceMockInterview({ userIndustry, userTargetCompany, co
     try {
       window.speechSynthesis?.cancel();
     } catch {
-      /* no-op */
     }
   };
 
@@ -316,7 +299,6 @@ export default function VoiceMockInterview({ userIndustry, userTargetCompany, co
         </Button>
       </div>
 
-      {/* Conversation */}
       <div
         ref={scrollRef}
         className="max-h-[420px] min-h-[260px] space-y-3 overflow-y-auto rounded-2xl border border-border bg-card/40 p-4"
@@ -366,7 +348,6 @@ export default function VoiceMockInterview({ userIndustry, userTargetCompany, co
         )}
       </div>
 
-      {/* Mic-blocked guidance */}
       {micBlocked && (
         <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-700 dark:text-amber-400">
           <p className="font-medium">Microphone is blocked.</p>
@@ -378,7 +359,6 @@ export default function VoiceMockInterview({ userIndustry, userTargetCompany, co
         </div>
       )}
 
-      {/* Controls */}
       <div className="flex flex-wrap items-center gap-2">
         {supported && (
           <Button
@@ -421,7 +401,6 @@ export default function VoiceMockInterview({ userIndustry, userTargetCompany, co
         </Button>
       </div>
 
-      {/* Text fallback answer */}
       <div className="space-y-2">
         <Label className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <MessageSquare className="h-3.5 w-3.5" /> Or type your answer

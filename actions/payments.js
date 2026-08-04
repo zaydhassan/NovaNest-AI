@@ -9,17 +9,8 @@ import { PLANS, createOrder, verifySignature } from "@/lib/razorpay";
 import { createNotification } from "@/lib/notifications";
 import { recordTimelineEvent } from "@/lib/career/timeline/timeline-engine";
 
-// Entitlement duration per billing cycle. Kept coarse on purpose — renewal
-// billing is out of scope; this sets the current-period-end for the initial
-// purchase only.
 const PERIOD_DAYS = { monthly: 30, annual: 365 };
 
-/**
- * Create a Razorpay order for the selected plan + billing cycle and persist a
- * `PaymentOrder` row in the `created` state. Returns everything the client
- * needs to open the checkout modal (order id, amount, the public key, and the
- * user's prefill details). Auth-gated via `requireUser`.
- */
 async function createPaymentOrder({ planId, billingCycle }) {
   const user = await requireUser();
 
@@ -34,7 +25,6 @@ async function createPaymentOrder({ planId, billingCycle }) {
   const plan = PLANS[parsed.data.planId];
   const amount = plan[billingCycle];
 
-  // Short, unique-ish receipt for Razorpay's dashboard + our own audit trail.
   const receipt = `nn_${parsed.data.planId.toLowerCase()}_${Date.now()}`;
 
   const order = await createOrder({
@@ -70,12 +60,6 @@ async function createPaymentOrder({ planId, billingCycle }) {
   };
 }
 
-/**
- * Verify the Razorpay signature returned by the checkout modal, then mark the
- * `PaymentOrder` paid and upgrade the user's plan + entitlement window inside
- * a transaction. Idempotent-ish: a re-verify against an already-paid order is
- * a no-op (the signature still checks, but the user update is safe to repeat).
- */
 async function verifyPayment({
   razorpay_order_id,
   razorpay_payment_id,
@@ -99,8 +83,6 @@ async function verifyPayment({
     });
   }
 
-  // The order must exist AND belong to this user — otherwise a signed payload
-  // from one user could be replayed to upgrade another.
   const order = await db.paymentOrder.findUnique({
     where: { razorpayOrderId: parsed.data.razorpay_order_id },
   });
@@ -123,7 +105,6 @@ async function verifyPayment({
     signature: parsed.data.razorpay_signature,
   });
   if (!ok) {
-    // Persist the failed attempt for the audit trail.
     await db.paymentOrder.update({
       where: { id: order.id },
       data: { status: "failed" },
@@ -156,8 +137,6 @@ async function verifyPayment({
         razorpayCustomerId: parsed.data.razorpay_payment_id,
       },
     }),
-    // Welcome-to-paid notification — inside the tx so it commits only if the
-    // plan upgrade commits.
     db.notification.create({
       data: {
         userId: user.id,
@@ -173,8 +152,6 @@ async function verifyPayment({
   revalidatePath("/");
   revalidatePath("/dashboard");
 
-  // Career OS — timeline "milestone" for the plan upgrade. Fire-and-forget so
-  // a timeline hiccup never affects the verified payment.
   recordTimelineEvent({
     userId: user.id,
     type: "milestone",

@@ -8,11 +8,6 @@ export const metadata = {
   title: "Notifications — NovaNest",
 };
 
-/**
- * Full notification inbox. Server component: pulls the latest 100 notifications
- * + the unread count, then hands them to the client NotificationsView for
- * All/Unread filtering + mark-all-read.
- */
 export default async function NotificationsPage() {
   await ensureOnboarded();
   const [notifications, unreadCount] = await Promise.all([

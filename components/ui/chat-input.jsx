@@ -4,12 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { Send, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/**
- * ChatInput — auto-growing textarea + send button, Enter to send (Shift+Enter
- * for newline). Shared by the /coach surface and the global CoachDrawer.
- *
- * @param {{ onSend: (text: string) => void, disabled?: boolean, loading?: boolean, placeholder?: string, className?: string }} props
- */
 export default function ChatInput({
   onSend,
   disabled = false,
@@ -20,7 +14,6 @@ export default function ChatInput({
   const [value, setValue] = useState("");
   const ref = useRef(null);
 
-  // Auto-grow up to a max height.
   useEffect(() => {
     const el = ref.current;
     if (!el) return;

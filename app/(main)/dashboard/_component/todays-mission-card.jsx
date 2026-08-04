@@ -11,16 +11,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-/**
- * TodaysMissionCard — the focal "what to do now" card. Composes 1–3 real
- * mission items from data that already exists (no fabrication):
- *   - the top recommended next skill ({ skill, why }) from recommendedTopics()
- *   - this week's digest actionItem (from the Monday cron WeeklyDigest)
- *   - the latest unread recommendation-kind CoachInsight (from nudgeNow/cron)
- * Each item links to the surface where the user can act on it.
- *
- * @param {{ goal: any, digest: any, recommendations: any[], recommendationInsights: any[] }} props
- */
 export default function TodaysMissionCard({
   goal = null,
   digest = null,
@@ -29,7 +19,6 @@ export default function TodaysMissionCard({
 }) {
   const items = [];
 
-  // 1. Top recommended next skill → practice/learn it.
   const topRec = recommendations?.[0];
   if (topRec?.skill) {
     items.push({
@@ -42,7 +31,6 @@ export default function TodaysMissionCard({
     });
   }
 
-  // 2. This week's digest action item.
   const actionItem = digest?.content?.actionItem;
   if (actionItem) {
     items.push({
@@ -55,7 +43,6 @@ export default function TodaysMissionCard({
     });
   }
 
-  // 3. Latest unread recommendation insight from the copilot.
   const recInsight = recommendationInsights?.find((i) => !i.isRead) ?? recommendationInsights?.[0];
   if (recInsight?.title) {
     items.push({

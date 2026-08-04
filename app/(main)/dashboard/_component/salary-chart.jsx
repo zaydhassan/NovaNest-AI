@@ -32,11 +32,6 @@ function GlassTooltip({ active, payload, label, formatter }) {
   );
 }
 
-/**
- * Salary ranges bar chart. Extracted from DashboardView so recharts can be
- * code-split (loaded in its own chunk after hydration instead of bloating the
- * dashboard route's First Load JS).
- */
 export default function SalaryChart({ salaryRanges }) {
   const salaryData = (salaryRanges ?? []).map((range) => ({
     name: range.role,

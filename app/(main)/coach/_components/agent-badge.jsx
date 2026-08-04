@@ -10,8 +10,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Agent id → icon + accent. The Coach/celebration accent uses the warm emerald;
-// analytics uses cyan; everything else stays solid. No gradients (reserved).
 const META = {
   memory: { icon: Brain, label: "Memory", className: "text-accent" },
   interview: { icon: GraduationCap, label: "Interview", className: "text-primary" },

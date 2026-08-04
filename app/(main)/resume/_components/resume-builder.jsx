@@ -36,10 +36,6 @@ import { entriesToMarkdown } from "@/lib/markdown";
 import { resumeSchema } from "@/lib/schemas";
 import { motion } from "framer-motion";
 
-// The Markdown editor (~300kB) and the PDF engine (html2canvas + jsPDF,
-// ~300kB+) are only used inside the "Markdown" tab / on download. Code-split
-// them so users on the Form tab never download either, and the PDF libs are
-// fetched only when "Download PDF" is clicked.
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), {
   ssr: false,
   loading: () => (
@@ -138,8 +134,6 @@ export default function ResumeBuilder({ initialContent }) {
     setIsGenerating(true);
     try {
       const element = document.getElementById("resume-pdf");
-      // Lazy-load the PDF engine only when actually exporting — keeps
-      // html2canvas + jsPDF (~300kB) out of the route's initial bundle.
       const { default: html2pdf } = await import(
         "html2pdf.js/dist/html2pdf.min.js"
       );
@@ -171,8 +165,6 @@ export default function ResumeBuilder({ initialContent }) {
     }
   };
 
-  // Resume completeness — a SaaS-style progress meter driven by how many
-  // core sections have content. Purely presentational.
   const sectionsFilled = [
     !!(formValues.contactInfo?.email || formValues.contactInfo?.mobile || user?.fullName),
     !!(formValues.summary && formValues.summary.trim()),
@@ -186,7 +178,6 @@ export default function ResumeBuilder({ initialContent }) {
 
   return (
     <div className="w-full py-6 text-foreground">
-      {/* ---- Header ---- */}
       <div className="flex flex-col gap-5 border-b border-border pb-6 md:flex-row md:items-end md:justify-between">
         <div className="min-w-0">
           <span className="mb-2 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -242,7 +233,6 @@ export default function ResumeBuilder({ initialContent }) {
         </div>
       </div>
 
-      {/* ---- Completeness meter ---- */}
       <div className="mt-5 flex items-center gap-4 rounded-xl border border-border bg-card/50 px-4 py-3 backdrop-blur-sm">
         <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg ring-aurora text-white shadow-glow">
           <Sparkles className="h-4 w-4" />
@@ -259,7 +249,6 @@ export default function ResumeBuilder({ initialContent }) {
         </span>
       </div>
 
-      {/* ---- Workspace ---- */}
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
@@ -287,10 +276,8 @@ export default function ResumeBuilder({ initialContent }) {
           </span>
         </div>
 
-        {/* ============ Builder tab: split form + live preview ============ */}
         <TabsContent value="edit">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.35fr_1fr]">
-            {/* Form column */}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               <SectionCard icon={User} title="Contact information" hint="How recruiters reach you" delay={0}>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -376,7 +363,6 @@ export default function ResumeBuilder({ initialContent }) {
                 {errors.projects && <p className="mt-1.5 text-xs text-destructive">{errors.projects.message}</p>}
               </SectionCard>
 
-              {/* Mobile save bar — keeps the primary action reachable while scrolling the form. */}
               <div className="flex gap-2 lg:hidden">
                 <Button type="submit" variant="outline" disabled={isSaving} className="flex-1 gap-2">
                   {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
@@ -389,7 +375,6 @@ export default function ResumeBuilder({ initialContent }) {
               </div>
             </form>
 
-            {/* Live preview column — sticky on large screens */}
             <div className="lg:sticky lg:top-24 lg:self-start">
               <div className="overflow-hidden rounded-xl border border-border bg-card shadow-card">
                 <div className="flex items-center justify-between border-b border-border bg-muted/40 px-4 py-2.5">
@@ -425,7 +410,6 @@ export default function ResumeBuilder({ initialContent }) {
           </div>
         </TabsContent>
 
-        {/* ============ Markdown tab: raw editor ============ */}
         <TabsContent value="preview">
           <div className="overflow-hidden rounded-xl border border-border bg-card shadow-card">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-muted/40 px-4 py-3">
@@ -477,8 +461,6 @@ export default function ResumeBuilder({ initialContent }) {
         </TabsContent>
       </Tabs>
 
-      {/* Hidden, always-mounted render target for PDF export. Kept in the DOM
-          on both tabs so "Download PDF" works from anywhere. */}
       <div className="hidden" aria-hidden="true">
         <div id="resume-pdf" data-color-mode="light">
           <MDMarkdown source={previewContent} style={{ background: "white", color: "black" }} />
@@ -488,7 +470,6 @@ export default function ResumeBuilder({ initialContent }) {
   );
 }
 
-/* ---------- Local helpers ---------- */
 
 function Field({ label, error, children }) {
   const id = useId();

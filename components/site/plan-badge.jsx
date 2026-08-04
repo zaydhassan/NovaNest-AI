@@ -1,13 +1,6 @@
 import { Sparkles, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/**
- * PlanBadge — compact at-a-glance plan indicator for the header. Server
- * component (no client interactivity): PRO/TEAMS render a filled gradient
- * pill with a crown; STARTER renders a subtle outlined "Free" pill that
- * links to the pricing section as an upgrade nudge. `plan` is the raw
- * `User.plan` value ("STARTER" | "PRO" | "TEAMS").
- */
 const PLAN_META = {
   PRO: { label: "Pro", icon: Crown, className: "cta-gradient text-white" },
   TEAMS: { label: "Teams", icon: Crown, className: "cta-gradient text-white" },
@@ -32,7 +25,6 @@ export function PlanBadge({ plan = "STARTER", className }) {
     </span>
   );
 
-  // Free users: badge doubles as an upgrade nudge linking to the pricing section.
   if (isFree) {
     return (
       <a href="/#pricing" aria-label="Upgrade your plan" className="inline-flex">

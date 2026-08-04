@@ -46,7 +46,6 @@ export default function LandingPage() {
     <>
       <HeroSection />
 
-      {/* ---- Why not just ChatGPT? ---- */}
       <section className="relative border-y border-white/[0.06] bg-white/[0.015] py-16 md:py-24">
         <div className="container mx-auto px-4">
           <SectionHeading
@@ -92,7 +91,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ---- Pillars ---- */}
       <section id="features" className="section">
         <div className="container mx-auto px-4">
           <SectionHeading
@@ -119,7 +117,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ---- Interactive product demo ---- */}
       <section id="demo" className="section pt-4 md:pt-8">
         <div className="container mx-auto px-4">
           <SectionHeading
@@ -131,7 +128,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ---- Dashboard preview ---- */}
       <section className="section pt-4 md:pt-8">
         <div className="container mx-auto px-4">
           <SectionHeading
@@ -143,7 +139,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ---- How NovaNest compounds ---- */}
       <section className="section py-12 md:py-20">
         <div className="container mx-auto px-4">
           <SectionHeading
@@ -189,7 +184,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ---- AI features ---- */}
       <section className="section py-12 md:py-20">
         <div className="container mx-auto px-4">
           <SectionHeading
@@ -221,7 +215,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ---- How it works ---- */}
       <section className="section">
         <div className="container mx-auto px-4">
           <SectionHeading
@@ -251,10 +244,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ---- Why NovaNest ---- */}
       <WhyNovaNest />
 
-      {/* ---- Pricing ---- */}
       <section id="pricing" className="section scroll-mt-24">
         <div className="container mx-auto px-4">
           <SectionHeading
@@ -266,7 +257,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ---- FAQ ---- */}
       <section className="section">
         <div className="container mx-auto px-4">
           <SectionHeading
@@ -300,7 +290,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ---- Final CTA ---- */}
       <section className="section">
         <div className="container mx-auto px-4">
           <div className="border-gradient relative overflow-hidden px-6 py-16 text-center shadow-glass-lg md:py-20">

@@ -26,16 +26,11 @@ const skills = [
   { name: "TypeScript", have: true },
 ];
 
-/**
- * DashboardPreview — a richly animated, self-running mock of the in-app
- * executive dashboard. Conveys the product without screenshotting real data.
- */
 export function DashboardPreview() {
   return (
     <div className="border-gradient mx-auto max-w-5xl shadow-glass-lg">
       <div className="rounded-[calc(var(--radius-2xl)-1px)] p-2">
         <div className="rounded-xl bg-background/50 p-4 md:p-6">
-          {/* Top bar */}
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="text-sm text-muted-foreground">Welcome back, Alex</p>
@@ -51,7 +46,6 @@ export function DashboardPreview() {
             </div>
           </div>
 
-          {/* KPI row */}
           <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
             {kpis.map((k, i) => {
               const Icon = k.icon;
@@ -75,7 +69,6 @@ export function DashboardPreview() {
           </div>
 
           <div className="grid gap-4 md:grid-cols-[1.5fr_1fr]">
-            {/* Chart */}
             <div className="glass rounded-xl p-5">
               <div className="mb-4 flex items-center justify-between">
                 <p className="text-sm font-semibold">Salary ranges by role</p>
@@ -106,7 +99,6 @@ export function DashboardPreview() {
               </div>
             </div>
 
-            {/* Skill gap + trends */}
             <div className="space-y-4">
               <div className="glass rounded-xl p-5">
                 <p className="mb-3 text-sm font-semibold">Skill coverage</p>

@@ -16,11 +16,6 @@ const TYPE_ACCENT = {
   github: "text-muted-foreground",
 };
 
-/**
- * A single memory chip — shown in the memory drawer and under messages for
- * cited memories. Cited chips get a subtle gradient ring (reserved usage on
- * an icon/progress element); uncited chips in the drawer stay plain.
- */
 export default function MemoryChip({ memory, cited = false, index }) {
   const accent = TYPE_ACCENT[memory?.type] ?? "text-muted-foreground";
   return (

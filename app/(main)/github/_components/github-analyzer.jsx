@@ -80,8 +80,6 @@ export default function GitHubAnalyzer({ initialRepos = [] }) {
   const { loading: disconnecting, fn: disconnectFn } = useFetch(disconnectRepo);
   const { loading: reanalyzing, fn: reanalyzeFn } = useFetch(reanalyzeRepo);
 
-  // Auto-poll while any repo is pending/running so the UI refreshes when the
-  // Inngest job finishes. Stops once everything is complete/failed.
   const anyPending = repos.some((r) => r.analysisStatus === "pending" || r.analysisStatus === "running");
   const refresh = useCallback(async () => {
     const data = await listRepos();
@@ -123,7 +121,6 @@ export default function GitHubAnalyzer({ initialRepos = [] }) {
   };
 
   const onReanalyze = async (repo) => {
-    // Private repos need a fresh PAT to re-analyze (tokens are never stored).
     const token = repo.isPrivate ? prompt(`Re-enter the access token for ${repo.fullName} (tokens aren't stored):`) : null;
     if (repo.isPrivate && !token) return;
     const ok = await reanalyzeFn(repo.id, token);
@@ -137,7 +134,6 @@ export default function GitHubAnalyzer({ initialRepos = [] }) {
 
   return (
     <div className="space-y-6">
-      {/* Connect form */}
       <Reveal>
         <SpotlightCard className="rounded-2xl border border-border bg-card/40 p-5">
           <form onSubmit={onConnect} className="space-y-4">
@@ -185,7 +181,6 @@ export default function GitHubAnalyzer({ initialRepos = [] }) {
         </SpotlightCard>
       </Reveal>
 
-      {/* Repo list */}
       {repos.length === 0 ? (
         <EmptyState
           icon={Github}
@@ -339,7 +334,6 @@ function AnalysisView({ analysis, repo, onReanalyze, onDisconnect, reanalyzing, 
         </div>
       )}
 
-      {/* 6-section senior review */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
         {SECTIONS.map((s) => {
           const sec = analysis.sections?.[s.key] ?? { score: 0, notes: [], suggestions: [] };

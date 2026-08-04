@@ -2,9 +2,6 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-/**
- * Textarea — mirrors the Input's premium focus treatment.
- */
 const Textarea = React.forwardRef(({ className, ...props }, ref) => {
   return (
     (<textarea

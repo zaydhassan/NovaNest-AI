@@ -19,11 +19,6 @@ import {
 import { fromLearning } from "@/lib/career/memory/memory-extractors";
 import { revalidatePath } from "next/cache";
 
-/**
- * List the signed-in user's learning topics (with session counts) newest-first.
- * Used by the /learning kanban. `lastTouchedAt` is bumped whenever a session is
- * logged against a topic so the board can surface "recently practiced".
- */
 export const getTopics = withErrorHandling(async function getTopics() {
   const user = await requireUser({ select: { id: true } });
   return db.learningTopic.findMany({
@@ -35,10 +30,6 @@ export const getTopics = withErrorHandling(async function getTopics() {
   });
 }, "Couldn't load your learning topics. Please try again.");
 
-/**
- * Create or update a learning topic. When `id` is omitted a new topic is
- * created; the optional `status` is validated against LEARNING_TOPIC_STATUSES.
- */
 export const upsertTopic = withErrorHandling(async function upsertTopic(data) {
   const user = await requireUser({ select: { id: true, clerkUserId: true } });
   rateLimit({ key: `learning-topic:${user.clerkUserId}`, limit: 30, windowMs: 60_000 });
@@ -57,8 +48,6 @@ export const upsertTopic = withErrorHandling(async function upsertTopic(data) {
 
   let row;
   if (id) {
-    // Ownership check BEFORE the update: only the signed-in user's row is
-    // mutable. A missing/unowned id surfaces as a single NotFoundError.
     const owned = await db.learningTopic.findFirst({
       where: { id, userId: user.id },
       select: { id: true },
@@ -87,9 +76,6 @@ export const upsertTopic = withErrorHandling(async function upsertTopic(data) {
       },
     });
 
-    // Career OS — timeline "learning" milestone when a new topic is added.
-    // Distinct sourceId (`#started`) keeps it separate from session events and
-    // from the `#learned` achievement. Fire-and-forget; never blocks the create.
     recordTimelineEvent({
       userId: user.id,
       type: "learning",
@@ -105,11 +91,6 @@ export const upsertTopic = withErrorHandling(async function upsertTopic(data) {
   return row;
 }, "Couldn't save that topic. Please try again.");
 
-/**
- * Move a topic between board columns. Validates the new status + ownership.
- * Marking a topic `learned` sets proficiency to 1 and bumps the Career Health
- * learning pillar on the next dashboard read (which reads live topic data).
- */
 export const markTopicStatus = withErrorHandling(
   async function markTopicStatus(id, status) {
     const user = await requireUser({ select: { id: true } });
@@ -134,9 +115,6 @@ export const markTopicStatus = withErrorHandling(
     });
 
     if (status === "learned") {
-      // Career OS — timeline "achievement" milestone when a topic is mastered.
-      // Distinct type (`achievement`) + sourceId (`#learned`) vs the start
-      // event, so both survive dedup. Fire-and-forget; never blocks the update.
       recordTimelineEvent({
         userId: user.id,
         type: "achievement",
@@ -162,16 +140,6 @@ export const markTopicStatus = withErrorHandling(
   "Couldn't update that topic. Please try again."
 );
 
-/**
- * Log a learning session (a practice activity). The session row is the
- * primary write; memory + timeline + activity + notification are tx-joined so
- * they commit atomically with it. When a `topicId` is provided the topic's
- * `lastTouchedAt` and (for non-learned) proficiency are nudged upward.
- *
- * `kind` maps an existing activity (quiz/mock/chat/resource/project); the
- * optional `sourceId` links back to the originating row (e.g. the Assessment
- * or MockInterview id) so the timeline is dedupable but never double-counts.
- */
 export const logLearningSession = withErrorHandling(
   async function logLearningSession(data) {
     const user = await requireUser({
@@ -187,7 +155,6 @@ export const logLearningSession = withErrorHandling(
     }
     const { topicId, kind, sourceId, summary, outcome, durationMin } = parsed.data;
 
-    // If a topic is referenced, verify ownership before attaching.
     let topic = null;
     if (topicId) {
       topic = await db.learningTopic.findFirst({
@@ -211,7 +178,6 @@ export const logLearningSession = withErrorHandling(
         include: { topic: { select: { skill: true } } },
       });
 
-      // Nudge the topic's recency + proficiency (caps at 1; learned stays 1).
       if (topic) {
         const nextProf = topic.status === "learned" ? 1 : Math.min(1, (topic.proficiency || 0) + 0.1);
         await tx.learningTopic.update({
@@ -220,7 +186,6 @@ export const logLearningSession = withErrorHandling(
         });
       }
 
-      // Atomic side-effects inside the same tx (mirrors applications/mock flows).
       try {
         await recordTimelineEvent(
           { userId: user.id, ...deriveFromLearningSession(created) },
@@ -243,7 +208,6 @@ export const logLearningSession = withErrorHandling(
       return created;
     });
 
-    // Best-effort notification outside the tx (fire-and-forget, like applications).
     createNotification(user.id, {
       type: "learning_recommendation",
       title: `Learning session logged (${kind})`,
@@ -262,12 +226,6 @@ export const logLearningSession = withErrorHandling(
   "Couldn't log that session. Please try again."
 );
 
-/**
- * Recommended next topics for the signed-in user (drives the /learning
- * recommendation panel). Delegates to the recommendation service which
- * combines the active goal + industry insights + mock weaknesses + existing
- * topics.
- */
 export const recommendedTopics = withErrorHandling(
   async function recommendedTopics() {
     const user = await requireUser({ select: { id: true } });

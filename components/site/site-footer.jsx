@@ -2,9 +2,6 @@ import Link from "next/link";
 import { ArrowRight, ArrowUp } from "lucide-react";
 import { Logo } from "@/components/site/logo";
 
-// Only real, reachable destinations are listed. Dead "#" / non-existent
-// routes (/docs, Privacy/Terms) were removed rather than shipped as
-// non-functional links — add them back when the real pages exist.
 const columns = [
   {
     title: "Product",
@@ -35,12 +32,6 @@ const columns = [
   },
 ];
 
-/**
- * SiteFooter — multi-column marketing footer with brand and link columns.
- * Decorative top border carries the aurora gradient. Rendered globally (root
- * layout), so it stays link-only — no auth-gated CTAs that'd read oddly for
- * signed-in users — and a no-JS back-to-top anchor targeting #main-content.
- */
 export function SiteFooter() {
   return (
     <footer className="relative mt-24 border-t border-border/60 bg-gradient-to-b from-transparent via-background/40 to-background/80">
@@ -50,7 +41,6 @@ export function SiteFooter() {
       />
       <div className="container mx-auto px-4 py-14">
         <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3 lg:grid-cols-5">
-          {/* Brand */}
           <div className="col-span-2 space-y-5 sm:col-span-3 lg:col-span-2">
             <Logo />
             <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
@@ -74,7 +64,6 @@ export function SiteFooter() {
             </div>
           </div>
 
-          {/* Link columns */}
           <nav aria-label="Footer" className="col-span-2 grid grid-cols-2 gap-x-8 gap-y-10 sm:col-span-3 sm:grid-cols-3 lg:col-span-3">
             {columns.map((col) => (
               <div key={col.title} className="space-y-3.5">

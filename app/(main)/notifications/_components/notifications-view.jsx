@@ -39,8 +39,6 @@ import {
   markAllNotificationsRead,
 } from "@/actions/notifications";
 
-// Icon + accent per type — mirrored from the bell so the inbox and the dropdown
-// stay visually consistent. Falls back to the plain Bell.
 const TYPE_META = {
   welcome: { icon: Sparkles, accent: "text-primary" },
   insights_ready: { icon: TrendingUp, accent: "text-emerald-400" },
@@ -54,7 +52,6 @@ const TYPE_META = {
   payment_success: { icon: Crown, accent: "text-amber-400" },
   weekly_digest: { icon: Mail, accent: "text-primary" },
   industry_changed: { icon: RefreshCw, accent: "text-muted-foreground" },
-  // ── Career OS (M5–M10) ──
   coach_nudge: { icon: Sparkles, accent: "text-primary" },
   coach_insight: { icon: Lightbulb, accent: "text-accent" },
   twin_ready: { icon: Fingerprint, accent: "text-violet-400" },
@@ -139,11 +136,6 @@ function NotificationRow({ n, onOpen }) {
   );
 }
 
-/**
- * NotificationsView — client island backing the inbox page. Renders the All /
- * Unread tabs, the mark-all-read action, and the list. Local state mirrors the
- * server list so marking read is optimistic + fire-and-forget.
- */
 export function NotificationsView({
   initialNotifications = [],
   initialUnreadCount = 0,
@@ -168,8 +160,6 @@ export function NotificationsView({
         console.error("[NovaNest] mark read:", e?.message)
       );
     }
-    // Navigation (for Link rows) happens via the href; for button rows with no
-    // href we just mark read.
   }
 
   function markAll() {

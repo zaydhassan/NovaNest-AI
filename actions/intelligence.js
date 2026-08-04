@@ -10,16 +10,6 @@ import { computeIntelligence } from "@/lib/career/intelligence/intelligence-engi
 const DAY_MS = 24 * 60 * 60 * 1000;
 const WEEK_MS = 7 * DAY_MS;
 
-/**
- * Career Intelligence — gather everything the 8 metrics need in one parallel
- * pass, then hand the rows to the pure `computeIntelligence` engine.
- *
- * Mirrors the gatherer pattern in `getCareerHealth` (actions/career.js) +
- * `gatherChatContextData` (lib/career/agents/chat-context-data.js): one
- * `requireUser` + one big `Promise.all`, then pure computation. No DB writes,
- * no caching, no AI — the whole engine is deterministic (every score traces to
- * a concrete data point in its `evidence[]`).
- */
 export const getIntelligence = withErrorHandling(async function getIntelligence() {
   const user = await requireUser({
     select: {
@@ -90,8 +80,6 @@ export const getIntelligence = withErrorHandling(async function getIntelligence(
       select: { createdAt: true, kind: true },
       orderBy: { createdAt: "asc" },
     }),
-    // Reuse the canonical memoryStats (over MemoryEntry) so the Career Health
-    // memory pillar is byte-identical to the dashboard's getCareerHealth.
     memoryStats(user.id),
     db.timelineEvent.findMany({
       where: { userId: user.id, occurredAt: { gte: since56d } },
@@ -101,24 +89,19 @@ export const getIntelligence = withErrorHandling(async function getIntelligence(
     getInterviewTrendsData(user.id, { limit: 12 }),
   ]);
 
-  // memoryStats already returns { total, byType } over MemoryEntry — use it
-  // directly for both the Career Health memory pillar and the Productivity
-  // memories count.
   const memTotal = memStats?.total ?? 0;
 
-  // Per-source counts feed the Productivity metric's `eventCounts`.
   const eventCounts = {
-    resumes: resume ? 1 : 0, // one resume per user
+    resumes: resume ? 1 : 0,
     coverLetters: coverLetters.length,
     quizzes: assessments.length,
     mocks: mocks.length,
     applications: applications.length,
     learningSessions: learningSessions.length,
-    goals: 0, // goal count not gathered (cheap to skip; Productivity degrades gracefully)
+    goals: 0,
     memories: memTotal,
   };
 
-  // Recent activity (last 7 days) = sessions + assessments + mocks + applications in window.
   const recentActivity =
     learningSessions.filter((s) => new Date(s.createdAt) >= since7d).length +
     assessments.filter((a) => new Date(a.createdAt) >= since7d).length +

@@ -5,11 +5,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/site/logo";
 
-/**
- * Global error boundary (App Router). Renders when an unhandled error bubbles
- * to the root. Logs to the console in non-production; in production wire this to
- * Sentry/your tracker.
- */
 export default function Error({ error, reset }) {
   useEffect(() => {
     if (process.env.NODE_ENV !== "production") {

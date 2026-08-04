@@ -14,8 +14,6 @@ export default async function CoachPage() {
   const { isOnboarded } = await getUserOnboardingStatus();
   if (!isOnboarded) redirect("/onboarding");
 
-  // Load the sidebar, insight feed, and suggested prompts in parallel. The chat
-  // messages themselves load on-demand when a session is opened client-side.
   const [sessions, insights, suggestedPrompts] = await Promise.all([
     listChatSessions().catch(() => []),
     getInsights({ limit: 20 }).catch(() => []),

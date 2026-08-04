@@ -4,13 +4,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { useReducedMotion, useInView } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-/**
- * AnimatedCounter — ease-out count-up that fires when scrolled into view.
- * Renders a plain span so it drops into existing typographic layouts without
- * affecting line-height. Respects reduced-motion (renders the final value).
- *
- * @param {{ value: number, duration?: number, decimals?: number, prefix?: string, suffix?: string, className?: string }}
- */
 export function AnimatedCounter({
   value,
   duration = 1200,

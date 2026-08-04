@@ -6,11 +6,6 @@ import { markNotificationReadSchema } from "@/lib/schemas";
 import { ValidationError } from "@/lib/errors";
 import { revalidatePath } from "next/cache";
 
-/**
- * Fetch the signed-in user's notifications, newest first. `unreadOnly` filters
- * to unread (used by the bell badge / "Unread" tab). `limit` caps the result —
- * the bell dropdown asks for a small slice, the full page asks for more.
- */
 export async function getNotifications({ limit = 20, unreadOnly = false } = {}) {
   const user = await requireUser({ select: { id: true } });
 
@@ -24,11 +19,6 @@ export async function getNotifications({ limit = 20, unreadOnly = false } = {}) 
   });
 }
 
-/**
- * Unread count for the header bell badge. Cheap `count` query; called from the
- * SiteHeader server component via `db` directly too, but exposed here so client
- * islands can refresh after marking read.
- */
 export async function getUnreadNotificationCount() {
   const user = await requireUser({ select: { id: true } });
   return db.notification.count({
@@ -36,10 +26,6 @@ export async function getUnreadNotificationCount() {
   });
 }
 
-/**
- * Mark a single notification as read. Scoped to the signed-in user via
- * `updateMany` + `userId` so a forged id from another user is a no-op.
- */
 export async function markNotificationRead(id) {
   const user = await requireUser({ select: { id: true } });
 
@@ -58,9 +44,6 @@ export async function markNotificationRead(id) {
   return { success: true };
 }
 
-/**
- * Mark every unread notification for the signed-in user as read.
- */
 export async function markAllNotificationsRead() {
   const user = await requireUser({ select: { id: true } });
 

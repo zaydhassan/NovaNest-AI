@@ -10,9 +10,6 @@ import { buildUserProfile, summarizeMemory } from "@/lib/career/ui/chat-context"
 import { recallMemory } from "@/lib/career/memory/memory-service";
 import { createNotification } from "@/lib/notifications";
 
-/**
- * List coach insights, newest-first. Pass { unreadOnly: true } for the bell.
- */
 export const getInsights = withErrorHandling(async function getInsights({
   unreadOnly,
   limit,
@@ -40,7 +37,6 @@ export const getInsights = withErrorHandling(async function getInsights({
   });
 }, "Couldn't load your coach insights. Please try again.");
 
-/** Count unread insights (for the drawer/bell badge). */
 export const getUnreadInsightCount = withErrorHandling(
   async function getUnreadInsightCount() {
     const user = await requireUser({ select: { id: true } });
@@ -49,7 +45,6 @@ export const getUnreadInsightCount = withErrorHandling(
   "Couldn't load your insight count."
 );
 
-/** Mark an insight read. */
 export const markInsightRead = withErrorHandling(async function markInsightRead(id) {
   const user = await requireUser({ select: { id: true } });
   if (!id) throw new ValidationError("An insight id is required.");
@@ -61,7 +56,6 @@ export const markInsightRead = withErrorHandling(async function markInsightRead(
   return { success: true };
 }, "Couldn't update that insight. Please try again.");
 
-/** Mark an insight as actioned (user clicked through). */
 export const markInsightActioned = withErrorHandling(async function markInsightActioned(id) {
   const user = await requireUser({ select: { id: true } });
   if (!id) throw new ValidationError("An insight id is required.");
@@ -73,11 +67,6 @@ export const markInsightActioned = withErrorHandling(async function markInsightA
   return { success: true };
 }, "Couldn't update that insight. Please try again.");
 
-/**
- * Generate 1-3 proactive coach insights on demand (the "Nudge me" button).
- * Rate-limited hard (5/10min) since it runs a Gemini call over the user's data.
- * M10 turns this into a weekly cron; M5 ships the on-demand version.
- */
 export const nudgeNow = withErrorHandling(async function nudgeNow() {
   const user = await requireUser({
     select: {
@@ -92,7 +81,6 @@ export const nudgeNow = withErrorHandling(async function nudgeNow() {
   });
   rateLimit({ key: `nudge:${user.clerkUserId}`, limit: 5, windowMs: 10 * 60_000 });
 
-  // Recent activity summary for the prompt.
   const [mockCount, appCount, resume, lastMock] = await Promise.all([
     db.mockInterview.count({ where: { userId: user.id } }),
     db.application.count({ where: { userId: user.id } }),
@@ -159,10 +147,6 @@ export const nudgeNow = withErrorHandling(async function nudgeNow() {
   return created;
 }, "Couldn't generate coach nudges. Please try again.");
 
-/**
- * Suggested opening prompts for an empty /coach session. Static + personalized
- * from the user's industry so there's no AI cost on first paint.
- */
 export const getSuggestedPrompts = withErrorHandling(async function getSuggestedPrompts() {
   const user = await requireUser({
     select: { id: true, industry: true, skills: true },

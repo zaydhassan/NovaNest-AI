@@ -11,8 +11,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-// Pipeline stages + accent colors — mirrored from application-board.jsx so the
-// dashboard and the kanban speak the same visual language.
 const COLUMNS = [
   { key: "SAVED", label: "Saved", accent: "hsl(var(--muted-foreground))" },
   { key: "APPLIED", label: "Applied", accent: "hsl(var(--chart-1))" },
@@ -22,12 +20,6 @@ const COLUMNS = [
   { key: "REJECTED", label: "Rejected", accent: "hsl(var(--chart-5))" },
 ];
 
-/**
- * ApplicationTrackerCard — pipeline at a glance. Counts applications per
- * stage from real `getApplications()` data. No fabrication.
- *
- * @param {{ applications: any[] }} props
- */
 export default function ApplicationTrackerCard({ applications = [] }) {
   const list = applications ?? [];
   const total = list.length;

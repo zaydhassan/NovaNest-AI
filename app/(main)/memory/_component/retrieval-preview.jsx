@@ -18,11 +18,6 @@ const EXAMPLES = [
   "Help me prep for my Amazon application",
 ];
 
-/**
- * RetrievalPreview — type a message and see exactly what the Memory Engine
- * retrieves for it (intent + sections + items), with no AI call. This is the
- * v1 demo of the "Google interview" cross-source retrieval case.
- */
 export default function RetrievalPreview() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);

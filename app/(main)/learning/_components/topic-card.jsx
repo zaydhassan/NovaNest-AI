@@ -39,13 +39,6 @@ const STATUS_META = {
   needs_review: { label: "Needs review", icon: RefreshCw, accent: "text-primary" },
 };
 
-/**
- * topic-card — one tracked skill. Shows proficiency bar + session count, with
- * quick actions: advance status, log a session, edit, delete. The proficiency
- * bar uses the reserved gradient (a progress element, per the rule).
- *
- * @param {{ topic: any, onChange: () => void, allTopics: any[] }} props
- */
 export default function TopicCard({ topic, onChange, allTopics }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState({ skill: topic.skill, notes: topic.notes ?? "" });
@@ -126,7 +119,6 @@ export default function TopicCard({ topic, onChange, allTopics }) {
         </div>
       </div>
 
-      {/* Proficiency bar — reserved gradient (progress element). */}
       <div className="mt-3">
         <Progress value={proficiency} aria-label={`${topic.skill} proficiency ${proficiency}%`} />
         <div className="mt-1 flex items-center justify-between text-[11px] text-muted-foreground">

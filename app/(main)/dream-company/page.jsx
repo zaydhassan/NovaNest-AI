@@ -8,16 +8,12 @@ import DreamCompanyView from "./_components/dream-company-view";
 
 export const metadata = { title: "Dream Company Mode" };
 
-// Avoid a build-time Dynamic server usage error — this page reads the signed-in
-// user and may generate AI content on demand.
 export const dynamic = "force-dynamic";
 
 export default async function DreamCompanyPage() {
   await ensureOnboarded();
   const user = await requireUser({ select: { targetCompany: true } });
 
-  // Load the dashboard (company meta + profile + plan) when a target is set.
-  // Best-effort: a failure falls back to the picker so the page never errors out.
   let dashboard = null;
   if (user.targetCompany) {
     try {

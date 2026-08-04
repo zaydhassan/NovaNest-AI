@@ -34,14 +34,6 @@ const KINDS = [
   { value: "project", label: "Project build" },
 ];
 
-/**
- * learning-session-form — a dialog to log a practice session. The trigger is
- * supplied by the parent (a toolbar button) so it can be placed inline on a
- * topic card or the board header. On submit it calls logLearningSession then
- * calls onLogged() so the parent can refresh its topic list.
- *
- * @param {{ topics: any[], preselectedTopicId?: string|null, onLogged?: () => void, trigger: React.ReactNode, open?: boolean, onOpenChange?: (o:boolean)=>void }} props
- */
 export default function LearningSessionForm({
   topics = [],
   preselectedTopicId = null,

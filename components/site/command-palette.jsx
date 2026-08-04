@@ -32,11 +32,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/**
- * CommandPalette — ⌘K / Ctrl+K quick launcher. Glassmorphic, keyboard-first.
- * Routes the user to any app surface, toggles the theme, or signs out.
- * Renders nothing visible until invoked; the trigger lives in the header.
- */
 export function CommandPalette({ className }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -47,7 +42,6 @@ export function CommandPalette({ className }) {
   const { isSignedIn } = useUser();
   const itemRefs = useRef([]);
 
-  // Global ⌘K / Ctrl+K toggles the palette.
   useEffect(() => {
     const onKey = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -59,7 +53,6 @@ export function CommandPalette({ className }) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // Reset state whenever the palette closes.
   useEffect(() => {
     if (!open) {
       setQuery("");
@@ -67,7 +60,6 @@ export function CommandPalette({ className }) {
     }
   }, [open]);
 
-  // Keep the active row reset + in-bounds as the filtered list changes.
   useEffect(() => {
     setActive(0);
   }, [query]);
@@ -90,8 +82,6 @@ export function CommandPalette({ className }) {
     signOut();
   }, [signOut]);
 
-  // Full command table (actions bound to live callbacks).
-  // Grouped by the product pillars of the AI Career Operating System.
   const all = useMemo(
     () => [
       { id: "home", label: "Home", group: "Home", icon: Home, run: () => go("/") },
@@ -243,7 +233,6 @@ export function CommandPalette({ className }) {
     );
   }, [all, query]);
 
-  // Group while preserving order.
   const groups = useMemo(() => {
     const map = new Map();
     items.forEach((c) => {
@@ -253,7 +242,6 @@ export function CommandPalette({ className }) {
     return Array.from(map.entries());
   }, [items]);
 
-  // Keyboard navigation inside the list.
   const onKeyDown = (e) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -268,7 +256,6 @@ export function CommandPalette({ className }) {
     }
   };
 
-  // Scroll the active row into view.
   useEffect(() => {
     const el = itemRefs.current[active];
     el?.scrollIntoView({ block: "nearest" });
@@ -276,7 +263,6 @@ export function CommandPalette({ className }) {
 
   return (
     <>
-      {/* Visible trigger — sits in the header; the ⌘K shortcut also works. */}
       <button
         type="button"
         onClick={() => setOpen(true)}
@@ -297,7 +283,6 @@ export function CommandPalette({ className }) {
           className="fixed left-1/2 top-[16%] z-50 w-[92vw] max-w-xl -translate-x-1/2 outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95"
           onKeyDown={onKeyDown}
         >
-          {/* Accessible title/description (Radix requires these; kept sr-only). */}
           <DialogPrimitive.Title className="sr-only">
             Command palette
           </DialogPrimitive.Title>
@@ -306,7 +291,6 @@ export function CommandPalette({ className }) {
           </DialogPrimitive.Description>
 
           <div className="glass-strong overflow-hidden rounded-2xl border border-white/10 shadow-glass-lg">
-            {/* Search row */}
             <div className="flex items-center gap-3 border-b border-white/10 px-4 py-3">
               <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
               <input
@@ -323,7 +307,6 @@ export function CommandPalette({ className }) {
               </kbd>
             </div>
 
-            {/* Results */}
             <div className="max-h-[60vh] overflow-y-auto p-2">
               {items.length === 0 ? (
                 <div className="px-3 py-10 text-center text-sm text-muted-foreground">
@@ -365,7 +348,6 @@ export function CommandPalette({ className }) {
               )}
             </div>
 
-            {/* Footer hints */}
             <div className="flex items-center justify-between border-t border-white/10 px-4 py-2 text-[11px] text-muted-foreground">
               <span className="flex items-center gap-1.5">
                 <kbd className="rounded-md border border-white/10 bg-white/[0.04] px-1.5 py-0.5 font-medium">

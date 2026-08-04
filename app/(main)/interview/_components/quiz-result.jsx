@@ -19,7 +19,6 @@ export default function QuizResult({
 
   const score = result.quizScore ?? 0;
   const passed = score >= 70;
-  // Circular ring geometry.
   const R = 52;
   const C = 2 * Math.PI * R;
   const offset = C * (1 - score / 100);
@@ -41,7 +40,6 @@ export default function QuizResult({
       </motion.div>
 
       <CardContent className="space-y-8">
-        {/* Score ring */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -77,7 +75,6 @@ export default function QuizResult({
           </p>
         </motion.div>
 
-        {/* Improvement Tip */}
         {result.improvementTip && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -91,7 +88,6 @@ export default function QuizResult({
           </motion.div>
         )}
 
-        {/* Questions Review */}
         <div className="space-y-4">
           <h3 className="font-medium">Question review</h3>
           {result.questions.map((q, index) => (

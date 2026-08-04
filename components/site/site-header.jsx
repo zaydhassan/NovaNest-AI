@@ -39,24 +39,9 @@ import { NotificationBell } from "@/components/site/notification-bell";
 import { checkUser } from "@/lib/checkUser";
 import { db } from "@/lib/prisma";
 
-/**
- * SiteHeader — sticky glass top bar. Server component (syncs the Clerk user
- * into our DB via checkUser, matching the original behavior). The scroll
- * shrink/glass behavior lives in the client HeaderScrollShell wrapper;
- * interactive bits (mobile sheet, theme toggle) are client islands.
- *
- * Navigation is organized around the product pillars of the AI Career
- * Operating System: Home (the OS hub), Workspace (authoring), Pipeline
- * (applications), Prep (interview rehearsal), and Intelligence (the OS
- * surfaces — Twin, GitHub, Learning). The Copilot is reachable globally via
- * the Coach drawer. Routes, middleware, and labels-on-the-server are
- * unchanged — this is a regrouping of the same links.
- */
 export async function SiteHeader() {
   const user = await checkUser();
 
-  // Unread count for the bell badge — cheap count query, server-resolved so the
-  // badge renders correctly on first paint (no client flash).
   const unreadCount = user
     ? await db.notification.count({
         where: { userId: user.id, isRead: false },
@@ -68,17 +53,12 @@ export async function SiteHeader() {
       <nav className="container mx-auto flex h-full items-center justify-between px-4">
         <Logo />
 
-        {/* Desktop signed-in nav */}
         <div className="flex items-center gap-2 md:gap-3">
-          {/* Plan badge — gated on the server-resolved DB user (null when signed
-              out), NOT on Clerk's client <SignedIn>, so this stays a pure
-              server component and never crosses the client boundary. */}
           {user?.plan && user.plan !== "STARTER" && (
             <PlanBadge plan={user.plan} className="hidden md:inline-flex" />
           )}
 
           <SignedIn>
-            {/* Home — the OS hub */}
             <Link href="/dashboard" className="hidden md:inline-flex">
               <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
                 <LayoutDashboard className="h-4 w-4" />
@@ -86,7 +66,6 @@ export async function SiteHeader() {
               </Button>
             </Link>
 
-            {/* Workspace — artifact authoring */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="hidden md:inline-flex items-center gap-2 text-muted-foreground hover:text-foreground">
@@ -117,7 +96,6 @@ export async function SiteHeader() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Pipeline — applications */}
             <Link href="/applications" className="hidden md:inline-flex">
               <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
                 <KanbanSquare className="h-4 w-4" />
@@ -125,7 +103,6 @@ export async function SiteHeader() {
               </Button>
             </Link>
 
-            {/* Prep — interview rehearsal */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="hidden md:inline-flex items-center gap-2 text-muted-foreground hover:text-foreground">
@@ -156,7 +133,6 @@ export async function SiteHeader() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Intelligence — the OS surfaces */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="hidden md:inline-flex items-center gap-2 text-muted-foreground hover:text-foreground">
@@ -244,7 +220,6 @@ export async function SiteHeader() {
             />
           </SignedIn>
 
-          {/* Mobile menu (signed in sees nav links; signed out can still toggle theme) */}
           <MobileMenu />
         </div>
       </nav>

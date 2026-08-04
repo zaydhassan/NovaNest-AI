@@ -24,8 +24,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-// Milestone types get the reserved gradient on their dot; the rest stay
-// elegant solid muted — per the gradient-reservation rule.
 const TYPE_META = {
   learning: { icon: BookOpen, className: "text-accent" },
   building: { icon: Hammer, className: "text-primary" },
