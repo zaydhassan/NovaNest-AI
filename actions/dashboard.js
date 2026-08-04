@@ -22,32 +22,47 @@ export const generateAIInsights = async (industry) => {
 
 export async function getIndustryInsights() {
   const user = await requireUser({ include: { industryInsight: true } });
+  const existing = user.industryInsight;
 
-  // If insights already exist for this industry, return them.
-  if (user.industryInsight) {
-    return user.industryInsight;
+  // Return cached insights while they're still fresh (nextUpdate in the
+  // future). When nextUpdate has passed — the weekly Inngest cron missed
+  // (e.g. the Inngest dev server isn't running locally) — fall through and
+  // regenerate on read so the dashboard self-heals instead of staying stale.
+  if (existing && existing.nextUpdate && new Date(existing.nextUpdate) > new Date()) {
+    return existing;
   }
 
-  // Otherwise generate them on demand (rate-limited to protect AI spend).
-  rateLimit({ key: `insights:${user.clerkUserId}`, limit: 5, windowMs: 10 * 60_000 });
-  const insights = await generateAIInsights(user.industry);
+  // Generate (or regenerate) on demand. Rate-limited to protect AI spend —
+  // a burst of dashboard loads while stale still only refreshes 5×/10min.
+  // If regeneration fails (rate limit, AI error), fall back to the stale row
+  // so the dashboard still renders — the "Refresh overdue" badge surfaces it.
+  try {
+    rateLimit({ key: `insights:${user.clerkUserId}`, limit: 5, windowMs: 10 * 60_000 });
+    const insights = await generateAIInsights(user.industry);
 
-  // Guard against a race where another request created the row first.
-  const industryInsight = await db.industryInsight.upsert({
-    where: { industry: user.industry },
-    update: {
-      ...insights,
-      lastUpdated: new Date(),
-      nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    },
-    create: {
-      industry: user.industry,
-      ...insights,
-      nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    },
-  });
+    // Guard against a race where another request created/updated the row first.
+    const industryInsight = await db.industryInsight.upsert({
+      where: { industry: user.industry },
+      update: {
+        ...insights,
+        lastUpdated: new Date(),
+        nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
+      create: {
+        industry: user.industry,
+        ...insights,
+        nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
+    });
 
-  return industryInsight;
+    return industryInsight;
+  } catch (e) {
+    if (existing) {
+      console.error("[NovaNest] industry insights refresh failed, serving stale:", e?.message);
+      return existing;
+    }
+    throw e;
+  }
 }
 
 /**

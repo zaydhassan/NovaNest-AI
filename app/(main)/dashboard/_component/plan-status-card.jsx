@@ -77,8 +77,10 @@ export default function PlanStatusCard({ plan = "STARTER", subscriptionStatus, c
               plan={proPlan}
               billingCycle="monthly"
               variant="gradient"
-              className="rounded-full border-2 border-white/40 bg-violet-600 font-semibold text-white ring-2 ring-white/10 hover:bg-violet-500 hover:border-white/60"
+              size="lg"
+              className="rounded-full px-6 font-semibold"
             >
+              <Crown className="h-4 w-4" />
               Upgrade to Pro · {symbol}
               {proPlan.price.toLocaleString("en-IN")}/mo
             </CheckoutButton>

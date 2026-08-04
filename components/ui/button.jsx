@@ -55,6 +55,20 @@ const Button = React.forwardRef(
   ({ className, variant, size, asChild = false, loading = false, children, disabled, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
     const isBusy = loading
+    // The hover sheen is a sibling of the content. Radix Slot calls
+    // React.Children.only on its children, so when asChild is true the
+    // Slot must receive exactly one child — the sheen cannot be a sibling
+    // (and a `{false}` placeholder still counts as a children-array entry,
+    // which trips Children.only). Render the sheen only when !asChild, and
+    // keep the asChild branch a single-element child.
+    const content = isBusy ? (
+      <>
+        <Loader2 className="h-4 w-4 animate-spin" />
+        <span>{children}</span>
+      </>
+    ) : (
+      children
+    )
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
@@ -63,18 +77,17 @@ const Button = React.forwardRef(
         aria-busy={isBusy || undefined}
         {...props}
       >
-        {/* Hover sheen — pure decoration, kept off screen until hover. */}
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 ease-spring group-hover/btn:translate-x-full"
-        />
-        {isBusy ? (
-          <>
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <span>{children}</span>
-          </>
+        {asChild ? (
+          content
         ) : (
-          children
+          <>
+            {/* Hover sheen — pure decoration, kept off screen until hover. */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 ease-spring group-hover/btn:translate-x-full"
+            />
+            {content}
+          </>
         )}
       </Comp>
     )

@@ -19,6 +19,7 @@ import {
   PenBox,
   KanbanSquare,
   ArrowRight,
+  RefreshCw,
 } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import {
@@ -196,7 +197,9 @@ export default function DashboardView({
   const outlookColor = outlookMeta(insights.marketOutlook).color;
 
   const lastUpdatedDate = format(new Date(insights.lastUpdated), "dd MMM yyyy");
-  const nextUpdateDistance = formatDistanceToNow(new Date(insights.nextUpdate), {
+  const nextUpdateDate = new Date(insights.nextUpdate);
+  const isOverdue = nextUpdateDate <= new Date();
+  const nextUpdateDistance = formatDistanceToNow(nextUpdateDate, {
     addSuffix: true,
   });
 
@@ -244,10 +247,17 @@ export default function DashboardView({
                   <Clock className="h-3 w-3" />
                   Updated {lastUpdatedDate}
                 </Badge>
-                <Badge variant="secondary" className="gap-1.5">
-                  <Sparkles className="h-3 w-3 text-primary" />
-                  Refresh {nextUpdateDistance}
-                </Badge>
+                {isOverdue ? (
+                  <Badge variant="secondary" className="gap-1.5 border-amber-500/30 bg-amber-500/15 text-amber-500">
+                    <RefreshCw className="h-3 w-3" />
+                    Refresh overdue
+                  </Badge>
+                ) : (
+                  <Badge variant="secondary" className="gap-1.5">
+                    <Sparkles className="h-3 w-3 text-primary" />
+                    Refresh {nextUpdateDistance}
+                  </Badge>
+                )}
               </div>
               <p className="text-xs text-muted-foreground">
                 AI-analyzed trends for {insights.industry}.

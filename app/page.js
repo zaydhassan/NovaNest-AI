@@ -255,7 +255,7 @@ export default function LandingPage() {
       <WhyNovaNest />
 
       {/* ---- Pricing ---- */}
-      <section className="section">
+      <section id="pricing" className="section scroll-mt-24">
         <div className="container mx-auto px-4">
           <SectionHeading
             eyebrow="Pricing"
