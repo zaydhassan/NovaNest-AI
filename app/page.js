@@ -20,6 +20,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import HeroSection from "@/components/site/hero";
+import { FeatureStrip } from "@/components/site/feature-strip";
 import WhyNovaNest from "@/components/site/why-novanest";
 import { ProductDemo } from "@/components/site/product-demo";
 import { DashboardPreview } from "@/components/site/dashboard-preview";
@@ -35,16 +36,20 @@ import { aiFeatures } from "@/data/aiFeatures";
 
 const ease = [0.22, 1, 0.36, 1];
 
+// Tonal accent mapping — pink (accent), violet (primary), lavender (secondary).
+// Kept tonal on purpose so the intelligence grid never reads as a rainbow.
 const accentText = {
   cyan: "text-accent",
   purple: "text-primary",
-  emerald: "text-accent-warm",
+  emerald: "text-accent-secondary",
 };
 
 export default function LandingPage() {
   return (
     <>
       <HeroSection />
+
+      <FeatureStrip />
 
       <section className="relative border-y border-white/[0.06] bg-white/[0.015] py-16 md:py-24">
         <div className="container mx-auto px-4">

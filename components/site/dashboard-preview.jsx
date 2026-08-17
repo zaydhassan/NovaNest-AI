@@ -88,10 +88,10 @@ export function DashboardPreview() {
                     style={{
                       background:
                         i % 3 === 0
-                          ? "hsl(var(--cyan))"
+                          ? "hsl(var(--accent))"
                           : i % 3 === 1
-                          ? "hsl(var(--purple))"
-                          : "hsl(var(--emerald))",
+                          ? "hsl(var(--primary))"
+                          : "hsl(var(--accent-secondary))",
                       opacity: 0.85,
                     }}
                   />

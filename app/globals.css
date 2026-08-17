@@ -18,84 +18,97 @@
     --radius-lg: 1rem;
     --radius-xl: 1.25rem;
     --radius-2xl: 1.5rem;
-    --cyan: 191 100% 50%;
-    --purple: 252 100% 68%;
-    --emerald: 152 61% 53%;
-    --background: 0 0% 100%;
-    --foreground: 240 10% 4%;
+    /* Accent triplet — names kept for backward compat, values repointed to
+       the pink/magenta + restrained violet + emerald-success language.
+       cyan → magenta, purple → violet, emerald stays green (success only). */
+    --cyan: 328 85% 58%;
+    --purple: 262 76% 64%;
+    --emerald: 152 58% 46%;
+    --background: 36 33% 98%;
+    --foreground: 228 34% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 4%;
+    --card-foreground: 228 34% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 4%;
-    --primary: 252 100% 68%;
+    --popover-foreground: 228 34% 11%;
+    --primary: 263 74% 58%;
     --primary-foreground: 0 0% 100%;
-    --primary-strong: 252 100% 73%;
+    --primary-strong: 264 76% 62%;
 
-    --secondary: 240 5% 96%;
-    --secondary-foreground: 240 6% 20%;
+    --secondary: 225 16% 94%;
+    --secondary-foreground: 228 20% 22%;
 
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 4% 46%;
+    --muted: 225 16% 95%;
+    --muted-foreground: 225 14% 42%;
 
-    --accent: 191 100% 42%;
+    --accent: 328 82% 52%;
     --accent-foreground: 0 0% 100%;
-    --accent-warm: 152 61% 43%;
+    --accent-warm: 152 58% 42%;
+    --accent-secondary: 255 50% 62%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 78% 58%;
     --destructive-foreground: 0 0% 100%;
+    --success: 152 58% 42%;
+    --warning: 38 92% 50%;
 
-    --border: 240 6% 90%;
-    --input: 240 6% 92%;
-    --ring: 252 100% 68%;
+    --border: 225 18% 89%;
+    --input: 225 16% 91%;
+    --ring: 328 82% 52%;
     --glass-bg: 0 0% 100%;
     --glass-border: 0 0% 0%;
-    --glass-shadow: 240 10% 4%;
-    --chart-1: 191 100% 42%;
-    --chart-2: 252 100% 68%;
-    --chart-3: 152 61% 43%;
-    --chart-4: 199 89% 48%;
-    --chart-5: 258 89% 66%;
+    --glass-shadow: 228 34% 11%;
+    --surface: 0 0% 100%;
+    --surface-hover: 225 16% 97%;
+    --chart-1: 328 82% 55%;
+    --chart-2: 262 74% 62%;
+    --chart-3: 255 50% 64%;
+    --chart-4: 205 70% 58%;
+    --chart-5: 152 58% 46%;
   }
 
   .dark {
-    --background: 0 0% 2%;
-    --foreground: 0 0% 100%;
+    --background: 228 34% 2.6%;
+    --foreground: 40 24% 96.5%;
 
-    --card: 0 0% 6%;
-    --card-foreground: 0 0% 100%;
-    --popover: 0 0% 5%;
-    --popover-foreground: 0 0% 100%;
+    --card: 222 18% 8%;
+    --card-foreground: 40 24% 96.5%;
+    --popover: 224 22% 6%;
+    --popover-foreground: 40 24% 96.5%;
 
-    --primary: 252 100% 68%;
+    --primary: 262 78% 70%;
     --primary-foreground: 0 0% 100%;
-    --primary-strong: 252 100% 73%;
+    --primary-strong: 263 80% 74%;
 
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 0 0% 88%;
+    --secondary: 222 16% 12%;
+    --secondary-foreground: 222 16% 88%;
 
-    --muted: 0 0% 4%;
-    --muted-foreground: 240 6% 65%;
+    --muted: 222 16% 6%;
+    --muted-foreground: 222 14% 62%;
 
-    --accent: 191 100% 50%;
-    --accent-foreground: 0 0% 4%;
-    --accent-warm: 152 61% 53%;
+    --accent: 328 92% 64%;
+    --accent-foreground: 0 0% 100%;
+    --accent-warm: 152 58% 52%;
+    --accent-secondary: 255 55% 74%;
 
-    --destructive: 0 72% 60%;
+    --destructive: 0 80% 62%;
     --destructive-foreground: 0 0% 100%;
+    --success: 152 58% 52%;
+    --warning: 38 92% 56%;
 
-    --border: 240 5% 14%;
-    --input: 240 5% 16%;
-    --ring: 252 100% 68%;
+    --border: 222 14% 15%;
+    --input: 222 14% 17%;
+    --ring: 328 88% 64%;
     --glass-bg: 0 0% 100%;
     --glass-border: 0 0% 100%;
     --glass-shadow: 0 0% 0%;
+    --surface: 222 18% 8%;
+    --surface-hover: 222 16% 11%;
 
-    --chart-1: 191 100% 50%;
-    --chart-2: 252 100% 68%;
-    --chart-3: 152 61% 53%;
-    --chart-4: 199 89% 52%;
-    --chart-5: 258 89% 70%;
+    --chart-1: 328 92% 66%;
+    --chart-2: 262 78% 70%;
+    --chart-3: 255 55% 76%;
+    --chart-4: 205 70% 62%;
+    --chart-5: 152 58% 52%;
   }
 }
 
@@ -141,7 +154,7 @@
   }
 
   ::selection {
-    background: hsl(var(--purple) / 0.30);
+    background: hsl(var(--accent) / 0.30);
     color: #fff;
   }
 }
@@ -151,21 +164,18 @@
     @apply text-transparent bg-clip-text;
     background-image: linear-gradient(110deg,
       hsl(var(--cyan)) 0%,
-      hsl(var(--purple)) 50%,
-      hsl(var(--emerald)) 100%);
+      hsl(var(--purple)) 100%);
   }
   .cta-gradient {
     background-image: linear-gradient(110deg,
       hsl(var(--cyan)) 0%,
-      hsl(var(--purple)) 52%,
-      hsl(var(--emerald)) 100%);
+      hsl(var(--purple)) 100%);
   }
   .aurora-text {
     @apply font-extrabold tracking-tighter text-transparent bg-clip-text;
     background-image: linear-gradient(110deg,
       hsl(var(--cyan)) 0%,
-      hsl(var(--purple)) 45%,
-      hsl(var(--emerald)) 100%);
+      hsl(var(--purple)) 100%);
   }
   .animate-aurora {
     background-size: 220% 220%;
@@ -176,15 +186,15 @@
   }
   .gradient {
     background-image: linear-gradient(110deg,
-      hsl(var(--cyan)), hsl(var(--purple)), hsl(var(--emerald)));
+      hsl(var(--cyan)), hsl(var(--purple)));
   }
   .ring-aurora {
     background: linear-gradient(130deg,
-      hsl(var(--cyan)), hsl(var(--purple)), hsl(var(--emerald)));
+      hsl(var(--cyan)), hsl(var(--purple)));
   }
   .ring-aurora-soft {
     background: linear-gradient(130deg,
-      hsl(var(--cyan) / 0.9), hsl(var(--purple) / 0.9), hsl(var(--emerald) / 0.9));
+      hsl(var(--cyan) / 0.9), hsl(var(--purple) / 0.9));
   }
   .surface-1 { background-color: hsl(var(--muted)); }
   .surface-2 { background-color: hsl(var(--card)); }
@@ -215,7 +225,7 @@
     position: absolute;
     border-radius: 999px;
     filter: blur(90px);
-    opacity: 0.45;
+    opacity: 0.22;
     will-change: transform;
   }
   .grid-mesh {
@@ -228,7 +238,7 @@
   }
   .spotlight {
     background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 0%),
-      hsl(var(--purple) / 0.10), transparent 60%);
+      hsl(var(--accent) / 0.08), transparent 60%);
   }
 
   .shimmer {
@@ -251,7 +261,7 @@
     inset: 0;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(130deg, hsl(var(--cyan) / 0.6), hsl(var(--purple) / 0.4), hsl(var(--emerald) / 0.5));
+    background: linear-gradient(130deg, hsl(var(--cyan) / 0.6), hsl(var(--purple) / 0.45));
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
             mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
@@ -270,7 +280,7 @@
     transition: opacity 0.4s ease-spring;
     pointer-events: none;
     background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%),
-      hsl(var(--purple) / 0.16), transparent 45%);
+      hsl(var(--accent) / 0.14), transparent 45%);
     z-index: 0;
   }
   .spotlight-card:hover .spotlight-card__glow { opacity: 1; }
@@ -283,7 +293,7 @@
     transition: opacity 0.4s ease-spring;
     pointer-events: none;
     background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%),
-      hsl(var(--cyan) / 0.55), transparent 60%);
+      hsl(var(--accent) / 0.50), transparent 60%);
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
             mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
@@ -317,7 +327,7 @@
     border-radius: inherit;
     padding: 1px;
     background: conic-gradient(from var(--angle, 0deg),
-      hsl(var(--cyan)), hsl(var(--purple)), hsl(var(--emerald)), hsl(var(--cyan)));
+      hsl(var(--cyan)), hsl(var(--purple)), hsl(var(--cyan)));
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
             mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
@@ -329,7 +339,7 @@
     @apply text-transparent bg-clip-text;
     background-image: linear-gradient(110deg,
       hsl(var(--foreground)) 0%, hsl(var(--foreground)) 35%,
-      hsl(var(--cyan)) 50%, hsl(var(--foreground)) 65%, hsl(var(--foreground)) 100%);
+      hsl(var(--accent)) 50%, hsl(var(--foreground)) 65%, hsl(var(--foreground)) 100%);
     background-size: 200% 100%;
     animation: shimmer 6s linear infinite;
   }

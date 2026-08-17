@@ -37,7 +37,7 @@ const features = [
     title: "A Career Twin that talks like you",
     description:
       "An AI model of you, rebuilt from your history, that answers questions in your voice and surfaces what you'd say in the room.",
-    accent: "emerald",
+    accent: "primary",
   },
   {
     icon: History,
@@ -58,7 +58,7 @@ const features = [
     title: "Private by default",
     description:
       "Encrypted at rest, scoped to your account, and never used to train shared models. Your career stays yours.",
-    accent: "emerald",
+    accent: "accent-secondary",
   },
 ];
 
@@ -113,7 +113,7 @@ function FeatureCard({ feature, index }) {
         style={{
           padding: "1px",
           background:
-            "linear-gradient(130deg, hsl(var(--cyan) / 0.7), hsl(var(--purple) / 0.45), hsl(var(--emerald) / 0.55))",
+            "linear-gradient(130deg, hsl(var(--cyan) / 0.7), hsl(var(--purple) / 0.45))",
           backgroundSize: "220% 220%",
           WebkitMask:
             "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",

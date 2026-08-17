@@ -4,37 +4,25 @@ export function AuroraBackground({ className = "" }) {
       <div
         className="aurora-blob"
         style={{
-          width: 560,
-          height: 560,
-          top: -160,
-          left: "-10%",
-          background: "hsl(var(--purple))",
-          opacity: 0.30,
+          width: 620,
+          height: 620,
+          top: -200,
+          left: "-12%",
+          background: "hsl(var(--primary))",
+          opacity: 0.16,
           animation: "floaty 9s ease-in-out infinite",
         }}
       />
       <div
         className="aurora-blob"
         style={{
-          width: 520,
-          height: 520,
-          top: -120,
-          right: "-8%",
+          width: 560,
+          height: 560,
+          top: -160,
+          right: "-10%",
           background: "hsl(var(--cyan))",
-          opacity: 0.26,
+          opacity: 0.14,
           animation: "floaty 11s ease-in-out infinite reverse",
-        }}
-      />
-      <div
-        className="aurora-blob"
-        style={{
-          width: 480,
-          height: 480,
-          bottom: -180,
-          left: "30%",
-          background: "hsl(var(--emerald))",
-          opacity: 0.20,
-          animation: "floaty 13s ease-in-out infinite",
         }}
       />
       <div className="absolute inset-0 grid-mesh" />
