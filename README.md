@@ -27,7 +27,7 @@ NovaNest is organized into five pillars. Every surface lives behind auth + onboa
 ### 2. Pipeline
 | Module | What it does |
 | --- | --- |
-| **Resume Builder** (`/resume`) | Dynamic, ATS-friendly resumes with a live Markdown editor, AI entry improvement, one-click PDF export, and autosave. Every save triggers a background industry-ATS rescore. |
+| **Resume Builder** (`/resume`) | Dynamic, ATS-friendly resumes with a live Markdown editor, AI entry improvement, one-click PDF export, and autosave. Every save triggers a background industry-ATS rescore.|
 | **Cover Letters** (`/ai-cover-letter`) | AI cover-letter generation from a job description, with search, sort, and filtered management. |
 | **Application Tracker** (`/applications`) | Drag-and-drop Kanban pipeline (Saved → Applied → Screening → Interview → Offer / Rejected) with resume↔JD **ATS matching** — score, matched/missing keywords, and concrete edits. |
 | **AI Career Tools** (`/ai-tools`) | Achievement rewriter (STAR/XYZ), 8-week skill roadmap generator, cold-outreach message writer (LinkedIn/email), and a job-fit scorer. |
