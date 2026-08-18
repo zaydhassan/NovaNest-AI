@@ -60,7 +60,7 @@ NovaNest is organized into five pillars. Every surface lives behind auth + onboa
 
 - **Framework:** Next.js 15.5 (App Router, RSC, Server Actions, Turbopack dev, route groups `(auth)` / `(main)`)
 - **Runtime:** React 19, Node ≥ 20
-- **UI:** Tailwind CSS 3.4 + shadcn/ui (Radix primitives), Framer Motion 12 (globally honors `prefers-reduced-motion` via `MotionProvider`), Recharts 2 (code-split, `ssr:false`), Lucide icons, Sonner toasts, next-themes (dark default)
+- **UI:** Tailwind CSS 3.4 + shadcn/ui (Radix primitives), Framer Motion 12 (globally honors `prefers-reduced-motion` via `MotionProvider`), Recharts 2 (code-split, `ssr:false`), Lucide icons, Sonner toasts, next-themes
 - **Design system:** "Obsidian" — glass cards, aurora + noise backgrounds, `PageHeader`, `SpotlightCard`, `Reveal`/`RevealStagger`, `WhyNote`, `EmptyState`/`ErrorState`/`SkeletonCard`
 - **Auth:** Clerk (with NovaNest-themed dark appearance) + middleware + per-page onboarding guards
 - **Database:** PostgreSQL via Prisma 6.2 (client singleton `db`), hosted on Neon
