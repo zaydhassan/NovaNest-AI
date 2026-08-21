@@ -79,7 +79,7 @@ NovaNest is organized into five pillars. Every surface lives behind auth + onboa
 
 **Core user & artifacts**
 - `User` — Clerk id, industry/experience/skills/bio, target dream company, XP/streak/lastActiveAt, plan/subscription
-- `Resume` (one/user, markdown + atsScore + feedback JSON), `CoverLetter`, `Application` (kanban pipeline), `Assessment` (quiz), `MockInterview` (transcript + denormalized subscores)
+- `Resume` (one/user, markdown + ats Score + feedback JSON), `CoverLetter`, `Application` (kanban pipeline), `Assessment` (quiz), `MockInterview` (transcript + denormalized subscores)
 
 **Reference / market**
 - `IndustryInsight` (salary, growth, demand, top skills, trends — per industry)
