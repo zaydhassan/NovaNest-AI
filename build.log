@@ -1,0 +1,85 @@
+   ▲ Next.js 15.5.21
+   - Environments: .env.local, .env
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 18.4s
+   Linting and checking validity of types ...
+
+./lib/career/memory/memory-engine.js
+1:10  Warning: 'db' is defined but never used. Allowed unused vars must match /^_/u.  no-unused-vars
+
+./lib/career/memory/structured-retrieval.js
+2:10  Warning: 'tokenize' is defined but never used. Allowed unused vars must match /^_/u.  no-unused-vars
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+   Collecting page data ...
+   Generating static pages (0/26) ...
+[NovaNest] checkUser: currentUser() failed: Dynamic server usage: Route /interview/mock couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+[NovaNest] checkUser: currentUser() failed: Dynamic server usage: Route /ai-cover-letter/new couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+[NovaNest] checkUser: currentUser() failed: Dynamic server usage: Route /_not-found couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+[NovaNest] checkUser: currentUser() failed: Dynamic server usage: Route /notifications couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+[NovaNest] checkUser: currentUser() failed: Dynamic server usage: Route /onboarding couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+[NovaNest] checkUser: currentUser() failed: Dynamic server usage: Route / couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+[NovaNest] checkUser: currentUser() failed: Dynamic server usage: Route /interview/quiz couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+[NovaNest] checkUser: currentUser() failed: Dynamic server usage: Route /interview couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+[NovaNest] checkUser: currentUser() failed: Dynamic server usage: Route /qa-intelligence couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+[NovaNest] checkUser: currentUser() failed: Dynamic server usage: Route /github couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+[NovaNest] checkUser: currentUser() failed: Dynamic server usage: Route /memory couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+[NovaNest] checkUser: currentUser() failed: Dynamic server usage: Route /learning couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+[NovaNest] checkUser: currentUser() failed: Dynamic server usage: Route /ai-cover-letter couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+[NovaNest] checkUser: currentUser() failed: Dynamic server usage: Route /timeline couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+[NovaNest] checkUser: currentUser() failed: Dynamic server usage: Route /applications couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+[NovaNest] checkUser: currentUser() failed: Dynamic server usage: Route /intelligence couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+[NovaNest] checkUser: currentUser() failed: Dynamic server usage: Route /ai-tools couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+   Generating static pages (6/26) 
+[NovaNest] checkUser: currentUser() failed: Dynamic server usage: Route /dashboard couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+[NovaNest] checkUser: currentUser() failed: Dynamic server usage: Route /twin couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+[NovaNest] checkUser: currentUser() failed: Dynamic server usage: Route /resume couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
+   Generating static pages (12/26) 
+   Generating static pages (19/26) 
+ ✓ Generating static pages (26/26)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ƒ /                                    33.5 kB         220 kB
+├ ƒ /_not-found                            156 B         103 kB
+├ ƒ /ai-cover-letter                      7.2 kB         202 kB
+├ ƒ /ai-cover-letter/[id]                1.43 kB         108 kB
+├ ƒ /ai-cover-letter/new                 1.82 kB         152 kB
+├ ƒ /ai-tools                            11.9 kB         168 kB
+├ ƒ /api/chat                              156 B         103 kB
+├ ƒ /api/inngest                           156 B         103 kB
+├ ƒ /applications                        8.27 kB         197 kB
+├ ƒ /applications/[id]                   10.4 kB         203 kB
+├ ƒ /coach                               5.02 kB         148 kB
+├ ƒ /dashboard                           19.6 kB         241 kB
+├ ƒ /dream-company                       11.4 kB         175 kB
+├ ƒ /github                              10.5 kB         167 kB
+├ ƒ /intelligence                        6.01 kB         152 kB
+├ ƒ /interview                           7.96 kB         179 kB
+├ ƒ /interview/mock                      9.66 kB         195 kB
+├ ƒ /interview/quiz                      8.55 kB         198 kB
+├ ƒ /learning                            10.4 kB         202 kB
+├ ƒ /memory                              14.1 kB         199 kB
+├ ƒ /notifications                       7.38 kB         138 kB
+├ ƒ /onboarding                           4.5 kB         217 kB
+├ ƒ /qa-intelligence                     1.05 kB         151 kB
+├ ƒ /resume                              18.8 kB         232 kB
+├ ○ /robots.txt                            156 B         103 kB
+├ ƒ /sign-in/[[...sign-in]]                494 B         133 kB
+├ ƒ /sign-up/[[...sign-up]]                494 B         133 kB
+├ ○ /sitemap.xml                           156 B         103 kB
+├ ƒ /timeline                            5.84 kB         169 kB
+└ ƒ /twin                                 7.7 kB         171 kB
++ First Load JS shared by all             103 kB
+  ├ chunks/1255-f5767ca0d1da046a.js        46 kB
+  ├ chunks/4bd1b696-100b9d70ed4e49c1.js  54.2 kB
+  └ other shared chunks (total)          2.95 kB
+
+
+ƒ Middleware                             71.2 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

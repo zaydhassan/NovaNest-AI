@@ -301,7 +301,11 @@
     z-index: 1;
   }
   .spotlight-card:hover .spotlight-card__ring { opacity: 1; }
-  .spotlight-card > * { position: relative; z-index: 2; }
+  /* Content above the glow/ring overlays. :not(span) so decorative
+     aria-hidden spans (which position themselves absolute) keep their
+     own positioning — as direct children they'd otherwise be forced
+     into flow and push card content down. */
+  .spotlight-card > :not(span) { position: relative; z-index: 2; }
   .noise-overlay {
     position: fixed;
     inset: 0;

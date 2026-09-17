@@ -1,157 +1,108 @@
 "use client";
 
-import { useRef } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import {
-  Brain,
-  Workflow,
-  Fingerprint,
-  History,
-  LayoutDashboard,
-  ShieldCheck,
-  ArrowRight,
-  Sparkles,
-} from "lucide-react";
+import { ArrowRight, Play, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Reveal, RevealStagger, RevealItem } from "@/components/site/reveal";
+import { whyFeatures } from "@/data/whyFeatures";
+import { WhyCard } from "./why/why-card";
+import { ConnectiveLines } from "./why/connective-lines";
+import { MemoryVisual } from "./why/memory-visual";
+import { AgentVisual } from "./why/agent-visual";
+import { CareerTwinVisual } from "./why/career-twin-visual";
+import { TimelineVisual } from "./why/timeline-visual";
+import { WorkspaceVisual } from "./why/workspace-visual";
+import { PrivacyVisual } from "./why/privacy-visual";
 
-const ease = [0.22, 1, 0.36, 1];
+/**
+ * WhyNovaNest — the "one connected career OS" statement section.
+ *
+ * Marketing presentation only; all visuals are static illustrative
+ * markup and never read from the database or user state. Six features
+ * (data/whyFeatures.js) map 1:1 onto the six miniature product visuals
+ * below, telling one story in order: memory → agents → twin →
+ * timeline → workspace → privacy.
+ */
 
-const features = [
-  {
-    icon: Brain,
-    title: "Remembers your whole career",
-    description:
-      "Not session state — durable memory that recalls your roles, mocks, and goals across every conversation, so every answer starts from you.",
-    accent: "purple",
-  },
-  {
-    icon: Workflow,
-    title: "Coordinates specialist agents",
-    description:
-      "An intent router dispatches the right agent — interview, resume, application, analytics, learning — instead of one bloated prompt doing everything badly.",
-    accent: "cyan",
-  },
-  {
-    icon: Fingerprint,
-    title: "A Career Twin that talks like you",
-    description:
-      "An AI model of you, rebuilt from your history, that answers questions in your voice and surfaces what you'd say in the room.",
-    accent: "primary",
-  },
-  {
-    icon: History,
-    title: "A timeline that builds itself",
-    description:
-      "Every action auto-derives a career timeline — no manual journaling, no separate log. Your history writes itself as you work.",
-    accent: "cyan",
-  },
-  {
-    icon: LayoutDashboard,
-    title: "One workspace, not five tabs",
-    description:
-      "Resume, applications, interviews, insights, and learning — connected, not copy-pasted between disconnected tools.",
-    accent: "purple",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Private by default",
-    description:
-      "Encrypted at rest, scoped to your account, and never used to train shared models. Your career stays yours.",
-    accent: "accent-secondary",
-  },
+const VISUALS = [
+  MemoryVisual,
+  AgentVisual,
+  CareerTwinVisual,
+  TimelineVisual,
+  WorkspaceVisual,
+  PrivacyVisual,
 ];
 
-function FeatureCard({ feature, index }) {
-  const cardRef = useRef(null);
-  const rafRef = useRef(null);
-
-  const handleMouseMove = (e) => {
-    const el = cardRef.current;
-    if (!el) return;
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(() => {
-      const rect = el.getBoundingClientRect();
-      el.style.setProperty("--mx", `${e.clientX - rect.left}px`);
-      el.style.setProperty("--my", `${e.clientY - rect.top}px`);
-    });
-  };
-
-  const Icon = feature.icon;
-  const glowVar = `var(--${feature.accent})`;
-
+/** Very subtle editorial microcopy flanking the grid.
+    Anchored to the section (not the container) so it sits in the outer
+    viewport margins and never overlaps the max-w-6xl grid. Hidden below
+    1440px, where those margins get too narrow. */
+function SideMicrocopy() {
   return (
-    <motion.article
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.6, delay: index * 0.1, ease }}
-      whileHover={{ y: -6, scale: 1.02 }}
-      style={{ "--glow": glowVar, willChange: "transform" }}
-      className="group relative overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 backdrop-blur-xl transition-[box-shadow,border-color] duration-500 hover:border-white/[0.14] hover:shadow-glass-lg"
-    >
-      <span
+    <>
+      <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        style={{
-          background:
-            "radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), hsl(var(--glow) / 0.16), transparent 62%)",
-        }}
-      />
-
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-30"
-        style={{ background: `hsl(${glowVar})` }}
-      />
-
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-        style={{
-          padding: "1px",
-          background:
-            "linear-gradient(130deg, hsl(var(--cyan) / 0.7), hsl(var(--purple) / 0.45))",
-          backgroundSize: "220% 220%",
-          WebkitMask:
-            "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-          WebkitMaskComposite: "xor",
-          maskComposite: "exclude",
-          animation: "gradient-pan 6s ease infinite",
-        }}
-      />
-
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute left-7 top-10 h-1 w-1 rounded-full bg-white/25"
-        style={{ animation: "floaty 7s ease-in-out infinite" }}
-      />
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute right-10 top-16 h-[3px] w-[3px] rounded-full bg-white/15"
-        style={{ animation: "floaty 9s ease-in-out infinite reverse" }}
-      />
-
-      <div className="relative z-10">
-        <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl ring-aurora text-white shadow-glow transition-transform duration-500 ease-spring group-hover:-rotate-6 group-hover:scale-110">
-          <Icon className="h-6 w-6" />
-        </div>
-
-        <h3 className="text-lg font-semibold tracking-tight text-foreground">
-          {feature.title}
-        </h3>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          {feature.description}
+        className="absolute left-4 top-[44%] hidden -translate-y-1/2 select-none min-[1440px]:block"
+      >
+        <p className="text-[9px] font-medium uppercase leading-[2.3] tracking-[0.22em] text-white/[0.22]">
+          More
+          <br />
+          context.
+          <br />
+          Better
+          <br />
+          decisions.
+          <br />
+          A brighter
+          <br />
+          you.
         </p>
-
-        <span
-          aria-hidden="true"
-          className="mt-5 block h-px w-8 origin-left scale-x-100 bg-gradient-to-r from-transparent via-white/40 to-transparent transition-all duration-500 ease-spring group-hover:w-16"
-        />
       </div>
-    </motion.article>
+      <div
+        aria-hidden="true"
+        className="absolute right-4 top-[46%] hidden -translate-y-1/2 select-none text-right min-[1440px]:block"
+      >
+        <p className="text-[9px] font-medium uppercase leading-[2.3] tracking-[0.22em] text-white/[0.22]">
+          Your career.
+          <br />
+          All connected.
+        </p>
+      </div>
+    </>
+  );
+}
+
+/** Low-opacity curved horizon behind the bottom CTA — closes the section. */
+function HorizonArc() {
+  return (
+    <svg
+      aria-hidden="true"
+      focusable="false"
+      viewBox="0 0 800 220"
+      preserveAspectRatio="none"
+      className="pointer-events-none absolute -top-12 left-1/2 h-60 w-[160%] -translate-x-1/2 opacity-80 [mask-image:radial-gradient(ellipse_55%_100%_at_50%_100%,#000_35%,transparent_72%)]"
+    >
+      <defs>
+        <linearGradient id="nn-horizon" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="hsl(var(--accent))" />
+          <stop offset="1" stopColor="hsl(var(--primary))" />
+        </linearGradient>
+      </defs>
+      <g fill="none">
+        <path
+          d="M0 200 C 260 120, 540 120, 800 200"
+          stroke="url(#nn-horizon)"
+          strokeOpacity="0.22"
+          strokeWidth="1.5"
+        />
+        <path
+          d="M60 212 C 300 142, 500 142, 740 212"
+          stroke="hsl(var(--primary) / 0.15)"
+          strokeWidth="1"
+          strokeDasharray="2 8"
+        />
+      </g>
+    </svg>
   );
 }
 
@@ -161,116 +112,105 @@ export default function WhyNovaNest() {
       id="why-novanest"
       className="relative overflow-hidden px-4 py-24 md:py-32"
     >
+      {/* Atmospheric background — near-black base, faint radial accent
+          lighting (violet upper-left, magenta upper-right, violet floor),
+          a whisper of grid. Entirely behind the content. */}
       <div
-        className="grid-mesh pointer-events-none absolute inset-0 opacity-60"
         aria-hidden="true"
-      />
-      <div
         className="pointer-events-none absolute inset-0"
-        aria-hidden="true"
         style={{
           background:
-            "radial-gradient(60% 50% at 50% 0%, hsl(var(--purple) / 0.10), transparent 70%)",
+            "radial-gradient(ellipse 42% 34% at 12% 5%, hsl(var(--primary) / 0.08), transparent 65%), radial-gradient(ellipse 38% 30% at 88% 7%, hsl(var(--accent) / 0.06), transparent 60%), radial-gradient(ellipse 55% 28% at 50% 102%, hsl(var(--primary) / 0.05), transparent 65%)",
         }}
       />
-      <div
-        className="aurora-blob pointer-events-none"
-        aria-hidden="true"
-        style={{
-          width: 360,
-          height: 360,
-          top: "8%",
-          left: "58%",
-          background: "hsl(var(--cyan))",
-          opacity: 0.06,
-          animation: "floaty 14s ease-in-out infinite",
-        }}
-      />
-      <div
-        className="aurora-blob pointer-events-none"
-        aria-hidden="true"
-        style={{
-          width: 320,
-          height: 320,
-          bottom: "6%",
-          left: "8%",
-          background: "hsl(var(--purple))",
-          opacity: 0.06,
-          animation: "floaty 16s ease-in-out infinite reverse",
-        }}
-      />
+      <div aria-hidden="true" className="grid-mesh pointer-events-none absolute inset-0 opacity-40" />
+
+      <SideMicrocopy />
 
       <div className="container relative mx-auto">
-        <div className="mx-auto max-w-3xl text-center">
-          <motion.span
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.6 }}
-            transition={{ duration: 0.5, ease }}
-            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground backdrop-blur"
-          >
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
-            Why NovaNest
-          </motion.span>
-
-          <motion.h2
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.5 }}
-            transition={{ duration: 0.6, delay: 0.06, ease }}
-            className="mt-6 text-3xl font-extrabold tracking-tight text-foreground md:text-5xl lg:text-[3.4rem] lg:leading-[1.05]"
-          >
-            What makes it an operating system
-          </motion.h2>
-
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.5 }}
-            transition={{ duration: 0.6, delay: 0.12, ease }}
-            className="mx-auto mt-5 max-w-2xl text-base text-muted-foreground md:text-lg"
-          >
-            NovaNest isn&apos;t a resume builder with a chatbot bolted on. It&apos;s
-            one connected career OS where every document, practice session, and
-            insight is shaped by your goals — so the guidance compounds with
-            every step you take.
-          </motion.p>
+        {/* Header — eyebrow → headline → supporting copy */}
+        <div className="relative mx-auto max-w-3xl text-center">
+          <Reveal y={12}>
+            <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground backdrop-blur">
+              <Sparkles className="h-3 w-3 text-accent" />
+              Why NovaNest
+            </span>
+          </Reveal>
+          <Reveal delay={0.08}>
+            <h2 className="text-4xl font-extrabold leading-[1.08] tracking-tight text-foreground md:text-5xl lg:text-[3.5rem]">
+              What makes it an{" "}
+              <span className="block bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
+                operating system
+              </span>
+            </h2>
+          </Reveal>
+          <Reveal delay={0.16}>
+            <p className="mx-auto mt-6 max-w-[760px] text-base leading-relaxed text-muted-foreground md:text-lg">
+              NovaNest isn&apos;t a resume builder with a chatbot bolted on.
+              It&apos;s one connected career OS where every document, practice
+              session, and insight is shaped by your goals — so the guidance
+              compounds with every step you take.
+            </p>
+          </Reveal>
         </div>
 
-        <div className="mx-auto mt-16 grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {features.map((feature, index) => (
-            <FeatureCard key={feature.title} feature={feature} index={index} />
-          ))}
+        {/* Feature grid — strict 3 × 2, identical row heights, with thin
+            connective trajectories weaving behind the cards */}
+        <div className="relative mx-auto mt-14 max-w-6xl md:mt-16">
+          <ConnectiveLines className="pointer-events-none absolute inset-0 hidden h-full w-full [mask-image:radial-gradient(ellipse_70%_75%_at_50%_50%,#000_30%,transparent_90%)] lg:block" />
+          <RevealStagger
+            className="relative grid auto-rows-fr grid-cols-1 gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-3"
+            stagger={0.08}
+            delay={0.1}
+          >
+            {whyFeatures.map((feature, i) => (
+              <RevealItem key={feature.title}>
+                <WhyCard
+                  index={i + 1}
+                  icon={feature.icon}
+                  tone={feature.tone}
+                  title={feature.title}
+                  description={feature.description}
+                  visual={VISUALS[i]}
+                />
+              </RevealItem>
+            ))}
+          </RevealStagger>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.6, delay: 0.1, ease }}
-          className="mx-auto mt-20 max-w-2xl text-center"
-        >
-          <h3 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+        {/* Bottom CTA — appears last, closes on a career-trajectory horizon */}
+        <Reveal delay={0.12} className="relative mx-auto mt-20 max-w-2xl text-center md:mt-24">
+          <HorizonArc />
+          <h3 className="relative text-3xl font-bold tracking-tight text-foreground md:text-4xl">
             Run your career on AI.
           </h3>
-          <p className="mx-auto mt-4 max-w-xl text-muted-foreground md:text-lg">
-            Stop starting from zero. NovaNest remembers your career, coordinates
-            the work, and compounds with every step.
+          <p className="relative mx-auto mt-4 max-w-xl text-muted-foreground md:text-lg">
+            Stop starting from zero. NovaNest remembers your career,
+            coordinates the work, and compounds with every step.
           </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div className="relative mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link href="/dashboard">
-              <Button variant="gradient" size="lg" className="w-full gap-2 rounded-full px-7 sm:w-auto">
-                Start free
+              <Button
+                variant="gradient"
+                size="lg"
+                className="w-full gap-2 rounded-full px-7 sm:w-auto"
+              >
+                Start for free
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
             <Link href="#demo">
-              <Button size="lg" variant="outline" className="w-full rounded-full px-7 sm:w-auto">
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full gap-2 rounded-full px-7 sm:w-auto"
+              >
+                <Play className="h-3.5 w-3.5 fill-current" />
                 See the OS
               </Button>
             </Link>
           </div>
-        </motion.div>
+        </Reveal>
       </div>
     </section>
   );

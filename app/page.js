@@ -5,6 +5,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
+  Sparkles,
+  Zap,
   MessagesSquare,
   Workflow,
   Infinity,
@@ -20,29 +22,21 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import HeroSection from "@/components/site/hero";
+import SixPillars from "@/components/site/six-pillars";
 import { FeatureStrip } from "@/components/site/feature-strip";
 import WhyNovaNest from "@/components/site/why-novanest";
 import { ProductDemo } from "@/components/site/product-demo";
 import { DashboardPreview } from "@/components/site/dashboard-preview";
+import { IntelligenceSection } from "@/components/site/intelligence/intelligence-section";
+import { HowItWorks } from "@/components/site/how-it-works";
 import { Pricing } from "@/components/site/pricing";
 import { SectionHeading } from "@/components/site/section-heading";
 import { SpotlightCard } from "@/components/site/spotlight-card";
 import { RevealStagger, RevealItem } from "@/components/site/reveal";
-import { features } from "@/data/features";
 import { faqs } from "@/data/faqs";
-import { howItWorks } from "@/data/howItWorks";
 import { plans } from "@/data/pricing";
-import { aiFeatures } from "@/data/aiFeatures";
 
 const ease = [0.22, 1, 0.36, 1];
-
-// Tonal accent mapping — pink (accent), violet (primary), lavender (secondary).
-// Kept tonal on purpose so the intelligence grid never reads as a rainbow.
-const accentText = {
-  cyan: "text-accent",
-  purple: "text-primary",
-  emerald: "text-accent-secondary",
-};
 
 export default function LandingPage() {
   return (
@@ -96,31 +90,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section id="features" className="section">
-        <div className="container mx-auto px-4">
-          <SectionHeading
-            eyebrow="The system"
-            title="Six pillars. One operating system."
-            subtitle="Every pillar feeds the next — your work doesn't sit in silos, it compounds."
-          />
-          <RevealStagger className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature, index) => (
-              <RevealItem key={index}>
-                <SpotlightCard className="glass group h-full rounded-2xl p-6 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:border-white/20 hover:shadow-glass-lg">
-                  <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl ring-aurora text-white shadow-glow transition-transform duration-300 ease-spring group-hover:scale-110 group-hover:rotate-3">
-                    {feature.icon}
-                  </div>
-                  <h3 className="mb-1.5 text-lg font-semibold">{feature.title}</h3>
-                  {feature.value && (
-                    <p className="mb-2 text-sm font-medium text-foreground/90">{feature.value}</p>
-                  )}
-                  <p className="text-sm text-muted-foreground">{feature.description}</p>
-                </SpotlightCard>
-              </RevealItem>
-            ))}
-          </RevealStagger>
-        </div>
-      </section>
+      <SixPillars />
 
       <section id="demo" className="section pt-4 md:pt-8">
         <div className="container mx-auto px-4">
@@ -189,65 +159,9 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="section py-12 md:py-20">
-        <div className="container mx-auto px-4">
-          <SectionHeading
-            eyebrow="Intelligence layer"
-            title="Intelligence woven into every step"
-            subtitle="The OS layer that turns your activity into memory, scores, and guidance — contextual, private, and built for the work you actually do."
-          />
-          <RevealStagger className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {aiFeatures.map((f) => {
-              const Icon = f.icon;
-              return (
-                <RevealItem key={f.title}>
-                  <SpotlightCard className="glass group relative h-full overflow-hidden rounded-2xl p-6 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:border-white/20">
-                    <div
-                      className="absolute -right-10 -top-10 h-28 w-28 rounded-full opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-40"
-                      style={{ background: `hsl(var(--${f.accent}))` }}
-                      aria-hidden="true"
-                    />
-                    <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl border border-white/10 bg-white/[0.04] transition-transform duration-300 ease-spring group-hover:scale-110">
-                      <Icon className={`h-6 w-6 ${accentText[f.accent]}`} />
-                    </div>
-                    <h3 className="mb-2 text-lg font-semibold">{f.title}</h3>
-                    <p className="text-sm text-muted-foreground">{f.description}</p>
-                  </SpotlightCard>
-                </RevealItem>
-              );
-            })}
-          </RevealStagger>
-        </div>
-      </section>
+      <IntelligenceSection />
 
-      <section className="section">
-        <div className="container mx-auto px-4">
-          <SectionHeading
-            eyebrow="How it works"
-            title="Set up once. It remembers forever."
-            subtitle="Every action you take writes to memory — so the system gets richer, and the guidance gets sharper, with every step."
-          />
-          <div className="relative mx-auto max-w-6xl">
-            <div className="hidden md:absolute md:left-0 md:right-0 md:top-[64px] md:block" aria-hidden="true">
-              <div className="mx-auto h-px max-w-5xl bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-            </div>
-            <RevealStagger className="grid grid-cols-1 gap-8 md:grid-cols-4" stagger={0.1}>
-              {howItWorks.map((item, i) => (
-                <RevealItem key={i} className="relative">
-                  <SpotlightCard className="glass h-full rounded-2xl p-6 transition-all duration-300 ease-spring hover:-translate-y-1.5 hover:border-white/20">
-                    <div className="mb-4 grid h-10 w-10 place-items-center rounded-full ring-aurora font-semibold text-white shadow-glow">
-                      {i + 1}
-                    </div>
-                    <div className="mb-4 text-primary">{item.icon}</div>
-                    <h3 className="mb-2 text-base font-semibold">{item.title}</h3>
-                    <p className="text-sm text-muted-foreground">{item.description}</p>
-                  </SpotlightCard>
-                </RevealItem>
-              ))}
-            </RevealStagger>
-          </div>
-        </div>
-      </section>
+      <HowItWorks />
 
       <WhyNovaNest />
 
@@ -295,35 +209,104 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="section">
-        <div className="container mx-auto px-4">
-          <div className="border-gradient relative overflow-hidden px-6 py-16 text-center shadow-glass-lg md:py-20">
+      <section className="section relative overflow-hidden bg-[#030305]">
+        {/* Radial atmosphere: subtle violet left, deep pink right, dark center */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(640px circle at 6% 42%, hsl(263 74% 40% / 0.11), transparent 70%), radial-gradient(640px circle at 94% 58%, hsl(345 60% 36% / 0.09), transparent 70%)",
+          }}
+        />
+        {/* Technical grid: thin 1px lines, low opacity, fades into the dark */}
+        <div
+          aria-hidden="true"
+          className="grid-mesh pointer-events-none absolute inset-0"
+          style={{ backgroundSize: "120px 120px" }}
+        />
+        <div className="relative z-10 mx-auto w-[calc(100%-40px)] max-w-[1740px]">
+          {/* Orbital curves: one entering from the left, one from the right */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -left-[40px] -top-[80px] h-[520px] w-[520px] rounded-tl-full border-l border-t border-[hsl(263_74%_58%/0.22)]"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-[48px] -bottom-[26px] h-[560px] w-[560px] rounded-br-full border-b border-r border-[hsl(328_82%_52%/0.2)]"
+          />
+          <div className="relative flex min-h-[400px] flex-col items-center justify-center overflow-hidden rounded-[24px] border border-white/[0.18] bg-[#111217] px-6 py-[52px] text-center md:rounded-[28px] md:px-16 md:py-[64px]">
+            {/* Internal radial lighting: violet left, magenta right, dark center */}
             <div
-              className="aurora-blob"
-              style={{ width: 420, height: 420, top: -140, left: "20%", background: "hsl(var(--purple))", opacity: 0.25 }}
               aria-hidden="true"
+              className="pointer-events-none absolute -left-24 top-1/2 h-[460px] w-[460px] -translate-y-1/2 rounded-full opacity-60 blur-[110px]"
+              style={{ background: "hsl(263 74% 58% / 0.18)" }}
             />
             <div
-              className="aurora-blob"
-              style={{ width: 360, height: 360, bottom: -160, right: "18%", background: "hsl(var(--cyan))", opacity: 0.2 }}
               aria-hidden="true"
+              className="pointer-events-none absolute -right-24 top-1/2 h-[400px] w-[400px] -translate-y-1/2 rounded-full opacity-60 blur-[110px]"
+              style={{ background: "hsl(345 70% 45% / 0.15)" }}
             />
-            <div className="relative z-10 mx-auto max-w-2xl">
-              <h2 className="aurora-text animate-aurora text-3xl font-extrabold md:text-5xl">
-                Run your career on AI.
-              </h2>
-              <p className="mx-auto mt-4 max-w-xl text-muted-foreground md:text-lg">
-                Stop starting from zero. NovaNest remembers your career,
-                coordinates the work, and compounds with every step.
-              </p>
-              <Link href="/dashboard" className="mt-8 inline-block">
-                <Button variant="gradient" size="lg" className="gap-2 rounded-full px-8">
-                  Start free
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
+            <h2 className="relative text-[36px] font-bold leading-[1.05] tracking-tight text-[#F5F5F7] md:text-[44px] lg:text-[56px]">
+              Run your career on{" "}
+              <span className="bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
+                AI.
+              </span>
+            </h2>
+            <p className="relative mx-auto mt-4 max-w-[720px] text-[16px] leading-[1.55] text-[#9296A3] md:text-[18px]">
+              Stop starting from zero. NovaNest remembers your career,
+              coordinates the work, and compounds with every step.
+            </p>
+            <Link
+              href="/dashboard"
+              className="group relative mt-[30px] inline-block rounded-[15px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#111217]"
+            >
+              <Button
+                asChild
+                variant="ghost"
+                className="flex h-[52px] w-[170px] cursor-pointer items-center justify-center gap-2 rounded-[15px] border border-white/[0.25] bg-[#F7F7F8] text-[15px] font-semibold text-[#111114] shadow-[0_10px_30px_rgba(0,0,0,0.28)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-white hover:text-[#111114] hover:shadow-[0_14px_34px_rgba(0,0,0,0.34)] active:scale-[0.98] md:h-[54px] md:w-[180px] [&_svg]:size-auto"
+              >
+                <span>
+                  <Sparkles size={15} strokeWidth={1.8} aria-hidden="true" />
+                  Start for free
+                  <ArrowRight
+                    size={17}
+                    className="ml-0.5 transition-transform duration-200 ease-out motion-safe:group-hover/btn:translate-x-1"
+                    aria-hidden="true"
+                  />
+                </span>
+              </Button>
+            </Link>
+            <div className="relative mt-[22px] flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[13px] text-[#777B88]">
+              <span className="inline-flex items-center gap-1.5">
+                <Zap size={13} className="text-accent" aria-hidden="true" />
+                No credit card
+              </span>
+              <span aria-hidden="true" className="hidden h-3 w-px bg-white/15 sm:block" />
+              <span className="inline-flex items-center gap-1.5">
+                <Infinity size={13} className="text-primary" aria-hidden="true" />
+                Free forever
+              </span>
+              <span aria-hidden="true" className="hidden h-3 w-px bg-white/15 sm:block" />
+              <span className="inline-flex items-center gap-1.5">
+                <Fingerprint size={13} className="text-accent" aria-hidden="true" />
+                Your data stays yours
+              </span>
             </div>
           </div>
+          {/* Tiny glowing nodes along the orbital curves */}
+          <div
+            aria-hidden="true"
+            className="absolute left-[6%] top-[72px] h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_10px_2px_hsl(var(--accent)/0.55)]"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute right-[6%] top-[64px] h-1 w-1 rounded-full bg-primary shadow-[0_0_10px_2px_hsl(var(--primary)/0.5)]"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute left-[93%] top-[262px] h-1 w-1 rounded-full bg-accent shadow-[0_0_10px_2px_hsl(var(--accent)/0.45)]"
+          />
         </div>
       </section>
     </>
